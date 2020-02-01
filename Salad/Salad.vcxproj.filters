@@ -1,36 +1,258 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    <Filter Include="src">
+      <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    <Filter Include="src\Platform">
+      <UniqueIdentifier>{21CA02E5-0D2D-9289-B6B2-CA3FA2F45D0C}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    <Filter Include="src\Platform\OpenGL">
+      <UniqueIdentifier>{35A49437-A105-7245-2A73-B8F796D3A804}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Platform\Windows">
+      <UniqueIdentifier>{5B054582-4794-CE4B-F0B2-E246DC20DFF1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Salad">
+      <UniqueIdentifier>{6109D1B3-CD73-852A-16B2-36D0825B637F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Salad\Core">
+      <UniqueIdentifier>{59329CA2-4500-90A8-2E94-00CF1A016C0D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Salad\Debug">
+      <UniqueIdentifier>{97D82EF6-0364-9CBA-0C75-1FAF787FF8BA}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Salad\Events">
+      <UniqueIdentifier>{253E94BF-1137-B311-3A69-989626C1921D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Salad\ImGui">
+      <UniqueIdentifier>{4B438DF6-B7CE-FABA-C0DF-7DAF2CEA56BB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Salad\Lua">
+      <UniqueIdentifier>{72EA23DE-DEAA-9F14-A7E5-E8911365E4F0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Salad\Renderer">
+      <UniqueIdentifier>{276A97EC-134E-5842-7CAE-529568B142C4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor">
+      <UniqueIdentifier>{B3738122-9F15-ACF8-88D0-BF4C74113349}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\stb_image">
+      <UniqueIdentifier>{0DA0BA59-F998-D9AB-22CB-BE300E23B9B7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Salad\Core.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h">
+      <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
-    <ClInclude Include="src\Salad\Application.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\OpenGL\OpenGLRenderAPI.h">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\OpenGL\OpenGLShader.h">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\OpenGL\OpenGLTexture.h">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\OpenGL\OpenGLVertexArray.h">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\Windows\WindowsInput.h">
+      <Filter>src\Platform\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\Windows\WindowsWindow.h">
+      <Filter>src\Platform\Windows</Filter>
     </ClInclude>
     <ClInclude Include="src\Salad.h">
-      <Filter>Header Files</Filter>
+      <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\Salad\EntryPoint.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="src\Salad\Core\Application.h">
+      <Filter>src\Salad\Core</Filter>
     </ClInclude>
+    <ClInclude Include="src\Salad\Core\Core.h">
+      <Filter>src\Salad\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Salad\Core\EntryPoint.h">
+      <Filter>src\Salad\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Salad\Core\Input.h">
+      <Filter>src\Salad\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Salad\Core\KeyCodes.h">
+      <Filter>src\Salad\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Salad\Core\Layer.h">
+      <Filter>src\Salad\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Salad\Core\LayerStack.h">
+      <Filter>src\Salad\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Salad\Core\Log.h">
+      <Filter>src\Salad\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Salad\Core\MouseButtonCodes.h">
+      <Filter>src\Salad\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Salad\Core\Timestep.h">
+      <Filter>src\Salad\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Salad\Core\Window.h">
+      <Filter>src\Salad\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Salad\Debug\Profiler.h">
+      <Filter>src\Salad\Debug</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Salad\Events\ApplicationEvent.h">
+      <Filter>src\Salad\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Salad\Events\Event.h">
+      <Filter>src\Salad\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Salad\Events\KeyEvent.h">
+      <Filter>src\Salad\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Salad\Events\MouseEvent.h">
+      <Filter>src\Salad\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Salad\ImGui\ImGuiLayer.h">
+      <Filter>src\Salad\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Salad\Lua\LuaScript.h">
+      <Filter>src\Salad\Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Salad\OrthographicCameraController.h">
+      <Filter>src\Salad</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Salad\Renderer\Buffer.h">
+      <Filter>src\Salad\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Salad\Renderer\Camera.h">
+      <Filter>src\Salad\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Salad\Renderer\GraphicsContext.h">
+      <Filter>src\Salad\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Salad\Renderer\OrthographicCamera.h">
+      <Filter>src\Salad\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Salad\Renderer\RenderAPI.h">
+      <Filter>src\Salad\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Salad\Renderer\RenderCommand.h">
+      <Filter>src\Salad\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Salad\Renderer\Renderer.h">
+      <Filter>src\Salad\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Salad\Renderer\Renderer2D.h">
+      <Filter>src\Salad\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Salad\Renderer\Shader.h">
+      <Filter>src\Salad\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Salad\Renderer\Texture.h">
+      <Filter>src\Salad\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Salad\Renderer\VertexArray.h">
+      <Filter>src\Salad\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sldpch.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\stb_image\stb_image.h">
+      <Filter>vendor\stb_image</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Salad\Renderer\TextureMap.h" />
+    <ClInclude Include="src\Salad\Renderer\Sprite.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Salad\Application.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp">
+      <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
+    <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\OpenGL\OpenGLRenderAPI.cpp">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\OpenGL\OpenGLShader.cpp">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\OpenGL\OpenGLTexture.cpp">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\OpenGL\OpenGLVertexArray.cpp">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\Windows\WindowsInput.cpp">
+      <Filter>src\Platform\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp">
+      <Filter>src\Platform\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Salad\Core\Application.cpp">
+      <Filter>src\Salad\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Salad\Core\Layer.cpp">
+      <Filter>src\Salad\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Salad\Core\LayerStack.cpp">
+      <Filter>src\Salad\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Salad\Core\Log.cpp">
+      <Filter>src\Salad\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Salad\ImGui\ImGuiBuild.cpp">
+      <Filter>src\Salad\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Salad\ImGui\ImGuiLayer.cpp">
+      <Filter>src\Salad\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Salad\Lua\LuaScript.cpp">
+      <Filter>src\Salad\Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Salad\OrthographicCameraController.cpp">
+      <Filter>src\Salad</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Salad\Renderer\Buffer.cpp">
+      <Filter>src\Salad\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Salad\Renderer\Camera.cpp">
+      <Filter>src\Salad\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Salad\Renderer\OrthographicCamera.cpp">
+      <Filter>src\Salad\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Salad\Renderer\RenderAPI.cpp">
+      <Filter>src\Salad\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Salad\Renderer\RenderCommand.cpp">
+      <Filter>src\Salad\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Salad\Renderer\Renderer.cpp">
+      <Filter>src\Salad\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Salad\Renderer\Renderer2D.cpp">
+      <Filter>src\Salad\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Salad\Renderer\Shader.cpp">
+      <Filter>src\Salad\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Salad\Renderer\Texture.cpp">
+      <Filter>src\Salad\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Salad\Renderer\VertexArray.cpp">
+      <Filter>src\Salad\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sldpch.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\stb_image\stb_image.cpp">
+      <Filter>vendor\stb_image</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Salad\Renderer\Sprite.cpp" />
   </ItemGroup>
 </Project>

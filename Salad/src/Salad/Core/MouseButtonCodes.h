@@ -1,0 +1,14 @@
+#pragma once
+
+#define SLD_MOUSE_BUTTON_1         0
+#define SLD_MOUSE_BUTTON_2         1
+#define SLD_MOUSE_BUTTON_3         2
+#define SLD_MOUSE_BUTTON_4         3
+#define SLD_MOUSE_BUTTON_5         4
+#define SLD_MOUSE_BUTTON_6         5
+#define SLD_MOUSE_BUTTON_7         6
+#define SLD_MOUSE_BUTTON_8         7
+#define SLD_MOUSE_BUTTON_LAST      SLD_MOUSE_BUTTON_8
+#define SLD_MOUSE_BUTTON_LEFT      SLD_MOUSE_BUTTON_1
+#define SLD_MOUSE_BUTTON_RIGHT     SLD_MOUSE_BUTTON_2
+#define SLD_MOUSE_BUTTON_MIDDLE    SLD_MOUSE_BUTTON_3

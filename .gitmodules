@@ -1,0 +1,15 @@
+[submodule "Salad/vendor/spdlog"]
+	path = Salad/vendor/spdlog
+	url = https://github.com/gabime/spdlog
+[submodule "Salad/vendor/GLFW"]
+	path = Salad/vendor/GLFW
+	url = https://github.com/robinvd995/glfw
+[submodule "Salad/vendor/imgui"]
+	path = Salad/vendor/imgui
+	url = https://github.com/robinvd995/imgui
+[submodule "Salad/vendor/glm"]
+	path = Salad/vendor/glm
+	url = https://github.com/g-truc/glm
+[submodule "Salad/Vendor/LuaBridge"]
+	path = Salad/Vendor/LuaBridge
+	url = https://github.com/robinvd995/LuaBridge
