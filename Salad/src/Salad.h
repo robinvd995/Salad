@@ -8,10 +8,14 @@
 #include "Salad/Core/Input.h"
 #include "Salad/Core/KeyCodes.h"
 #include "Salad/Core/MouseButtonCodes.h"
+#include "Salad/Core/Timestep.h"
+
+#include "Salad/Entity/Entity.h"
 
 #include "Salad/ImGui/ImGuiLayer.h"
 
 // Render stuff
+#include "Salad/Renderer/Sprite.h"
 #include "Salad/Renderer/Renderer.h"
 #include "Salad/Renderer/Renderer2D.h"
 #include "Salad/Renderer/RenderCommand.h"

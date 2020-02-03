@@ -1,9 +1,11 @@
 #include "sldpch.h"
 #include "Renderer2D.h"
 
+#include "Salad/Entity/Entity.h"
 #include "Salad/Renderer/VertexArray.h"
 #include "Salad/Renderer/Shader.h"
 #include "Salad/Renderer/RenderCommand.h"
+#include "Salad/Renderer/TextureManager.h"
 
 #include <glm/ext/matrix_transform.hpp>
 
@@ -40,9 +42,9 @@ namespace Salad {
 		s_Data->quadVertexArray->setIndexBuffer(indexBuffer);
 		s_Data->quadVertexArray->unbind();
 
-		s_Data->whiteTexture = Texture2D::create(1, 1);
+		s_Data->whiteTexture = TextureManager::get().loadTexture2D("default_white", 1, 1);
 		uint32_t whiteTextureData = 0xffffffff;
-		s_Data->whiteTexture->setData(& whiteTextureData, sizeof(uint32_t));
+		s_Data->whiteTexture->setData(&whiteTextureData, sizeof(uint32_t));
 
 		s_Data->textureShader = Shader::create("assets/shaders/Texture.glsl");
 	}
@@ -87,8 +89,8 @@ namespace Salad {
 	void Renderer2D::drawTexturedQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture, const float rotation) {
 
 		s_Data->textureShader->setFloat4("u_Color", glm::vec4(1.0f));
-		s_Data->textureShader->setFloat2("u_TexMapSize", glm::vec2(1.0f));
-		s_Data->textureShader->setFloat2("u_TexMapCoords", glm::vec2(1.0f));
+		s_Data->textureShader->setFloat2("u_UVSize", glm::vec2(1.0f));
+		s_Data->textureShader->setFloat2("u_UVCoords", glm::vec2(1.0f));
 		texture->bind();
 
 		glm::mat4 transform =
@@ -102,35 +104,46 @@ namespace Salad {
 		RenderCommand::drawIndexed(s_Data->quadVertexArray);
 	}
 
-	void Renderer2D::drawSprite(const glm::vec2& position, const glm::vec2& size, const Ref<Sprite>& sprite, const float rotation) {
-		drawSprite({ position.x, position.y, 0.0f }, size, sprite, rotation);
+	void Renderer2D::drawSprite(const glm::vec2& position, const glm::vec2& size, const SpriteRenderInformation& sri) {
+		drawSprite({ position.x, position.y, 0.0f }, size, sri);
 	}
 
-	void Renderer2D::drawSprite(const glm::vec3& position, const glm::vec2& size, const Ref<Sprite>& sprite, const float rotation) {
+	void Renderer2D::drawSprite(const glm::vec3& position, const glm::vec2& size, const SpriteRenderInformation& sri) {
 		s_Data->textureShader->setFloat4("u_Color", glm::vec4(1.0f));
-		sprite->getTextureMap()->getTexture()->bind();
+		sri.sprite->getTextureMap()->getTexture()->bind();
 
-		float texMapSizeH = 1.0f / (float)sprite->getTextureMap()->getGridCountH();
-		float texMapSizeV = 1.0f / (float)sprite->getTextureMap()->getGridCountV();
-
-		s_Data->textureShader->setFloat2("u_TexMapSize", glm::vec2(texMapSizeH, texMapSizeV));
-
-		int hIndex = sprite->getSpriteIndex() % sprite->getTextureMap()->getGridCountH();
-		int vIndex = sprite->getSpriteIndex() / sprite->getTextureMap()->getGridCountH();
-
-		float hOffset = hIndex * 1.0f / sprite->getTextureMap()->getGridCountH();
-		float vOffset = hIndex * 1.0f / sprite->getTextureMap()->getGridCountV();
+		s_Data->textureShader->setFloat2("u_UVSize", glm::vec2(sri.sizeU, sri.sizeV));
+		s_Data->textureShader->setFloat2("u_UVCoords", glm::vec2(sri.posU, sri.posV));
 
 		glm::mat4 transform =
 			glm::translate(glm::mat4(1.0f), position) *
-			glm::rotate(glm::mat4(1.0f), glm::radians(rotation), glm::vec3(0, 0, 1)) *
+			glm::rotate(glm::mat4(1.0f), glm::radians(0.0f), glm::vec3(0, 0, 1)) *
 			glm::scale(glm::mat4(1.0f), glm::vec3(size.x, size.y, 1.0f));
 
 		s_Data->textureShader->setMat4("u_Transform", transform);
-		s_Data->textureShader->setFloat2("u_TexMapCoords", glm::vec2(hIndex * hOffset, vIndex * vOffset));
 
 		s_Data->quadVertexArray->bind();
 		RenderCommand::drawIndexed(s_Data->quadVertexArray);
 	}
 
+	//void Renderer2D::drawEntitySprite(Ref<EntityComponentTransform>& transform, const SpriteRenderInformation& sri) {}
+
+	/*void Renderer2D::drawSprite(Ref<EntityComponentTransform>& transform, const SpriteRenderInformation& sri) {
+		s_Data->textureShader->setFloat4("u_Color", glm::vec4(1.0f));
+		sri.sprite->getTextureMap()->getTexture()->bind();
+
+		s_Data->textureShader->setFloat2("u_UVSize", glm::vec2(sri.sizeU, sri.sizeV));
+		s_Data->textureShader->setFloat2("u_UVCoords", glm::vec2(sri.posU, sri.posV));
+
+		glm::mat4 transformMatrix =
+			glm::translate(glm::mat4(1.0f), transform->getPosition()) *
+			glm::rotate(glm::mat4(1.0f), glm::radians(transform->getRotation().y), glm::vec3(0, 0, 1)) *
+			glm::scale(glm::mat4(1.0f), transform->getScale());
+
+		s_Data->textureShader->setMat4("u_Transform", transformMatrix);
+
+		s_Data->quadVertexArray->bind();
+		RenderCommand::drawIndexed(s_Data->quadVertexArray);
+	}
+	*/
 }

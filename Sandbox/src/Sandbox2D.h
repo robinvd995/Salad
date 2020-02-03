@@ -3,6 +3,8 @@
 #include <Salad.h>
 #include <Salad/Renderer/TextureMap.h>
 
+#include <Salad/Entity/Entity.h>
+
 #include <Salad/OrthographicCameraController.h>
 
 class Sandbox2D : public Salad::Layer {
@@ -17,7 +19,7 @@ public:
 	virtual void onEvent(Salad::Event& e) override;
 
 private:
-	Salad::OrthographicCameraController m_CameraController;
+	Salad::OrthographicCameraFollower m_CameraController;
 	
 	// Temporary!!!
 	Salad::Ref<Salad::VertexArray> m_VertexArray;
@@ -25,6 +27,8 @@ private:
 
 	Salad::Ref<Salad::Texture2D> m_Texture;
 	Salad::Ref<Salad::TextureMap> m_TextureMap;
+
+	Salad::Ref<Salad::Entity> m_Entity;
 
 	Salad::Ref<Salad::Sprite> m_Sprite;
 

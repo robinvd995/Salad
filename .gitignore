@@ -5,3 +5,10 @@ bin-int/
 
 # files
 *.user
+*.sln
+*.vcxproj
+*.filters
+*.vpp~*
+*.vpp.working
+*.vpp.working-journal
+*.lck

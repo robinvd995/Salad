@@ -4,6 +4,7 @@
 #include "Salad/Events/ApplicationEvent.h"
 #include "Salad/Events/MouseEvent.h"
 #include "Salad/Renderer/OrthographicCamera.h"
+#include "Salad/Entity/Entity.h"
 
 namespace Salad {
 
@@ -12,14 +13,14 @@ namespace Salad {
 	public:
 		OrthographicCameraController(float aspectRatio, bool rotation = false);
 
-		void onUpdate(Timestep ts);
+		virtual void onUpdate(Timestep ts);
 		void onEvent(Event& e);
 		OrthographicCamera getCamera() const { return m_Camera; }
 		
 	private:
 		bool onMouseScrolledEvent(MouseScrolledEvent& e);
 		bool onWindowResizedEvent(WindowResizeEvent& e);
-	private:
+	protected:
 		float m_AspectRatio;
 		float m_ZoomLevel = 1.0f;
 		OrthographicCamera m_Camera;
@@ -30,4 +31,16 @@ namespace Salad {
 		float m_CameraTranslationSpeed = 1.0f, m_CameraRotationSpeed = 180.0f;
 	};
 
+	class OrthographicCameraFollower : public OrthographicCameraController {
+	
+	public:
+		OrthographicCameraFollower(float aspectRatio, bool rotation = false);
+
+		virtual void onUpdate(Timestep ts) override;
+
+		void setTarget(Ref<Entity> target);
+
+	private:
+		WeakRef<Entity> m_Target;
+	};
 }

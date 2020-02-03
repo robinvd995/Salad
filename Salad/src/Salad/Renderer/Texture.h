@@ -21,7 +21,9 @@ namespace Salad {
 
 	class Texture2D : public Texture {
 
-	public:
+		friend class TextureManager;
+
+	private:
 		static Ref<Texture2D> create(const std::string& filepath);
 		static Ref<Texture2D> create(uint32_t width, uint32_t height);
 	};

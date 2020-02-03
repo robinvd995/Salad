@@ -146,3 +146,23 @@ project "Sandbox"
         defines "SLD_DIST"
         runtime "Release"
         optimize "on"
+
+project "AssetGenerator"
+    location "AssetGenerator"
+    kind "ConsoleApp"
+    language "C++"
+    cppdialect "C++17"
+    staticruntime "on"
+
+    targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+    objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+
+    spriteDir = "AssetGenerator/output/sprites"
+    os.mkdir(spriteDir)
+
+    files {
+        "%{prj.name}/src/**.c",
+        "%{prj.name}/src/**.h",
+        "%{prj.name}/src/**.hpp",
+        "%{prj.name}/src/**.cpp"
+    }

@@ -161,6 +161,7 @@
     <ClInclude Include="src\Salad\Core\Timestep.h" />
     <ClInclude Include="src\Salad\Core\Window.h" />
     <ClInclude Include="src\Salad\Debug\Profiler.h" />
+    <ClInclude Include="src\Salad\Entity\Entity.h" />
     <ClInclude Include="src\Salad\Events\ApplicationEvent.h" />
     <ClInclude Include="src\Salad\Events\Event.h" />
     <ClInclude Include="src\Salad\Events\KeyEvent.h" />
@@ -179,6 +180,7 @@
     <ClInclude Include="src\Salad\Renderer\Shader.h" />
     <ClInclude Include="src\Salad\Renderer\Sprite.h" />
     <ClInclude Include="src\Salad\Renderer\Texture.h" />
+    <ClInclude Include="src\Salad\Renderer\TextureManager.h" />
     <ClInclude Include="src\Salad\Renderer\TextureMap.h" />
     <ClInclude Include="src\Salad\Renderer\VertexArray.h" />
     <ClInclude Include="src\sldpch.h" />
@@ -197,6 +199,7 @@
     <ClCompile Include="src\Salad\Core\Layer.cpp" />
     <ClCompile Include="src\Salad\Core\LayerStack.cpp" />
     <ClCompile Include="src\Salad\Core\Log.cpp" />
+    <ClCompile Include="src\Salad\Entity\Entity.cpp" />
     <ClCompile Include="src\Salad\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="src\Salad\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="src\Salad\Lua\LuaScript.cpp" />
@@ -211,6 +214,7 @@
     <ClCompile Include="src\Salad\Renderer\Shader.cpp" />
     <ClCompile Include="src\Salad\Renderer\Sprite.cpp" />
     <ClCompile Include="src\Salad\Renderer\Texture.cpp" />
+    <ClCompile Include="src\Salad\Renderer\TextureManager.cpp" />
     <ClCompile Include="src\Salad\Renderer\VertexArray.cpp" />
     <ClCompile Include="src\sldpch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>

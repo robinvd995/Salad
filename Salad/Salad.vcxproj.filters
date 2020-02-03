@@ -22,6 +22,9 @@
     <Filter Include="src\Salad\Debug">
       <UniqueIdentifier>{97D82EF6-0364-9CBA-0C75-1FAF787FF8BA}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Salad\Entity">
+      <UniqueIdentifier>{8D9E0BBF-7997-2A11-A2C9-0F968E210A1D}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Salad\Events">
       <UniqueIdentifier>{253E94BF-1137-B311-3A69-989626C1921D}</UniqueIdentifier>
     </Filter>
@@ -105,6 +108,9 @@
     <ClInclude Include="src\Salad\Debug\Profiler.h">
       <Filter>src\Salad\Debug</Filter>
     </ClInclude>
+    <ClInclude Include="src\Salad\Entity\Entity.h">
+      <Filter>src\Salad\Entity</Filter>
+    </ClInclude>
     <ClInclude Include="src\Salad\Events\ApplicationEvent.h">
       <Filter>src\Salad\Events</Filter>
     </ClInclude>
@@ -153,7 +159,16 @@
     <ClInclude Include="src\Salad\Renderer\Shader.h">
       <Filter>src\Salad\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="src\Salad\Renderer\Sprite.h">
+      <Filter>src\Salad\Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="src\Salad\Renderer\Texture.h">
+      <Filter>src\Salad\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Salad\Renderer\TextureManager.h">
+      <Filter>src\Salad\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Salad\Renderer\TextureMap.h">
       <Filter>src\Salad\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Salad\Renderer\VertexArray.h">
@@ -165,8 +180,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\Salad\Renderer\TextureMap.h" />
-    <ClInclude Include="src\Salad\Renderer\Sprite.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp">
@@ -205,6 +218,9 @@
     <ClCompile Include="src\Salad\Core\Log.cpp">
       <Filter>src\Salad\Core</Filter>
     </ClCompile>
+    <ClCompile Include="src\Salad\Entity\Entity.cpp">
+      <Filter>src\Salad\Entity</Filter>
+    </ClCompile>
     <ClCompile Include="src\Salad\ImGui\ImGuiBuild.cpp">
       <Filter>src\Salad\ImGui</Filter>
     </ClCompile>
@@ -241,7 +257,13 @@
     <ClCompile Include="src\Salad\Renderer\Shader.cpp">
       <Filter>src\Salad\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="src\Salad\Renderer\Sprite.cpp">
+      <Filter>src\Salad\Renderer</Filter>
+    </ClCompile>
     <ClCompile Include="src\Salad\Renderer\Texture.cpp">
+      <Filter>src\Salad\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Salad\Renderer\TextureManager.cpp">
       <Filter>src\Salad\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Salad\Renderer\VertexArray.cpp">
@@ -253,6 +275,5 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\Salad\Renderer\Sprite.cpp" />
   </ItemGroup>
 </Project>

@@ -24,7 +24,7 @@ namespace Salad {
 
 		m_Window = Scope<Window>(Window::create());
 		m_Window->setEventCallback(BIND_EVENT_FN(onEvent));
-		m_Window->setVSync(false);
+		m_Window->setVSync(true);
 
 		Renderer::init();
 

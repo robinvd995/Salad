@@ -1,0 +1,27 @@
+CPP Code Organization:
+	- Sort out includes, put core classes in salad.h like Entity.h, dont include in header files!!! causes circle references
+
+2D Renderer:
+
+	Sprite Animation
+		DONE - Either make every sprite an animated sprite
+		DONE - Add a SpriteRenderer that can be transformed into a component for the ECS system that will hold a sprite animator(not required), and a sprite.
+
+		- Sprite Switching, Sprite Manager???
+		- Could delete texture map and store the data in the sprite itself
+
+	Tile Maps
+		- Derived from Texture maps or just use texture maps when no extra functionality is required.
+		- Tile animations, global animation system no per tile animation
+
+	Batching?
+
+	UI Elements
+		- Default ui elements(simpleTexture, text, buttons, text boxes, dropdown stuff, checkboxes)
+		- UI anchoring
+
+Entity Component System (ECS)
+	? Update entity components trough a "Component Manager", might help with lua script performance amongst other things
+
+Scenes - ???
+Physics - ???

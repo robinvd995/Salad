@@ -17,19 +17,19 @@ namespace Salad {
 		float delta = (float)ts;
 		float speed = m_CameraTranslationSpeed * delta * m_ZoomLevel;
 
-		if (Input::isKeyPressed(SLD_KEY_A)) {
+		if (Input::isKeyPressed(SLD_KEY_LEFT)) {
 			m_CameraPosition.x -= speed;
 		}
 
-		if (Input::isKeyPressed(SLD_KEY_D)) {
+		if (Input::isKeyPressed(SLD_KEY_RIGHT)) {
 			m_CameraPosition.x += speed;
 		}
 
-		if (Input::isKeyPressed(SLD_KEY_W)) {
+		if (Input::isKeyPressed(SLD_KEY_UP)) {
 			m_CameraPosition.y += speed;
 		}
 
-		if (Input::isKeyPressed(SLD_KEY_S)) {
+		if (Input::isKeyPressed(SLD_KEY_DOWN)) {
 			m_CameraPosition.y -= speed;
 		}
 
@@ -65,5 +65,22 @@ namespace Salad {
 		m_AspectRatio = (float)e.getWidth() / (float)e.getHeight();
 		m_Camera.setProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
 		return false;
+	}
+
+	OrthographicCameraFollower::OrthographicCameraFollower(float aspectRatio, bool rotation) :
+		OrthographicCameraController(aspectRatio, rotation)
+	{}
+
+	void OrthographicCameraFollower::onUpdate(Timestep ts) {
+		glm::vec3 pos = m_Target.lock()->getComponent<EntityComponentTransform>()->cpyPosition();
+		m_CameraPosition.x = pos.x;
+		m_CameraPosition.y = pos.y;
+		m_CameraPosition.z = pos.z;
+
+		m_Camera.setPosition(m_CameraPosition);
+	}
+
+	void OrthographicCameraFollower::setTarget(Ref<Entity> target) {
+		m_Target = target;
 	}
 }

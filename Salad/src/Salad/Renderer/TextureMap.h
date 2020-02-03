@@ -8,12 +8,16 @@ namespace Salad {
 
 	class TextureMap {
 
+		friend class TextureManager;
+
 	public:
-		TextureMap(Ref<Texture2D>& texture, uint32_t gridCountH, uint32_t gridCountV) :
+
+		TextureMap(const TextureMap& map) = delete;
+		TextureMap(Ref<Texture2D> texture, uint32_t gridCountH, uint32_t gridCountV) :
 			m_Texture(texture),
 			m_GridCountH(gridCountH),
-			m_GridCountV(gridCountV)
-		{}
+			m_GridCountV(gridCountV) {
+		}
 
 		~TextureMap() {}
 

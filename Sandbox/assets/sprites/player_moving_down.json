@@ -1,0 +1,10 @@
+{
+  "textureId": "player_sprites",
+  "texCoordX": "0",
+  "texCoordY": "0",
+  "frameTime": "0.05f",
+  "frameCount": "10",
+  "spriteWidth": "32",
+  "spriteHeight": "32",
+  "spritesPerRow": "10"
+}

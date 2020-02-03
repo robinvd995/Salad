@@ -7,6 +7,8 @@
 #include <glm/glm/gtc/type_ptr.hpp>
 #include <imgui/imgui.h>
 #include <Salad/OrthographicCameraController.h>
+#include "Salad/Renderer/TextureManager.h"
+
 
 #include "Sandbox2D.h"
 
@@ -173,8 +175,8 @@ public:
 			auto shader = m_ShaderLibrary.load("assets/shaders/Texture.glsl");
 		}
 
-		m_Texture = Salad::Texture2D::create("assets/textures/checkerboard.png");
-		m_Logo = Salad::Texture2D::create("assets/textures/logo.png");
+		m_Texture = Salad::TextureManager::get().loadTexture2D("assets/textures/checkerboard.png");
+		m_Logo = Salad::TextureManager::get().loadTexture2D("assets/textures/logo.png");
 
 		auto textureShader = m_ShaderLibrary.get("Texture");
 		std::dynamic_pointer_cast<Salad::OpenGLShader>(textureShader)->bind();
