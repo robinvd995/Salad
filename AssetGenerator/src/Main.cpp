@@ -4,7 +4,9 @@
 #include <vector>
 #include <string>
 
-int readInt(unsigned char* data) {
+#include "BinaryIO.h"
+
+/*int readInt(unsigned char* data) {
 	int i = (*(int*)data);
 	return i;
 }
@@ -40,35 +42,29 @@ std::string readString(std::ifstream& inFile) {
 		s += c[0];
 	}
 	return s;
-}
+}*/
 
 void generateSpriteFile(std::string filename, const char* spriteId, int spriteIdSize, const char* textureId, int textureIdSize,
 	int texCoordX, int texCoordY, int spriteWidth, int spriteHeight, int frameCount, float frameTime, int spritesPerRow) {
 
 	std::string filepath = "output/sprites/" + filename + ".sprite";
-	std::fstream file(filepath, std::ios::out | std::ios::binary);
-
-	file.write((char*)&spriteIdSize, sizeof(unsigned int));
-	file.write(spriteId, spriteIdSize);
-	file.write((char*)&textureIdSize, sizeof(unsigned int));
-	file.write(textureId, textureIdSize);
-	file.write((char*)&texCoordX, sizeof(unsigned int));
-	file.write((char*)&texCoordY, sizeof(unsigned int));
-	file.write((char*)&spriteWidth, sizeof(unsigned int));
-	file.write((char*)&spriteHeight, sizeof(unsigned int));
-	file.write((char*)&frameCount, sizeof(unsigned int));
-	file.write((char*)&frameTime, sizeof(float));
-	file.write((char*)&spritesPerRow, sizeof(unsigned int));
-
-	file.flush();
-	file.close();
-
+	{
+		BinaryWriter writer(filepath);
+		writer.writeString(spriteId, spriteIdSize);
+		writer.writeString(textureId, textureIdSize);
+		writer.writeInt(texCoordX);
+		writer.writeInt(texCoordY);
+		writer.writeInt(spriteWidth);
+		writer.writeInt(spriteHeight);
+		writer.writeInt(frameCount);
+		writer.writeFloat(frameTime);
+		writer.writeInt(spritesPerRow);
+	}
 	std::cout << "Generated sprite file '" << filepath << "'!" << std::endl;
 }
 
 
 int main() {
-
 
 	while (true) {
 		char line[200];
@@ -116,11 +112,11 @@ int main() {
 
 			if(argumentVector.size() == 2 && argumentVector[0] == "read") {
 				std::string filepath = "output/sprites/" + argumentVector[1] + ".sprite";
-				std::ifstream inFile(filepath, std::ios::in | std::ios::binary);
+				//std::ifstream inFile(filepath, std::ios::in | std::ios::binary);
 
-				unsigned char buffer[4];
+				//unsigned char buffer[4];
 
-				std::string spriteId = readString(inFile);
+				/*std::string spriteId = readString(inFile);
 				std::string textureId = readString(inFile);
 
 				int texCoordX = readInt(inFile);
@@ -129,7 +125,20 @@ int main() {
 				int spriteHeight = readInt(inFile);
 				int frameCount = readInt(inFile);
 				float frameTime = readFloat(inFile);
-				int spritesPerRow = readInt(inFile);
+				int spritesPerRow = readInt(inFile);*/
+
+				BinaryReader reader(filepath);
+
+				std::string spriteId = reader.readString();
+				std::string textureId = reader.readString();
+
+				int texCoordX = reader.readInt();
+				int texCoordY = reader.readInt();
+				int spriteWidth = reader.readInt();
+				int spriteHeight = reader.readInt();
+				int frameCount = reader.readInt();
+				float frameTime = reader.readFloat();
+				int spritesPerRow = reader.readInt();
 
 				std::cout << "spriteId: '" << spriteId << "'" << std::endl;
 				std::cout << "textureId: '" << textureId << "'" << std::endl;
