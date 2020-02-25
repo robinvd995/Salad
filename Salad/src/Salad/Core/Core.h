@@ -21,11 +21,15 @@
 #endif
 
 #ifdef SLD_ENABLE_ASSERTS
-	#define SLD_ASSERT(x, ...) { if(!x) {SLD_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
-	#define SLD_CORE_ASSERT(x, ...) { if(!x) {SLD_CORE_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
+	#define SLD_ASSERT(...) { if(!x) { SLD_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
+	#define SLD_ASSERT_FAIL(x, ...) { SLD_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); }
+	#define SLD_CORE_ASSERT(x, ...) { if(!x) { SLD_CORE_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
+	#define SLD_CORE_ASSERT_FAIL(...) { SLD_CORE_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); }
 #else
 	#define SLD_ASSERT(x, ...)
+	#define SLD_ASSERT_FAIL(...)
 	#define SLD_CORE_ASSERT(x, ...)
+	#define SLD_CORE_ASSERT_FAIL(...)
 #endif
 
 #define BIT(x) (x << 1)

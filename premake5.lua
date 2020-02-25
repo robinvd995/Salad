@@ -18,12 +18,14 @@ IncludeDir["glm"] = "Salad/vendor/glm"
 IncludeDir["stb_image"] = "Salad/vendor/stb_image"
 IncludeDir["lua53"] = "Salad/vendor/lua53/include"
 IncludeDir["LuaBridge"] = "Salad/vendor/LuaBridge/Source"
+IncludeDir["freetype"] = "Salad/vendor/freetype/include"
 
 group "Dependencies"
     include "Salad/vendor/GLFW"
     include "Salad/vendor/Glad"
     include "Salad/vendor/imgui"
     include "Salad/vendor/lua53"
+    include "Salad/vendor/freetype"
 group ""
 
 project "Salad"
@@ -61,7 +63,8 @@ project "Salad"
         "%{IncludeDir.glm}",
         "%{IncludeDir.stb_image}",
         "%{IncludeDir.lua53}",
-        "%{IncludeDir.LuaBridge}"
+        "%{IncludeDir.LuaBridge}",
+        "%{IncludeDir.freetype}"
     }
 
     links{
@@ -69,6 +72,7 @@ project "Salad"
         "Glad",
         "ImGui",
         "lua53",
+        "freetype",
         "opengl32.lib"
     }
 

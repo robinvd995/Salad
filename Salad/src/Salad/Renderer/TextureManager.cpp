@@ -14,20 +14,9 @@ namespace Salad{
 		m_Texture2DCollection[textureId] = textureRef;
 		return textureRef;
 	}
-	
-	Ref<TextureMap> TextureManager::loadTextureMap(const std::string& filepath, uint32_t gridCountH, uint32_t gridCountV) {
-		Ref<Texture2D> textureRef = Texture2D::create(filepath);
-		Ref<TextureMap> textureMap = createRef<TextureMap>(textureRef, gridCountH, gridCountV);
-		m_TextureMapCollection[filepath] = textureMap;
-		return textureMap;
-	}
 
 	Ref<Texture2D> TextureManager::getTexture2D(const std::string& textureId) {
 		return m_Texture2DCollection[textureId];
-	}
-
-	Ref<TextureMap> TextureManager::getTextureMap(const std::string& textureMap) {
-		return m_TextureMapCollection[textureMap];
 	}
 
 }

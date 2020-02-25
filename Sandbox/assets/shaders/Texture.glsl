@@ -12,7 +12,6 @@ $add_uniform uniform mat4 u_Transform;
 $add_uniform uniform vec2 u_UVSize;
 $add_uniform uniform vec2 u_UVCoords;
 
-
 out vec2 v_TexCoord;
 
 void main() {
@@ -32,5 +31,9 @@ uniform sampler2D u_Texture;
 
 void main() {
 	vec4 texColor = texture(u_Texture, v_TexCoord) * u_Color;
+	//vec4 texColor = vec4(1.0, 1.0, 1.0, texture(u_Texture, v_TexCoord).r);
+	if(texColor.a == 0)
+		discard;
+
 	frag_color = texColor;
 }

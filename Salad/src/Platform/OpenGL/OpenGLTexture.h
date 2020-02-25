@@ -13,6 +13,7 @@ namespace Salad {
 
 		OpenGLTexture2D(const std::string& filepath);
 		OpenGLTexture2D(uint32_t width, uint32_t height);
+		OpenGLTexture2D(uint32_t textureId, uint32_t width, uint32_t height, GLenum internalFormat, GLenum dataFormat);
 
 		virtual void setData(void* data, uint32_t size) override;
 

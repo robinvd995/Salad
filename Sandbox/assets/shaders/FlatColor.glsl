@@ -1,4 +1,4 @@
-// Flat Color Shader
+// Gui Shader
 
 $type vertex
 #version 330 core

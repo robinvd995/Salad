@@ -51,7 +51,7 @@ namespace Salad {
 	}
 
 	template<typename T>
-	inline Ref<T> Entity::getComponent() {
+	Ref<T> Entity::getComponent() {
 		std::unordered_map<ComponentType, Ref<EntityComponent>>::iterator it;
 		for (it = m_EntityComponentMap.begin(); it != m_EntityComponentMap.end(); it++) {
 			auto component = it->second;
@@ -109,31 +109,58 @@ namespace Salad {
 		m_Scale.z = scale.z;
 	}
 
+	void EntityComponentTransform::translate(float x, float y) {
+		m_Position.x += x;
+		m_Position.y += y;
+	}
+
+	void EntityComponentTransform::translate(const glm::vec2& delta) {
+		m_Position.x += delta.x;
+		m_Position.y += delta.y;
+	}
+
+	void EntityComponentTransform::translate(float x, float y, float z) {
+		m_Position.x += x;
+		m_Position.y += y;
+		m_Position.z += z;
+	}
+
+	void EntityComponentTransform::translate(const glm::vec3& delta) {
+		m_Position.x += delta.x;
+		m_Position.y += delta.y;
+		m_Position.z += delta.z;
+	}
+
 	// -------- Transform Component End --------
 
 	// -------- Sprite Render Component --------
 
-	void EntityComponentSpriteRenderer::setSpriteRendererValues(Ref<Sprite> sprite, float frameTime, int frameCount) {
+	void EntityComponentSpriteRenderer::setSprite(const std::string spriteId) {
+		m_Sprite = SpriteLibrary::get().getSprite(spriteId);
+	}
+
+	void EntityComponentSpriteRenderer::setSprite(Ref<Sprite> sprite) {
 		m_Sprite = sprite;
-		m_Animator.setAnimatorValues(frameTime, frameCount);
 	}
 
 	SpriteRenderInformation EntityComponentSpriteRenderer::getSpriteRenderInformation() {
 
-		float texMapSizeH = 1.0f / (float)m_Sprite->getTextureMap()->getGridCountH();
-		float texMapSizeV = 1.0f / (float)m_Sprite->getTextureMap()->getGridCountV();
+		float resolution = 1.0f / m_Sprite->getSpriteTexture()->getWidth();
 
-		int hIndex = (m_Sprite->getSpriteIndex() + m_Animator.getCurFrame()) % m_Sprite->getTextureMap()->getGridCountH();
-		int vIndex = (m_Sprite->getSpriteIndex() + m_Animator.getCurFrame()) / m_Sprite->getTextureMap()->getGridCountV();
+		float spriteWidth = (float)m_Sprite->getSpriteWidth() * resolution;
+		float spriteHeight = (float)m_Sprite->getSpriteHeight() * resolution;
 
-		float hOffset = hIndex * 1.0f / m_Sprite->getTextureMap()->getGridCountH();
-		float vOffset = vIndex * 1.0f / m_Sprite->getTextureMap()->getGridCountV();
+		uint32_t spriteIndexX = m_Animator.getCurrentFrame() % m_Sprite->getSpritesPerRow();
+		uint32_t spriteIndexY = m_Animator.getCurrentFrame() / m_Sprite->getSpritesPerRow();
 
-		return SpriteRenderInformation(m_Sprite, hOffset, vOffset, texMapSizeH, texMapSizeV);
+		float spriteTexCoordX = (m_Sprite->getTexCoordX() + (spriteIndexX * m_Sprite->getSpriteWidth())) * resolution;
+		float spriteTexCoordY = (m_Sprite->getTexCoordY() + (spriteIndexY * m_Sprite->getSpriteHeight())) * resolution;
+
+		return SpriteRenderInformation(m_Sprite->getSpriteTexture(), spriteTexCoordX, spriteTexCoordY, m_Sprite->getSpriteWidth() * resolution, m_Sprite->getSpriteHeight() * resolution);
 	}
 
 	void EntityComponentSpriteRenderer::onComponentUpdate(Timestep ts) {
-		m_Animator.updateAnimator(ts);
+		m_Animator.updateAnimator(ts, m_Sprite->getFrameTime(), m_Sprite->getFrameCount());
 	}
 
 	// -------- Sprite Render Component End --------
@@ -152,21 +179,66 @@ namespace Salad {
 		glm::vec3& position = m_Transform->getPosition();
 		float speed = m_MoveSpeed * ts;
 
+		glm::vec2 moveDirection(0.0f);
+
 		if (Input::isKeyPressed(SLD_KEY_A)) {
-			position.x -= speed;
+			moveDirection.x -= 1;
 		}
 
 		if (Input::isKeyPressed(SLD_KEY_D)) {
-			position.x += speed;
+			moveDirection.x += 1;
 		}
 
 		if (Input::isKeyPressed(SLD_KEY_W)) {
-			position.y += speed;
+			moveDirection.y -= 1;
 		}
 
 		if (Input::isKeyPressed(SLD_KEY_S)) {
-			position.y -= speed;
+			moveDirection.y += 1;
 		}
+
+		bool moving = false;
+		if(moveDirection.x != 0.0f || moveDirection.y != 0.0f) {
+			moving = true;
+		}
+		if (moving) {
+			glm::vec2 normalizedVector = glm::normalize(moveDirection);
+			m_Transform->translate(normalizedVector * speed);
+		}
+		
+		if (moveDirection.y > 0)
+			m_Direction = 0;
+		else if (moveDirection.y < 0) 
+			m_Direction = 1;
+		else if (moveDirection.x < 0)
+			m_Direction = 2;
+		else if (moveDirection.x > 0)
+			m_Direction = 3;
+
+		std::string spriteId = "";
+		if (m_Direction == 0 && moving)
+			spriteId = "player_move_up";
+		else if (m_Direction == 0 && !moving)
+			spriteId = "player_stand_up";
+		else if (m_Direction == 1 && moving)
+			spriteId = "player_move_down";
+		else if (m_Direction == 1 && !moving)
+			spriteId = "player_stand_down";
+		else if (m_Direction == 2 && moving)
+			spriteId = "player_move_right";
+		else if (m_Direction == 2 && !moving)
+			spriteId = "player_stand_right";
+		else if (m_Direction == 3 && moving)
+			spriteId = "player_move_left";
+		else if (m_Direction == 3 && !moving)
+			spriteId = "player_stand_left";
+
+		if(spriteId != m_CurSprite) {
+			m_Entity.lock()->getComponent<EntityComponentSpriteRenderer>()->setSprite(spriteId);
+			m_CurSprite = spriteId;
+		}
+
+		m_Moved = moving;
 	}
 
 	// -------- Player Controller End --------

@@ -8,7 +8,7 @@ namespace Salad {
 
 	OrthographicCameraController::OrthographicCameraController(float aspectRatio, bool rotation) :
 		m_AspectRatio(aspectRatio),
-		m_Camera(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel),
+		m_Camera(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, m_ZoomLevel, -m_ZoomLevel),
 		m_Rotation(rotation)
 	{}
 
@@ -26,11 +26,11 @@ namespace Salad {
 		}
 
 		if (Input::isKeyPressed(SLD_KEY_UP)) {
-			m_CameraPosition.y += speed;
+			m_CameraPosition.y -= speed;
 		}
 
 		if (Input::isKeyPressed(SLD_KEY_DOWN)) {
-			m_CameraPosition.y -= speed;
+			m_CameraPosition.y += speed;
 		}
 
 		if (Input::isKeyPressed(SLD_KEY_Q)) {
@@ -57,13 +57,13 @@ namespace Salad {
 		m_ZoomLevel -= e.getYOffset() * 0.1f;
 		m_ZoomLevel = std::max(m_ZoomLevel, 0.25f);
 		m_ZoomLevel = std::min(m_ZoomLevel, 4.0f);
-		m_Camera.setProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
+		m_Camera.setProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, m_ZoomLevel, -m_ZoomLevel);
 		return false;
 	}
 
 	bool OrthographicCameraController::onWindowResizedEvent(WindowResizeEvent& e) {
 		m_AspectRatio = (float)e.getWidth() / (float)e.getHeight();
-		m_Camera.setProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
+		m_Camera.setProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, m_ZoomLevel, -m_ZoomLevel);
 		return false;
 	}
 

@@ -1,48 +1,9 @@
 #include <fstream>
 #include <iostream>
-
 #include <vector>
 #include <string>
 
 #include "BinaryIO.h"
-
-/*int readInt(unsigned char* data) {
-	int i = (*(int*)data);
-	return i;
-}
-
-float readFloat(unsigned char* data) {
-	float f = (*(float*)data);
-	f = roundf(f * 1000) / 1000;
-	return f;
-}
-
-int readInt(std::ifstream& inFile) {
-	unsigned char buffer[4];
-	inFile.read((char*)buffer, sizeof(unsigned int));
-	int i = readInt(&buffer[0]);
-	return i;
-}
-
-float readFloat(std::ifstream& inFile) {
-	unsigned char buffer[4];
-	inFile.read((char*)buffer, sizeof(float));
-	float f = readFloat(&buffer[0]);
-	return f;
-}
-
-std::string readString(std::ifstream& inFile) {
-	unsigned char buffer[4];
-	inFile.read((char*)buffer, sizeof(unsigned int));
-	int size = readInt(&buffer[0]);
-	std::string s = "";
-	for (int i = 0; i < size; i++) {
-		char c[1];
-		inFile.read(&c[0], sizeof(char));
-		s += c[0];
-	}
-	return s;
-}*/
 
 void generateSpriteFile(std::string filename, const char* spriteId, int spriteIdSize, const char* textureId, int textureIdSize,
 	int texCoordX, int texCoordY, int spriteWidth, int spriteHeight, int frameCount, float frameTime, int spritesPerRow) {
@@ -62,7 +23,6 @@ void generateSpriteFile(std::string filename, const char* spriteId, int spriteId
 	}
 	std::cout << "Generated sprite file '" << filepath << "'!" << std::endl;
 }
-
 
 int main() {
 
@@ -112,20 +72,6 @@ int main() {
 
 			if(argumentVector.size() == 2 && argumentVector[0] == "read") {
 				std::string filepath = "output/sprites/" + argumentVector[1] + ".sprite";
-				//std::ifstream inFile(filepath, std::ios::in | std::ios::binary);
-
-				//unsigned char buffer[4];
-
-				/*std::string spriteId = readString(inFile);
-				std::string textureId = readString(inFile);
-
-				int texCoordX = readInt(inFile);
-				int texCoordY = readInt(inFile);
-				int spriteWidth = readInt(inFile);
-				int spriteHeight = readInt(inFile);
-				int frameCount = readInt(inFile);
-				float frameTime = readFloat(inFile);
-				int spritesPerRow = readInt(inFile);*/
 
 				BinaryReader reader(filepath);
 
@@ -175,4 +121,3 @@ int main() {
 		}
 	}
 }
-

@@ -25,7 +25,7 @@ namespace Salad {
 		m_Height(0)
 	{
 		int width, height, channels;
-		stbi_set_flip_vertically_on_load(1);
+		//stbi_set_flip_vertically_on_load(1);
 		stbi_uc* data = stbi_load(filepath.c_str(), &width, &height, &channels, 0);
 		SLD_CORE_ASSERT(data, "Failed to load image!");
 
@@ -53,6 +53,14 @@ namespace Salad {
 
 		stbi_image_free(data);
 	}
+
+	OpenGLTexture2D::OpenGLTexture2D(uint32_t textureId, uint32_t width, uint32_t height, GLenum internalFormat, GLenum dataFormat) :
+		m_Width(width),
+		m_Height(height),
+		m_TextureId(textureId),
+		m_InternalFormat(internalFormat),
+		m_DataFormat(dataFormat)
+	{}
 
 	void OpenGLTexture2D::setData(void* data, uint32_t size) {
 		glTextureSubImage2D(m_TextureId, 0, 0, 0, m_Width, m_Height, m_DataFormat, GL_UNSIGNED_BYTE, data);

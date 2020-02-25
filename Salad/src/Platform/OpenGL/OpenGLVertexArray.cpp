@@ -36,7 +36,7 @@ namespace Salad {
 		glBindVertexArray(0);
 	}
 	
-	void OpenGLVertexArray::addVertexBuffer(const Ref<VertexBuffer>& vertexbuffer) {
+	uint32_t OpenGLVertexArray::addVertexBuffer(const Ref<VertexBuffer>& vertexbuffer) {
 		SLD_CORE_ASSERT(vertexbuffer->getLayout().getElements().size(), "Vertex Buffer has no layout!");
 		
 		glBindVertexArray(m_VertexArrayId);
@@ -55,7 +55,10 @@ namespace Salad {
 			index++;
 		}
 
+		uint32_t indexToReturn = m_CurVBIndex;
+		m_CurVBIndex++;
 		m_VertexBuffers.push_back(vertexbuffer);
+		return indexToReturn;
 	}
 
 	void OpenGLVertexArray::setIndexBuffer(const Ref<IndexBuffer>& indexBuffer) {
@@ -63,5 +66,15 @@ namespace Salad {
 		indexBuffer->bind();
 
 		m_IndexBuffer = indexBuffer;
+	}
+	void OpenGLVertexArray::updateVertexBuffer(uint32_t index, uint32_t offset, uint32_t size, void* data) {
+		glBindVertexArray(m_VertexArrayId);
+		Ref<VertexBuffer> vertexbuffer = m_VertexBuffers[index];
+		vertexbuffer->bind();
+
+		glBufferSubData(GL_ARRAY_BUFFER, offset, size, data);
+
+		vertexbuffer->unbind();
+		glBindVertexArray(0);
 	}
 }

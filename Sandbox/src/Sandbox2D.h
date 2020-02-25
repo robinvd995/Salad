@@ -1,10 +1,6 @@
 #pragma once
 
 #include <Salad.h>
-#include <Salad/Renderer/TextureMap.h>
-
-#include <Salad/Entity/Entity.h>
-
 #include <Salad/OrthographicCameraController.h>
 
 class Sandbox2D : public Salad::Layer {
@@ -26,11 +22,12 @@ private:
 	Salad::Ref<Salad::Shader> m_Shader;
 
 	Salad::Ref<Salad::Texture2D> m_Texture;
-	Salad::Ref<Salad::TextureMap> m_TextureMap;
 
 	Salad::Ref<Salad::Entity> m_Entity;
 
 	Salad::Ref<Salad::Sprite> m_Sprite;
 
 	glm::vec3 m_SqColor = { 0.2f, 0.3f, 0.8f };
+
+	Salad::Ref<Salad::TileMap> m_TileMap;
 };

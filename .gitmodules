@@ -13,3 +13,12 @@
 [submodule "Salad/Vendor/LuaBridge"]
 	path = Salad/Vendor/LuaBridge
 	url = https://github.com/robinvd995/LuaBridge
+[submodule "Salad/Vendor/freetype-2.10.0"]
+	path = Salad/Vendor/freetype-2.10.0
+	url = https://github.com/robinvd995/freetype-2.10.0
+[submodule "Salad/vendor/pybind11"]
+	path = Salad/vendor/pybind11
+	url = https://github.com/robinvd995/pybind11
+[submodule "Salad/vendor/cpython"]
+	path = Salad/vendor/cpython
+	url = https://github.com/robinvd995/cpython

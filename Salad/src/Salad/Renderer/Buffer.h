@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Salad/Core/Core.h"
+#include "Salad/Renderer/Texture.h"
+
 #include <string>
 
 namespace Salad {
@@ -111,7 +113,7 @@ namespace Salad {
 		virtual void setLayout(const BufferLayout layout) = 0;
 		virtual const BufferLayout& getLayout() = 0;
 
-		static Ref<VertexBuffer> create(float* vertices, uint32_t size);
+		static Ref<VertexBuffer> create(float* vertices, uint32_t size, uint32_t drawMode);
 	};
 
 	class SALAD_API IndexBuffer {
@@ -124,6 +126,21 @@ namespace Salad {
 		virtual uint32_t getCount() const = 0;
 
 		static Ref<IndexBuffer> create(uint32_t* indices, uint32_t size);
+	};
+
+	class Framebuffer {
+	public:
+		virtual ~Framebuffer() = default;
+
+		virtual uint32_t getWidth() const = 0;
+		virtual uint32_t getHeight() const = 0;
+
+		virtual void bind() const = 0;
+		virtual void unbind() const = 0;
+
+		virtual Ref<Texture2D> getColorBuffer() const = 0;
+
+		static Ref<Framebuffer> create(uint32_t width, uint32_t height);
 	};
 
 }

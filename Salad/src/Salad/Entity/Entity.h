@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Salad/Core/Core.h"
+#include "Salad/Core/Timestep.h"
 #include "Salad/Renderer/Sprite.h"
 
 #include <glm/glm.hpp>
@@ -60,7 +61,7 @@ virtual ComponentType getComponentType() const override { return getStaticType()
 
 	public:
 		EntityComponentTransform() :
-			m_Position(0.0f, 0.0f, 0.0f),
+			m_Position(0.0f, 0.0f, 0.1f),
 			m_Rotation(0.0f, 0.0f, 0.0f),
 			m_Scale(1.0f, 1.0f, 1.0f) 
 		{}
@@ -84,6 +85,11 @@ virtual ComponentType getComponentType() const override { return getStaticType()
 		void setScale(float x, float y, float z);
 		void setScale(glm::vec3& scale);
 
+		void translate(float x, float y);
+		void translate(const glm::vec2& delta);
+		void translate(float x, float y, float z);
+		void translate(const glm::vec3& delta);
+
 		EC_CLASS_TYPE(Transform)
 
 	private:
@@ -93,16 +99,16 @@ virtual ComponentType getComponentType() const override { return getStaticType()
 	};
 
 	struct SpriteRenderInformation {
-		Ref<Sprite> sprite;
+		Ref<Texture2D> spriteTexture;
 		float posU = 0.0f, posV = 1.0f, sizeU = 0.0f, sizeV = 1.0f;
 
-		SpriteRenderInformation(Ref<Sprite> p_sprite, float u, float v, float w, float h) :
-			sprite(p_sprite),
+		SpriteRenderInformation(Ref<Texture2D> p_spriteTexture, float u, float v, float w, float h) :
+			spriteTexture(p_spriteTexture),
 			posU(u),
 			posV(v),
 			sizeU(w),
-			sizeV(h) {
-		}
+			sizeV(h) 
+		{}
 	};
 
 	// TODO Place in seperate file, current restriction is the template function getComponent
@@ -113,7 +119,8 @@ virtual ComponentType getComponentType() const override { return getStaticType()
 		EntityComponentSpriteRenderer(const EntityComponentSpriteRenderer& ecsr) = delete;
 		//EntityComponentSpriteRenderer(Ref<Sprite>& sprite, float frameTime, int frameCount);
 
-		void setSpriteRendererValues(Ref<Sprite> sprite, float frameTime, int frameCount);
+		void setSprite(const std::string spriteId);
+		void setSprite(Ref<Sprite> sprite);
 		SpriteRenderInformation getSpriteRenderInformation();
 
 		virtual void onComponentUpdate(Timestep ts) override;
@@ -143,6 +150,11 @@ virtual ComponentType getComponentType() const override { return getStaticType()
 		Ref<EntityComponentTransform> m_Transform;
 		Ref<EntityComponentSpriteRenderer> m_SpriteRenderer;
 		float m_MoveSpeed = 2.0f;
+
+		uint32_t m_Direction = 0;
+		bool m_Moved = false;
+
+		std::string m_CurSprite = "";
 	};
 
 	// TODO find a way to declare this in another class and prototype the class

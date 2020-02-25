@@ -7,21 +7,15 @@ namespace Salad {
 	class LuaScript {
 
 	public:
-		LuaScript(const std::string& filepath);
+		LuaScript(const char* luafile);
 		~LuaScript();
 
-		void printError(const std::string& variable, const std::string& reason);
+		void openLibs();
 
-		template<typename T>
-		T get(const std::string& variableName);
+		int getGlobalInt(const char* variable);
 
-		bool lua_gettostack(const std::string& variableName);
-
-		template<typename T>
-		T lua_get(const std::string& variableName) { return 0; }
-
-		template<typename T>
-		T lua_getDefault(const std::string& variableName);
+		void scopeToTable(const char* scopeName);
+		int getInt(const char* variable);
 
 	private:
 		lua_State* m_LuaState;

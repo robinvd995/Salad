@@ -1,5 +1,5 @@
 CPP Code Organization:
-	- Sort out includes, put core classes in salad.h like Entity.h, dont include in header files!!! causes circle references
+	- Sort out includes, put core classes in salad.h like Entity.h, dont include in header files!!! causes circle jerkin
 
 2D Renderer:
 
@@ -7,14 +7,34 @@ CPP Code Organization:
 		DONE - Either make every sprite an animated sprite
 		DONE - Add a SpriteRenderer that can be transformed into a component for the ECS system that will hold a sprite animator(not required), and a sprite.
 
-		- Sprite Switching, Sprite Manager???
-		- Could delete texture map and store the data in the sprite itself
+		DONE? - Sprite Switching, Sprite Manager???
+				? currently sprites are retrieved from a unordered map, works fine for now but when more sprites are gonna be added
+				  and switching will occur more often performance might take a hit
+		DONE - Could delete texture map and store the data in the sprite itself
 
 	Tile Maps
-		- Derived from Texture maps or just use texture maps when no extra functionality is required.
+		DONE - Basic Tile Maps
+		DONE - Tessellator to make creating geometry a bit easier to do, simple functions like pushvertex(x,y,z,u,v)
 		- Tile animations, global animation system no per tile animation
+		- Chunking
+			- Deviding a tilemap into multipile pieces of x width and x height that can be dynamically loaded and unloaded
+			  to allow for an almost infinite map size
+			
+			Entities#1:
+				? Are entities tied to these chunks only on load or do they persist to be bound to these chunks
+				? If entities are kept bound to chunks after creation will the entity need to be moved to another chunk?
+			Entities#2
+				? Entities withing a chunk at the moment of unloading will be unloaded and bound to that chunk, an entity will not be bound to the chunk otherwise
 
-	Batching?
+	Collision Maps
+		- Basic AABB Collision
+		- Could be somehow bound to certain tiles of a certain map?
+
+	Lighting
+		- Basic 2D Lighting
+		- Shadowcast lighting(https://www.youtube.com/watch?v=fc3nnG2CG8U)
+
+	Batch Rendering
 
 	UI Elements
 		- Default ui elements(simpleTexture, text, buttons, text boxes, dropdown stuff, checkboxes)
@@ -23,5 +43,14 @@ CPP Code Organization:
 Entity Component System (ECS)
 	? Update entity components trough a "Component Manager", might help with lua script performance amongst other things
 
+Asset Manager
+	- Some sort of system that needs to load and unload assets like textures and all that stuff based on the given scenario
+
+Audio
+	- Audio using openAL, maybe change to another audio API later on?
+	- Will be abstracted away and function calls to the api will only be done by files located in the platform folder
+
 Scenes - ???
 Physics - ???
+
+Particle System

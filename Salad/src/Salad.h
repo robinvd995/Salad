@@ -24,3 +24,7 @@
 #include "Salad/Renderer/Texture.h"
 #include "Salad/Renderer/VertexArray.h"
 #include "Salad/Renderer/OrthographicCamera.h"
+#include "Salad/Renderer/TileMap.h"
+
+// Gui
+#include "Salad/Renderer/Gui/Gui.h"

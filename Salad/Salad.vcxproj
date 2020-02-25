@@ -77,7 +77,7 @@
       <PrecompiledHeaderFile>sldpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;SLD_PLATFORM_WINDOWS;SLD_BUILD_DLL;GLFW_INCLUDE_NONE;SLD_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\lua53\include;vendor\LuaBridge\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\lua53\include;vendor\LuaBridge\Source;vendor\freetype\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -97,7 +97,7 @@
       <PrecompiledHeaderFile>sldpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;SLD_PLATFORM_WINDOWS;SLD_BUILD_DLL;GLFW_INCLUDE_NONE;SLD_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\lua53\include;vendor\LuaBridge\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\lua53\include;vendor\LuaBridge\Source;vendor\freetype\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -121,7 +121,7 @@
       <PrecompiledHeaderFile>sldpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;SLD_PLATFORM_WINDOWS;SLD_BUILD_DLL;GLFW_INCLUDE_NONE;SLD_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\lua53\include;vendor\LuaBridge\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\lua53\include;vendor\LuaBridge\Source;vendor\freetype\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -142,7 +142,9 @@
   <ItemGroup>
     <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h" />
+    <ClInclude Include="src\Platform\OpenGL\OpenGLFont.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLRenderAPI.h" />
+    <ClInclude Include="src\Platform\OpenGL\OpenGLRenderFlags.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLShader.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLTexture.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLVertexArray.h" />
@@ -150,6 +152,7 @@
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
     <ClInclude Include="src\Salad.h" />
     <ClInclude Include="src\Salad\Core\Application.h" />
+    <ClInclude Include="src\Salad\Core\BinaryIO.h" />
     <ClInclude Include="src\Salad\Core\Core.h" />
     <ClInclude Include="src\Salad\Core\EntryPoint.h" />
     <ClInclude Include="src\Salad\Core\Input.h" />
@@ -171,17 +174,23 @@
     <ClInclude Include="src\Salad\OrthographicCameraController.h" />
     <ClInclude Include="src\Salad\Renderer\Buffer.h" />
     <ClInclude Include="src\Salad\Renderer\Camera.h" />
+    <ClInclude Include="src\Salad\Renderer\Gui\Font.h" />
     <ClInclude Include="src\Salad\Renderer\GraphicsContext.h" />
+    <ClInclude Include="src\Salad\Renderer\Gui\FontManager.h" />
+    <ClInclude Include="src\Salad\Renderer\Gui\Gui.h" />
+    <ClInclude Include="src\Salad\Renderer\Gui\GuiTessellator.h" />
     <ClInclude Include="src\Salad\Renderer\OrthographicCamera.h" />
     <ClInclude Include="src\Salad\Renderer\RenderAPI.h" />
     <ClInclude Include="src\Salad\Renderer\RenderCommand.h" />
     <ClInclude Include="src\Salad\Renderer\Renderer.h" />
     <ClInclude Include="src\Salad\Renderer\Renderer2D.h" />
+    <ClInclude Include="src\Salad\Renderer\RenderFlags.h" />
     <ClInclude Include="src\Salad\Renderer\Shader.h" />
     <ClInclude Include="src\Salad\Renderer\Sprite.h" />
+    <ClInclude Include="src\Salad\Renderer\Tessellator.h" />
     <ClInclude Include="src\Salad\Renderer\Texture.h" />
     <ClInclude Include="src\Salad\Renderer\TextureManager.h" />
-    <ClInclude Include="src\Salad\Renderer\TextureMap.h" />
+    <ClInclude Include="src\Salad\Renderer\TileMap.h" />
     <ClInclude Include="src\Salad\Renderer\VertexArray.h" />
     <ClInclude Include="src\sldpch.h" />
     <ClInclude Include="vendor\stb_image\stb_image.h" />
@@ -189,6 +198,7 @@
   <ItemGroup>
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp" />
+    <ClCompile Include="src\Platform\OpenGL\OpenGLFont.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLRenderAPI.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLShader.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLTexture.cpp" />
@@ -196,6 +206,7 @@
     <ClCompile Include="src\Platform\Windows\WindowsInput.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
     <ClCompile Include="src\Salad\Core\Application.cpp" />
+    <ClCompile Include="src\Salad\Core\BinaryIO.cpp" />
     <ClCompile Include="src\Salad\Core\Layer.cpp" />
     <ClCompile Include="src\Salad\Core\LayerStack.cpp" />
     <ClCompile Include="src\Salad\Core\Log.cpp" />
@@ -206,6 +217,10 @@
     <ClCompile Include="src\Salad\OrthographicCameraController.cpp" />
     <ClCompile Include="src\Salad\Renderer\Buffer.cpp" />
     <ClCompile Include="src\Salad\Renderer\Camera.cpp" />
+    <ClCompile Include="src\Salad\Renderer\Gui\Font.cpp" />
+    <ClCompile Include="src\Salad\Renderer\Gui\FontManager.cpp" />
+    <ClCompile Include="src\Salad\Renderer\Gui\Gui.cpp" />
+    <ClCompile Include="src\Salad\Renderer\Gui\GuiTessellator.cpp" />
     <ClCompile Include="src\Salad\Renderer\OrthographicCamera.cpp" />
     <ClCompile Include="src\Salad\Renderer\RenderAPI.cpp" />
     <ClCompile Include="src\Salad\Renderer\RenderCommand.cpp" />
@@ -213,8 +228,10 @@
     <ClCompile Include="src\Salad\Renderer\Renderer2D.cpp" />
     <ClCompile Include="src\Salad\Renderer\Shader.cpp" />
     <ClCompile Include="src\Salad\Renderer\Sprite.cpp" />
+    <ClCompile Include="src\Salad\Renderer\Tessellator.cpp" />
     <ClCompile Include="src\Salad\Renderer\Texture.cpp" />
     <ClCompile Include="src\Salad\Renderer\TextureManager.cpp" />
+    <ClCompile Include="src\Salad\Renderer\TileMap.cpp" />
     <ClCompile Include="src\Salad\Renderer\VertexArray.cpp" />
     <ClCompile Include="src\sldpch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
@@ -233,6 +250,9 @@
     </ProjectReference>
     <ProjectReference Include="vendor\lua53\lua53.vcxproj">
       <Project>{8F22E30F-FB36-0BC1-C4B8-AE20308C07F2}</Project>
+    </ProjectReference>
+    <ProjectReference Include="vendor\freetype\freetype.vcxproj">
+      <Project>{89895BD8-7556-B6E3-9E6F-A48B8A9BEB71}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

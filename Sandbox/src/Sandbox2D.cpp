@@ -51,20 +51,37 @@ Sandbox2D::Sandbox2D() :
 }
 
 void Sandbox2D::onAttach() {
-	m_Texture = Salad::TextureManager::get().loadTexture2D("assets/textures/logo.png");
-	Salad::Ref<Salad::TextureMap> textureMap = Salad::TextureManager::get().loadTextureMap("assets/textures/spritemap_link.png", 16, 16);
+	// Texture loading
+	{
+		//m_Texture = Salad::TextureManager::get().loadTexture2D("assets/textures/logo.png");
+		Salad::Ref<Salad::Texture2D> t0 = Salad::TextureManager::get().loadTexture2D("assets/textures/spritemap_link.png");
+		Salad::Ref<Salad::Texture2D> t1 = Salad::TextureManager::get().loadTexture2D("assets/textures/tileset.png");
+	}
+
+
+	// Sprite loading
+	Salad::SpriteLibrary::get().loadSprite(std::string("assets/sprites/player_move_down.sprite"));
+	Salad::SpriteLibrary::get().loadSprite(std::string("assets/sprites/player_move_up.sprite"));
+	Salad::SpriteLibrary::get().loadSprite(std::string("assets/sprites/player_move_left.sprite"));
+	Salad::SpriteLibrary::get().loadSprite(std::string("assets/sprites/player_move_right.sprite"));
+
+	Salad::SpriteLibrary::get().loadSprite(std::string("assets/sprites/player_stand_down.sprite"));
+	Salad::SpriteLibrary::get().loadSprite(std::string("assets/sprites/player_stand_up.sprite"));
+	Salad::SpriteLibrary::get().loadSprite(std::string("assets/sprites/player_stand_left.sprite"));
+	Salad::SpriteLibrary::get().loadSprite(std::string("assets/sprites/player_stand_right.sprite"));
 
 	m_Entity = Salad::createRef<Salad::Entity>();
 	Salad::Entity::attachComponent(m_Entity, Salad::createRef<Salad::EntityComponentTransform>());
 
-	m_Sprite = Salad::Sprite::create("assets/textures/spritemap_link.png", 0);
 	Salad::Ref<Salad::EntityComponentSpriteRenderer> spriteRenderer = Salad::createRef<Salad::EntityComponentSpriteRenderer>();
-	spriteRenderer->setSpriteRendererValues(m_Sprite, 1.0f, 10);
+	spriteRenderer->setSprite("player_move_up");
 	Salad::Entity::attachComponent(m_Entity, spriteRenderer);
 
 	Salad::Entity::attachComponent(m_Entity, Salad::createRef<Salad::EntityComponentPlayerController>());
-
 	m_CameraController.setTarget(m_Entity);
+
+	m_TileMap = Salad::createRef<Salad::TileMap>(64, 64, 4, 1.0f, 1.0f);
+	m_TileMap->buildTileMap();
 }
 
 void Sandbox2D::onDetach() {
@@ -83,30 +100,30 @@ void Sandbox2D::onUpdate(Salad::Timestep ts) {
 	{
 		// Render
 		SLD_PROFILER_SCOPE("Render");
-		Salad::RenderCommand::setClearColor(glm::vec4(0.05f, 0.05f, 0.05f, 1.0f));
+		Salad::RenderCommand::setClearColor(glm::vec4(1.0f, 0.05f, 0.05f, 1.0f));
 		Salad::RenderCommand::clear();
 
 		Salad::Renderer2D::beginScene(m_CameraController.getCamera());
 
 		Salad::Ref<Salad::EntityComponentSpriteRenderer> ecsr = m_Entity->getComponent<Salad::EntityComponentSpriteRenderer>();
 		Salad::Ref<Salad::EntityComponentTransform> transform = m_Entity->getComponent<Salad::EntityComponentTransform>();
-		if (ecsr && transform) {
-			Salad::Renderer2D::drawSprite(transform->cpyPosition(), transform->cpyScale(), ecsr->getSpriteRenderInformation());
-			//Salad::Renderer2D::drawSprite(transform, ecsr->getSpriteRenderInformation());
-		}
-		else{
-			SLD_CORE_TRACE("NULLPOINTER!");
-		}
-		Salad::Renderer2D::drawQuad({ -1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.8f, 0.2f, 0.2f, 1.0f });
-		Salad::Renderer2D::drawTexturedQuad({ 1.0f, 0.0f }, glm::vec2(1.0f), m_Texture);
+
+		//Salad::Renderer2D::drawQuad({ -1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.8f, 0.2f, 0.2f, 1.0f });
+		//Salad::Renderer2D::drawTexturedQuad({ 1.0f, 0.0f }, glm::vec2(1.0f), m_Texture);
+
+		Salad::TextureManager::get().getTexture2D("assets/textures/tileset.png")->bind();
+		Salad::Renderer2D::drawTileMap({ 0.0f, 0.0f }, glm::vec2(0.5f), m_TileMap);
+		
+		Salad::Renderer2D::drawSprite(transform->cpyPosition(), transform->cpyScale(), ecsr->getSpriteRenderInformation());
+
 		Salad::Renderer2D::endScene();
 	}
 }
 
 void Sandbox2D::onImGuiRender() {
-	ImGui::Begin("Settings");
-	ImGui::ColorEdit3("Square Color", glm::value_ptr(m_SqColor));
-	ImGui::End();
+	//ImGui::Begin("Settings");
+	//ImGui::ColorEdit3("Square Color", glm::value_ptr(m_SqColor));
+	//ImGui::End();
 }
 
 void Sandbox2D::onEvent(Salad::Event& e) {

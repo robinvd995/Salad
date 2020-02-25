@@ -1,13 +1,14 @@
 #pragma once
 
 #include "Salad/Renderer/Buffer.h"
+#include "Platform/OpenGL/OpenGLTexture.h"
 
 namespace Salad {
 
 	class OpenGLVertexBuffer : public VertexBuffer {
 
 	public:
-		OpenGLVertexBuffer(float* vertices, uint32_t size);
+		OpenGLVertexBuffer(float* vertices, uint32_t size, uint32_t drawMode = GL_STATIC_DRAW);
 		virtual ~OpenGLVertexBuffer();
 
 		virtual void bind() const override;
@@ -35,5 +36,26 @@ namespace Salad {
 	private:
 		uint32_t m_BufferId;
 		uint32_t m_Count;
+	};
+
+	class OpenGLFramebuffer : public Framebuffer {
+
+	public:
+		OpenGLFramebuffer(uint32_t width, uint32_t height);
+		virtual ~OpenGLFramebuffer() override;
+
+		virtual uint32_t getWidth() const override { return m_Width; }
+		virtual uint32_t getHeight() const override { return m_Height; }
+
+		virtual void bind() const override;
+		virtual void unbind() const override;
+
+		virtual Ref<Texture2D> getColorBuffer() const override { return m_ColorBuffer; }
+
+	private:
+		uint32_t m_Width, m_Height;
+
+		uint32_t m_FramebufferId, m_RenderBufferId;
+		Ref<Texture2D> m_ColorBuffer;
 	};
 }

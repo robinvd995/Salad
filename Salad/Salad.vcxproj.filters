@@ -75,6 +75,9 @@
     <ClInclude Include="src\Salad\Core\Application.h">
       <Filter>src\Salad\Core</Filter>
     </ClInclude>
+    <ClInclude Include="src\Salad\Core\BinaryIO.h">
+      <Filter>src\Salad\Core</Filter>
+    </ClInclude>
     <ClInclude Include="src\Salad\Core\Core.h">
       <Filter>src\Salad\Core</Filter>
     </ClInclude>
@@ -162,13 +165,16 @@
     <ClInclude Include="src\Salad\Renderer\Sprite.h">
       <Filter>src\Salad\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="src\Salad\Renderer\Tessellator.h">
+      <Filter>src\Salad\Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="src\Salad\Renderer\Texture.h">
       <Filter>src\Salad\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Salad\Renderer\TextureManager.h">
       <Filter>src\Salad\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="src\Salad\Renderer\TextureMap.h">
+    <ClInclude Include="src\Salad\Renderer\TileMap.h">
       <Filter>src\Salad\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Salad\Renderer\VertexArray.h">
@@ -180,6 +186,15 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
+    <ClInclude Include="src\Salad\Renderer\Gui\Gui.h" />
+    <ClInclude Include="src\Salad\Renderer\RenderFlags.h" />
+    <ClInclude Include="src\Platform\OpenGL\OpenGLRenderFlags.h" />
+    <ClInclude Include="src\Salad\Renderer\Gui\GuiTessellator.h" />
+    <ClInclude Include="src\Platform\OpenGL\OpenGLFont.h" />
+    <ClInclude Include="src\Salad\Renderer\Gui\Font.h">
+      <Filter>src\Salad\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Salad\Renderer\Gui\FontManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp">
@@ -207,6 +222,9 @@
       <Filter>src\Platform\Windows</Filter>
     </ClCompile>
     <ClCompile Include="src\Salad\Core\Application.cpp">
+      <Filter>src\Salad\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Salad\Core\BinaryIO.cpp">
       <Filter>src\Salad\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\Salad\Core\Layer.cpp">
@@ -260,10 +278,16 @@
     <ClCompile Include="src\Salad\Renderer\Sprite.cpp">
       <Filter>src\Salad\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="src\Salad\Renderer\Tessellator.cpp">
+      <Filter>src\Salad\Renderer</Filter>
+    </ClCompile>
     <ClCompile Include="src\Salad\Renderer\Texture.cpp">
       <Filter>src\Salad\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Salad\Renderer\TextureManager.cpp">
+      <Filter>src\Salad\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Salad\Renderer\TileMap.cpp">
       <Filter>src\Salad\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Salad\Renderer\VertexArray.cpp">
@@ -275,5 +299,12 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
+    <ClCompile Include="src\Salad\Renderer\Gui\Gui.cpp" />
+    <ClCompile Include="src\Salad\Renderer\Gui\GuiTessellator.cpp" />
+    <ClCompile Include="src\Platform\OpenGL\OpenGLFont.cpp" />
+    <ClCompile Include="src\Salad\Renderer\Gui\Font.cpp">
+      <Filter>src\Salad\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Salad\Renderer\Gui\FontManager.cpp" />
   </ItemGroup>
 </Project>

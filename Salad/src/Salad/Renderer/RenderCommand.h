@@ -1,6 +1,11 @@
 #pragma once
 
 #include "RenderAPI.h"
+#include "RenderFlags.h"
+
+//Render Flag Defines
+#define SLD_STATIC_DRAW RenderCommand::getFlags()->getFlagStaticDraw()
+#define SLD_DYNAMIC_DRAW RenderCommand::getFlags()->getFlagDynamicDraw()
 
 namespace Salad {
 
@@ -13,7 +18,10 @@ namespace Salad {
 		static inline void clear() { s_RenderAPI->clear(); }
 		static inline void drawIndexed(const Ref<VertexArray>& vertexArray) { s_RenderAPI->drawIndexed(vertexArray); }
 
+		static inline RenderFlags* getFlags() { return s_RenderFlags; }
+
 	private:
 		static RenderAPI* s_RenderAPI;
+		static RenderFlags* s_RenderFlags;
 	};
 }
