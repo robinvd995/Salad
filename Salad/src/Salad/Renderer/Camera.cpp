@@ -3,22 +3,40 @@
 
 namespace Salad {
 
-	Camera::Camera(CameraProps properties) :
-		m_Position(glm::vec3(0)),
-		m_Rotation(glm::vec3(0)),
-		m_ViewMatrix(glm::mat4()),
-		m_ProjectionMatrix(glm::mat4()),
-		m_Properties(properties)
+	PerspectiveCamera::PerspectiveCamera(PerspectiveCameraProps properties) :
+		m_Properties(properties),
+		m_ProjectionMatrix(glm::perspective(properties.fov, properties.aspectRatio, properties.nearPlane, properties.farPlane)),
+		m_ViewMatrix(1.0f)
 	{
-		m_ProjectionMatrix = glm::perspective(m_Properties.fov, m_Properties.aspectRatio, 0.1f, 1000.0f);
+		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
 	}
 
-	Camera::~Camera() {}
+	PerspectiveCamera::~PerspectiveCamera() {}
 
-	void Camera::calculateViewMatrix() {
-		m_ViewMatrix = glm::mat4();
-		m_ViewMatrix = m_ViewMatrix * glm::toMat4(m_Rotation);
-		m_ViewMatrix = glm::translate(m_ViewMatrix, -m_Position);
+	void PerspectiveCamera::recalculateViewMatrix() {
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), m_Position)
+			* glm::rotate(glm::mat4(1.0), glm::radians(m_Rotation.x), glm::vec3(1, 0, 0))
+			* glm::rotate(glm::mat4(1.0), glm::radians(m_Rotation.y), glm::vec3(0, 1, 0))
+			* glm::rotate(glm::mat4(1.0), glm::radians(m_Rotation.z), glm::vec3(0, 0, 1));
+		m_ViewMatrix = glm::inverse(transform);
+		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
 	}
 
+	OrthographicCamera::OrthographicCamera(float left, float right, float bottom, float top) :
+		m_ProjectionMatrix(glm::ortho(left, right, bottom, top, -1.0f, 1.0f)), m_ViewMatrix(1.0f) {
+		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
+	}
+
+	void OrthographicCamera::setProjection(float left, float right, float bottom, float top) {
+		m_ProjectionMatrix = glm::ortho(left, right, bottom, top, -1.0f, 1.0f);
+		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
+	}
+
+	void OrthographicCamera::recalculateViewMatrix() {
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), m_Position)
+			* glm::rotate(glm::mat4(1.0), glm::radians(m_Rotation), glm::vec3(0, 0, 1));
+
+		m_ViewMatrix = glm::inverse(transform);
+		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
+	}
 }

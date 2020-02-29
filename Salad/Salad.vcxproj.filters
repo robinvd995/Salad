@@ -144,9 +144,6 @@
     <ClInclude Include="src\Salad\Renderer\GraphicsContext.h">
       <Filter>src\Salad\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="src\Salad\Renderer\OrthographicCamera.h">
-      <Filter>src\Salad\Renderer</Filter>
-    </ClInclude>
     <ClInclude Include="src\Salad\Renderer\RenderAPI.h">
       <Filter>src\Salad\Renderer</Filter>
     </ClInclude>
@@ -255,9 +252,6 @@
       <Filter>src\Salad\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Salad\Renderer\Camera.cpp">
-      <Filter>src\Salad\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Salad\Renderer\OrthographicCamera.cpp">
       <Filter>src\Salad\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Salad\Renderer\RenderAPI.cpp">

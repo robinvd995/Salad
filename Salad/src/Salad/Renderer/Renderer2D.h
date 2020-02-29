@@ -2,7 +2,7 @@
 
 #include "Salad/Renderer/Texture.h"
 #include "Salad/Entity/Entity.h"
-#include "Salad/Renderer/OrthographicCamera.h"
+#include "Salad/Renderer/Camera.h"
 #include "Salad/Renderer/TileMap.h"
 
 #include "Salad/Renderer/Gui/Gui.h"

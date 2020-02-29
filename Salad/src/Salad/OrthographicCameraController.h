@@ -3,7 +3,7 @@
 #include "Salad/Core/Timestep.h"
 #include "Salad/Events/ApplicationEvent.h"
 #include "Salad/Events/MouseEvent.h"
-#include "Salad/Renderer/OrthographicCamera.h"
+#include "Salad/Renderer/Camera.h"
 #include "Salad/Entity/Entity.h"
 
 namespace Salad {

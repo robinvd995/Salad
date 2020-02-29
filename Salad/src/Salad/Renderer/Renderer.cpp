@@ -19,7 +19,7 @@ namespace Salad {
 		RenderCommand::setViewport(0, 0, width, height);
 	}
 
-	void Renderer::beginScene(OrthographicCamera& camera) {
+	void Renderer::beginScene(Camera& camera) {
 		m_SceneData->viewProjectionMatrix = camera.getViewProjectionMatrix();
 	}
 

@@ -8,8 +8,6 @@
 
 #include "Salad/ImGui/ImGuiLayer.h"
 
-#include "Salad/Renderer/OrthographicCamera.h"
-
 namespace Salad {
 
 	class SALAD_API Application

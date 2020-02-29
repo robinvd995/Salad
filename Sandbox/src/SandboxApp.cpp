@@ -8,7 +8,7 @@
 class Sandbox : public Salad::Application {
 public:
 	Sandbox() {
-		pushLayer(new Sandbox3D());
+		pushLayer(new Sandbox2D());
 		pushOverlay(new GuiLayer());
 	}
 	~Sandbox() {}
