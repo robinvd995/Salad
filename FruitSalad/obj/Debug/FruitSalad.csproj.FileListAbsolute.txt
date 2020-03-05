@@ -1,0 +1,17 @@
+C:\Dev\Salad\FruitSalad\bin\Debug\FruitSalad.exe.config
+C:\Dev\Salad\FruitSalad\bin\Debug\FruitSalad.exe
+C:\Dev\Salad\FruitSalad\bin\Debug\FruitSalad.pdb
+C:\Dev\Salad\FruitSalad\obj\Debug\FruitSalad.csprojAssemblyReference.cache
+C:\Dev\Salad\FruitSalad\obj\Debug\MainWindow.g.cs
+C:\Dev\Salad\FruitSalad\obj\Debug\App.g.cs
+C:\Dev\Salad\FruitSalad\obj\Debug\FruitSalad_MarkupCompile.cache
+C:\Dev\Salad\FruitSalad\obj\Debug\FruitSalad_MarkupCompile.lref
+C:\Dev\Salad\FruitSalad\obj\Debug\MainWindow.baml
+C:\Dev\Salad\FruitSalad\obj\Debug\FruitSalad.g.resources
+C:\Dev\Salad\FruitSalad\obj\Debug\FruitSalad.Properties.Resources.resources
+C:\Dev\Salad\FruitSalad\obj\Debug\FruitSalad.csproj.GenerateResource.cache
+C:\Dev\Salad\FruitSalad\obj\Debug\FruitSalad.exe
+C:\Dev\Salad\FruitSalad\obj\Debug\FruitSalad.pdb
+C:\Dev\Salad\FruitSalad\obj\Debug\GeneratedInternalTypeHelper.g.cs
+C:\Dev\Salad\FruitSalad\obj\Debug\NewWorkspaceWindow.g.cs
+C:\Dev\Salad\FruitSalad\obj\Debug\NewWorkspaceWindow.baml
