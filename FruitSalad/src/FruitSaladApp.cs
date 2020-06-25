@@ -1,4 +1,6 @@
-﻿using System;
+﻿using FruitSalad.Director;
+using FruitSalad.Util;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Xml;
@@ -32,24 +35,51 @@ namespace FruitSalad
         }
         // -------- Singleton End --------
 
+        private readonly IDialogService dialogService = new DialogService();
+
+        //private PropertyContainer currentPropertyContainer = null;
+        private FileContainer currentOpenFile = null;
+        private Tree<DirectorItemData> directoryTree;
+
         public Workspace WorkspaceObj { get; private set; }
-        public void LoadWorkspace(String filepath)
+        public void LoadWorkspace(string filepath)
         {
             WorkspaceObj = Workspace.GetWorkspace(filepath);
-            MainWindow.Instance.ViewModel.DirectorItems = CreateDirectoryTree();
+            directoryTree = DirectorTree.CreateDirectoryTree(WorkspaceObj);
+            MainWindow.Instance.ViewModel.SetDirectoryTree(directoryTree);
             LoadPropertyTemplates();
         }
 
-        public void CreateNewWorkspace(string workspaceName, string directory, string sourceDir, string propertyDir, string outputDir)
+        public void CreateNewWorkspace(string workspaceName, string directory, string sourceDir, string propertyDir, string outputDir, string assetsDir)
         {
-            string file = Workspace.CreateNewWorkspace(workspaceName, directory, sourceDir, propertyDir, outputDir);
+            string file = Workspace.CreateNewWorkspace(workspaceName, directory, sourceDir, propertyDir, outputDir, assetsDir);
             LoadWorkspace(file);
         }
 
-        public void OpenFile(string filePath)
+        public void OpenFile(FileContainer file)
         {
-            string extension = Path.GetExtension(filePath);
-            Console.WriteLine(extension);
+            currentOpenFile = file;
+            MainWindow.Instance.ViewModel.LoadFile(currentOpenFile);
+        }
+
+        public void OpenFile(FSFile file)
+        {
+            Logger.LogMessage(file.AbosultePath);
+
+            try
+            {
+                FileType type = Enumeration.GetAll<FileType>().Single(ft => ft.Name.Equals(file.Extension));
+                /*IFileTypeHandler handler = Enumeration.GetAll<FileType>().Single(ft => ft.Name.Equals(file.Extension)).FileTypeHandler;
+
+                currentOpenFile = handler.OpenFile(file);
+                MainWindow.Instance.ViewModel.LoadFile(currentOpenFile);*/
+            }
+            catch (Exception)
+            {
+                Logger.ErrorMessage(string.Format("Error opening file '{0}'", file.AbosultePath));
+            }
+
+            /*string extension = Path.GetExtension(filePath);
             FileType type = Enumeration.GetAll<FileType>().First(ft => ft.Extension == extension);
             if(type == null)
             {
@@ -57,19 +87,87 @@ namespace FruitSalad
                 return;
             }
 
-            if (type.IsProperty)
+            FileContainer fileContainer = new FileContainer();
+
+            if (type.HasProperties && type.IsSourceFile)
             {
+                int filePrefixLength = WorkspaceObj.SourceDirectory.Length;
+                string relativeFilePath = filePath.Substring(filePrefixLength);
+                string propertyPath = WorkspaceObj.PropertiesDirectory + relativeFilePath + FileType.Properties.Extension;
+                Console.WriteLine(propertyPath);
+                bool exists = File.Exists(propertyPath);
+                if (!exists)
+                {
+                    var dialog = new DialogVMYesNo("Create new properties file", "Could not find an existing properties file.\nDo you want to create a new one?");
+                    DialogResult result = dialogService.OpenDialog(dialog);
+                    if(result == DialogResult.Yes)
+                    {
+                        File.Create(propertyPath);
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
+
                 PropertyContainer container = PropertyContainer.FromTemplate(type.Template);
-                MainWindow.Instance.ViewModel.LoadProperties(container);
+                container.LoadPropertiesFromFile(propertyPath);
+
+                fileContainer.HasPropertyFile = true;
+                fileContainer.PropertyFilePath = propertyPath;
+                fileContainer.Properties = container;
+            }
+
+            if (type.CanEdit)
+            {
+                MainWindow.Instance.ViewModel.EditorData = new EditorVM(type, filePath);
+            }
+
+            MainWindow.Instance.ViewModel.LoadFile(fileContainer);
+            currentOpenFile = fileContainer;*/
+        }
+
+        public void SaveFile()
+        {
+            /*if(currentOpenFile == null || currentOpenFile.PropertyFilePath.Length == 0)
+            {
+                var dialog = new DialogVMAlert("Error", "No property file path is set!");
+                dialogService.OpenDialog(dialog);
+                return;
+            }
+
+            if (!File.Exists(currentOpenFile.PropertyFilePath))
+            {
+                var dialog = new DialogVMAlert("Error", "Trying to save to an property file that does not exists!");
+                dialogService.OpenDialog(dialog);
+                return;
+            }*/
+
+            if (currentOpenFile == null)
+            {
+                Logger.ErrorMessage("Error while saving current document!");
+                return;
+            }
+
+            currentOpenFile.SaveFile();
+        }
+
+        public void Exit()
+        {
+            var dialog = new DialogVMYesNo("Exit Application", "Are you sure you want to exit?");
+            DialogResult result = dialogService.OpenDialog(dialog);
+            if (result == DialogResult.Yes)
+            {
+                MainWindow.Instance.Close();
             }
         }
 
         private void LoadPropertyTemplates()
         {
             string dirPath = WorkspaceObj.WorkingDirectory + Constants.PropertyTemplateFolder;
-            foreach(FileType type in Enumeration.GetAll<FileType>())
+            foreach (FileType type in Enumeration.GetAll<FileType>())
             {
-                if (type.IsProperty)
+                if (type.HasProperties)
                 {
                     string fileName = dirPath + Path.DirectorySeparatorChar + type.Name + Constants.PropertyTemplateFileExtension;
                     try
@@ -77,7 +175,7 @@ namespace FruitSalad
                         type.Template = PropertyTemplate.FromFile(fileName);
                         Console.WriteLine(string.Format("Loaded template for type '{0}'", type.Name));
                     }
-                    catch(FileNotFoundException)
+                    catch (FileNotFoundException)
                     {
                         Console.WriteLine(string.Format("Could not load template for type '{0}', filepath={1}", type.Name, fileName));
                     }
@@ -85,81 +183,9 @@ namespace FruitSalad
             }
         }
 
-        private List<DirectorItem> CreateDirectoryTree()
+        public IDialogService GetDialogService()
         {
-            List<DirectorItem> itemList = new List<DirectorItem>();
-            DirectorItem rootItem = new DirectorItem()
-            {
-                ItemName = string.Format("Workspace '{0}'", WorkspaceObj.Name),
-                ItemType = FileType.Workspace
-            };
-
-            DirectorItem sourceItem = new DirectorItem()
-            {
-                ItemName = "Source",
-                ItemType = FileType.SourceFolder
-            };
-            AddDirectory(sourceItem, WorkspaceObj.SourceDirectory);
-            rootItem.Children.Add(sourceItem);
-
-            DirectorItem propertiesItem = new DirectorItem()
-            {
-                ItemName = "Properties",
-                ItemType = FileType.PropertiesFolder
-            };
-            AddDirectory(propertiesItem, WorkspaceObj.PropertiesDirectory);
-            rootItem.Children.Add(propertiesItem);
-
-            DirectorItem outputItem = new DirectorItem()
-            {
-                ItemName = "Output",
-                ItemType = FileType.OuputFolder
-            };
-            AddDirectory(outputItem, WorkspaceObj.OutputDirectory);
-            rootItem.Children.Add(outputItem);
-
-            itemList.Add(rootItem);
-
-            return itemList;
-        }
-
-        private void AddDirectory(DirectorItem item, string directory)
-        { 
-            string[] directories = Directory.GetDirectories(directory);
-            foreach(string s in directories)
-            {
-                string[] folders = s.Split(Path.DirectorySeparatorChar);
-                string dirName = folders[folders.Length - 1];
-                DirectorItem directorItem = new DirectorItem()
-                {
-                    ItemName = dirName,
-                    ItemType = FileType.Folder
-                };
-                item.Children.Add(directorItem);
-                AddDirectory(directorItem, s);
-            }
-
-            string[] files = Directory.GetFiles(directory);
-            foreach (string s in files)
-            {
-                string name = Path.GetFileName(s);
-                string extension = Path.GetExtension(s);
-                IEnumerable<FileType> matchingTypes = Enumeration.GetAll<FileType>().Where(dit => dit.Extension == extension);
-                FileType type = FileType.Unknown;
-                if(matchingTypes.Count() == 1)
-                {
-                    type = matchingTypes.First();
-                }
-
-                DirectorItem directorItem = new DirectorItem()
-                {
-                    ItemName = name,
-                    ItemType = type,
-                    AbsolutePath = s
-                };
-
-                item.Children.Add(directorItem);
-            }
+            return dialogService;
         }
     }
 }

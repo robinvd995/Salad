@@ -192,6 +192,8 @@
       <Filter>src\Salad\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Salad\Renderer\Gui\FontManager.h" />
+    <ClInclude Include="src\Salad\PerspectiveCameraController.h" />
+    <ClInclude Include="src\Salad\Renderer\Primitives\Spline.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp">
@@ -300,5 +302,7 @@
       <Filter>src\Salad\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Salad\Renderer\Gui\FontManager.cpp" />
+    <ClCompile Include="src\Salad\PerspectiveCameraController.cpp" />
+    <ClCompile Include="src\Salad\Renderer\Primitives\Spline.cpp" />
   </ItemGroup>
 </Project>

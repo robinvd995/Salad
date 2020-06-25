@@ -33,7 +33,7 @@ void GuiLayer::onUpdate(Salad::Timestep ts) {
 	//Salad::RenderCommand::clear();
 	m_GuiWindow->drawWindow();
 	m_Font->getFontTexture()->bind();
-	Salad::Renderer2D::drawVertexArray({ 20.0f, 400.0f }, { 1.0f, 1.0f }, m_Text);
+	Salad::Renderer2D::drawVertexArray({ 20.0f, 700.0f }, { 1.0f, 1.0f }, m_Text);
 	//m_Framebuffer->unbind();
 	Salad::Renderer2D::endScene();
 }

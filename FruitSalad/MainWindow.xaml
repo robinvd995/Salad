@@ -5,14 +5,23 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FruitSalad"
         mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
         Title="FruitSalad" Height="900" Width="1600">
 
     <Window.DataContext>
         <local:MainWindowVM/>
     </Window.DataContext>
 
+    <Window.CommandBindings>
+        <CommandBinding Command="Save" Executed="CommandBindingSaveFile"/>
+    </Window.CommandBindings>
+    <Window.InputBindings>
+        <KeyBinding Key="S" Modifiers="Ctrl" Command="Save"/>
+    </Window.InputBindings>
+
     <Window.Resources>
-        <local:PropertyTemplateSelector x:Key="TaskDataTemplateSelector"/>
+        <local:PropertyTemplateSelector x:Key="PropertyDataTemplateSelector"/>
+        <local:EditorTemplateSelector x:Key="EditorDataTemplateSelector"/>
     </Window.Resources>
     
     <DockPanel LastChildFill="True">
@@ -21,8 +30,22 @@
         <Border BorderBrush="#AAAAAA" BorderThickness="0 0 0 1" DockPanel.Dock="Top">
             <Menu>
                 <MenuItem Header="_File">
-                    <MenuItem Header="_New" Click="MenuNewClick"/>
-                    <MenuItem Header="_Open" Click="MenuOpenClick"/>
+                    <MenuItem Header="_New" Click="MenuNewClick" InputGestureText="Ctrl+N"/>
+                    <MenuItem Header="_Open" Click="MenuOpenClick" InputGestureText="Ctrl+O">
+                        <MenuItem.Icon>
+                            <Image Source="res/16_16/folder_open.png"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="_Save" Click="MenuSaveClick" InputGestureText="Ctrl+S">
+                        <MenuItem.Icon>
+                            <Image Source="res/16_16/save.png"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="_Exit" Click="MenuExitClick" InputGestureText="Alt+F4"/>
+                </MenuItem>
+                <MenuItem Header="_Build">
+                    <MenuItem Header="_Build Workspace" Click="BuildWorkspaceClick"/>
+                    <MenuItem Header="_Build Settings"/>
                 </MenuItem>
             </Menu>
         </Border>
@@ -31,91 +54,109 @@
         <Border BorderBrush="#AAAAAA" BorderThickness="0 1 0 0" DockPanel.Dock="Bottom" Padding="2" Background="#EEEEEE">
             <TextBlock Text="Status"></TextBlock>
         </Border>
-        
-        <!-- Main Content -->
-        <DockPanel Margin="2">
-            <!-- Bottom Panel -->
-            <DockPanel DockPanel.Dock="Bottom" Height="200" Margin="2" LastChildFill="True">
-                <Border BorderBrush="#AAAAAA" BorderThickness="1 1 1 0" DockPanel.Dock="Top">
-                    <TextBlock FontWeight="Bold" Text="Console" Padding="3 3 3 3" Background="#EEEEEE"/>
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="4"/>
+                <RowDefinition Height="200"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="300"/>
+                    <ColumnDefinition Width="4"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Left Panel -->
+                <Border BorderBrush="#AAAAAA" BorderThickness="1" Grid.Column="0" Width="auto" Margin="2">
+                    <DockPanel LastChildFill="True">
+                        <Border BorderBrush="#AAAAAA" BorderThickness="0 0 0 1" DockPanel.Dock="Top">
+                            <TextBlock FontWeight="Bold" Text="Directory" Padding="3 3 3 3" Background="#EEEEEE"/>
+                        </Border>
+                        <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible">
+                            <local:DirectoryTreeView x:Name="DirectoryTree" ItemsSource="{Binding DirectoryTree.DirectorItems}" BorderThickness="0" HorizontalAlignment="Stretch">
+                                <!--TreeView.ItemContainerStyle>
+                                    <Style TargetType="{x:Type local:DirectoryTreeViewItem}">
+                                        <EventSetter Event="MouseDoubleClick" Handler="TreeItemDoubleClick"/>
+                                        <Setter Property="FilePath" Value="{Binding Path=AbsolutePath}"/>
+                                        <Setter Property="FileType" Value="{Binding Path=ItemType.Name}"/>
+                                    </Style>
+                                </-->
+                                <TreeView.Resources>
+                                    <HierarchicalDataTemplate DataType="{x:Type local:DirectorItemVM}" ItemsSource="{Binding Path=Children}">
+                                        <StackPanel Orientation="Horizontal" Margin="2 1 4 1">
+                                            <!-- Context Menu -->
+                                            <StackPanel.ContextMenu>
+                                                <ContextMenu ItemsSource="{Binding CommandList}">
+                                                    <ContextMenu.ItemContainerStyle>
+                                                        <Style TargetType="MenuItem">
+                                                            <Setter Property="Header" Value="{Binding Name}"/>
+                                                            <Setter Property="Command" Value="{Binding Command }"/>
+                                                            <Setter Property="CommandParameter" Value="{Binding Parameter}"/>
+                                                        </Style>
+                                                    </ContextMenu.ItemContainerStyle>
+                                                </ContextMenu>
+                                            </StackPanel.ContextMenu>
+                                            <Image Source="{Binding Path=ImageUrl}" Width="16" Height="16" Margin="2 0 2 0"/>
+                                            <TextBlock Text="{Binding Path=ItemName}"/>
+                                        </StackPanel>
+                                    </HierarchicalDataTemplate>
+                                </TreeView.Resources>
+                            </local:DirectoryTreeView>
+                        </ScrollViewer>
+                    </DockPanel>
                 </Border>
-                <TextBox IsReadOnly="True" Background="#FFFFFF"/>
-            </DockPanel>
 
-            <!-- Left Panel -->
-            <Border BorderBrush="#AAAAAA" BorderThickness="1" DockPanel.Dock="Left" Width="300" Margin="2">
-                <StackPanel>
-                    <Border BorderBrush="#AAAAAA" BorderThickness="0 0 0 1">
-                        <TextBlock FontWeight="Bold" Text="Directory" Padding="3 3 3 3" Background="#EEEEEE"/>
+                <GridSplitter Grid.Column="1" Width="2" HorizontalAlignment="Stretch"/>
+
+                <Grid Grid.Column="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="4"/>
+                        <ColumnDefinition Width="300"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <!-- Middle Panel -->
+                    <Border BorderBrush="#AAAAAA" BorderThickness="1" Grid.Column="0" Margin="2">
+                        <DockPanel LastChildFill="True">
+                            <Border BorderBrush="#AAAAAA" BorderThickness="0 0 0 1" DockPanel.Dock="Top">
+                                <TextBlock FontWeight="Bold" Text="{Binding Path=SourceData.EditorTitle}" Padding="3 3 3 3" Background="#EEEEEE"/>
+                            </Border>
+                            <ContentControl Content="{Binding Path=SourceData}" ContentTemplateSelector="{StaticResource EditorDataTemplateSelector}" Margin="2"/>
+                        </DockPanel>
                     </Border>
-                    <TreeView x:Name="DirectoryTree" ItemsSource="{Binding DirectorItems}" BorderThickness="0" HorizontalAlignment="Stretch">
-                        <TreeView.ItemContainerStyle>
-                            <Style TargetType="{x:Type TreeViewItem}">
-                                <EventSetter Event="MouseDoubleClick" Handler="TreeItemDoubleClick"/>
-                                <Setter Property="Tag" Value="{Binding Path=AbsolutePath}"/>
-                            </Style>
-                        </TreeView.ItemContainerStyle>
-                        <TreeView.ItemTemplate>
-                            <HierarchicalDataTemplate DataType="{x:Type local:DirectorItem}" ItemsSource="{Binding Path=Children}">
-                                <StackPanel Orientation="Horizontal" Margin="2 1 4 1">
-                                    <Image Source="{Binding Path=ImageUrl}" Width="16" Height="16" Margin="2 0 2 0"/>
-                                    <TextBlock x:Name="DataCarrier" Text="{Binding Path=ItemName}"/>
-                                </StackPanel>
-                            </HierarchicalDataTemplate>
-                        </TreeView.ItemTemplate>
-                    </TreeView>
-                </StackPanel>
-            </Border>
 
-            <!-- Right Panel -->
-            <Border BorderBrush="#AAAAAA" BorderThickness="1" DockPanel.Dock="Right" Width="300" Margin="2">
-                <StackPanel>
-                    <Border BorderBrush="#AAAAAA" BorderThickness="0 0 0 1">
-                        <TextBlock FontWeight="Bold" Text="Properties" Padding="3 3 3 3" Background="#EEEEEE"/>
+                    <GridSplitter Grid.Column="1" Width="2" HorizontalAlignment="Stretch"/>
+
+                    <!-- Right Panel -->
+                    <Border BorderBrush="#AAAAAA" BorderThickness="1" Grid.Column="2" Margin="2">
+                        <DockPanel LastChildFill="True">
+                            <Border BorderBrush="#AAAAAA" BorderThickness="0 0 0 1" DockPanel.Dock="Top">
+                                <TextBlock FontWeight="Bold" Text="Properties" Padding="3 3 3 3" Background="#EEEEEE"/>
+                            </Border>
+                            <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Visible">
+                                <ItemsControl ItemsSource="{Binding Path=Properties}" ItemTemplateSelector="{StaticResource PropertyDataTemplateSelector}" Margin="2"/>
+                            </ScrollViewer>
+                        </DockPanel>
                     </Border>
-                    <ItemsControl ItemsSource="{Binding Path=Properties}" ItemTemplateSelector="{StaticResource TaskDataTemplateSelector}" Margin="2">
-                        <ItemsControl.Resources>
-                            <DataTemplate x:Key="PropertyTemplateFloat" DataType="{x:Type local:PropertyFloatVM}">
-                                <StackPanel Margin="0 2">
-                                    <TextBlock Text="{Binding Path=Name}"/>
-                                    <TextBox Text="{Binding Path=Value}" Padding="3" PreviewTextInput="FloatValidationTextBox"/>
-                                </StackPanel>
-                            </DataTemplate>
-                            <DataTemplate x:Key="PropertyTemplateFloat3" DataType="{x:Type local:PropertyFloat3VM}">
-                                <StackPanel Margin="0 2">
-                                    <TextBlock Text="{Binding Path=Name}"/>
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="*"/>
-                                        </Grid.ColumnDefinitions>
-                                        <TextBox Text="{Binding Path=ValueX}" Padding="3" Margin="0 0 2 0" Grid.Column="0" PreviewTextInput="FloatValidationTextBox"/>
-                                        <TextBox Text="{Binding Path=ValueY}" Padding="3" Margin="1 0 1 0" Grid.Column="1" PreviewTextInput="FloatValidationTextBox"/>
-                                        <TextBox Text="{Binding Path=ValueZ}" Padding="3" Margin="2 0 0 0" Grid.Column="2" PreviewTextInput="FloatValidationTextBox"/>
-                                    </Grid>
-                                </StackPanel>
-                            </DataTemplate>
-                            <DataTemplate x:Key="PropertyTemplateUnknown" DataType="{x:Type local:PropertyVM}">
-                                <TextBlock Text="UNKNOWN PROPERTY TYPE!" FontWeight="Bold"/>
-                            </DataTemplate>
-                        </ItemsControl.Resources>
-                    </ItemsControl>
-                </StackPanel>
-            </Border>
+                </Grid>
 
-            <!-- Middle Panel -->
-            <TabControl Margin="2">
-                <TabItem Header="Sprite">
-
-                </TabItem>
-                <TabItem Header="Model">
-
-                </TabItem>
-                <TabItem Header="Texture Map">
-
-                </TabItem>
-            </TabControl>
-        </DockPanel>
+            </Grid>
+            <GridSplitter Grid.Row="1" Height="2" HorizontalAlignment="Stretch"/>
+            <Grid Grid.Row="2">
+                <Border BorderBrush="#AAAAAA" BorderThickness="1" DockPanel.Dock="Bottom" Height="auto" Margin="2">
+                    <DockPanel LastChildFill="True">
+                        <Border BorderBrush="#AAAAAA" BorderThickness="0 0 0 1" DockPanel.Dock="Top">
+                            <TextBlock FontWeight="Bold" Text="Console" Padding="3 3 3 3" Background="#EEEEEE"/>
+                        </Border>
+                        <ScrollViewer>
+                            <TextBox x:Name="ConsoleBox" IsReadOnly="True" Background="#FFFFFF" BorderThickness="0"/>
+                        </ScrollViewer>
+                    </DockPanel>
+                </Border>
+            </Grid>
+        </Grid>
+        
     </DockPanel>
 </Window>

@@ -2,8 +2,138 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:FruitSalad"
+             xmlns:files="clr-namespace:FruitSalad.FileHandlers"
+             xmlns:avalon="http://icsharpcode.net/sharpdevelop/avalonedit"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        
+        <!-- Dialog Data Templates-->
+        <DataTemplate DataType="{x:Type local:DialogVMAlert}">
+            <local:DialogViewAlert/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type local:DialogVMYesNo}">
+            <local:DialogViewYesNo/>
+        </DataTemplate>
+
+        <!-- Float Data Template-->
+        <DataTemplate x:Key="PropertyTemplateFloat" DataType="{x:Type local:PropertyFloatVM}">
+            <StackPanel Margin="0 2">
+                <TextBlock Text="{Binding Path=Name}"/>
+                <TextBox Text="{Binding Path=Value}" Padding="3" PreviewTextInput="FloatValidationTextBox"/>
+            </StackPanel>
+        </DataTemplate>
+
+        <!-- Float2 Data Template-->
+        <DataTemplate x:Key="PropertyTemplateFloat2" DataType="{x:Type local:PropertyFloat2VM}">
+            <StackPanel Margin="0 2">
+                <TextBlock Text="{Binding Path=Name}"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox Text="{Binding Path=ValueX}" Padding="3" Margin="0 0 2 0" Grid.Column="0" PreviewTextInput="FloatValidationTextBox"/>
+                    <TextBox Text="{Binding Path=ValueY}" Padding="3" Margin="0 0 2 0" Grid.Column="1" PreviewTextInput="FloatValidationTextBox"/>
+                </Grid>
+            </StackPanel>
+        </DataTemplate>
+
+        <!-- Float3 Data Template-->
+        <DataTemplate x:Key="PropertyTemplateFloat3" DataType="{x:Type local:PropertyFloat3VM}">
+            <StackPanel Margin="0 2">
+                <TextBlock Text="{Binding Path=Name}"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox Text="{Binding Path=ValueX}" Padding="3" Margin="0 0 2 0" Grid.Column="0" PreviewTextInput="FloatValidationTextBox"/>
+                    <TextBox Text="{Binding Path=ValueY}" Padding="3" Margin="1 0 1 0" Grid.Column="1" PreviewTextInput="FloatValidationTextBox"/>
+                    <TextBox Text="{Binding Path=ValueZ}" Padding="3" Margin="2 0 0 0" Grid.Column="2" PreviewTextInput="FloatValidationTextBox"/>
+                </Grid>
+            </StackPanel>
+        </DataTemplate>
+
+        <!-- Float4 Data Template-->
+        <DataTemplate x:Key="PropertyTemplateFloat4" DataType="{x:Type local:PropertyFloat4VM}">
+            <StackPanel Margin="0 2">
+                <TextBlock Text="{Binding Path=Name}"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox Text="{Binding Path=ValueX}" Padding="3" Margin="0 0 2 0" Grid.Column="0" PreviewTextInput="FloatValidationTextBox"/>
+                    <TextBox Text="{Binding Path=ValueY}" Padding="3" Margin="1 0 1 0" Grid.Column="1" PreviewTextInput="FloatValidationTextBox"/>
+                    <TextBox Text="{Binding Path=ValueZ}" Padding="3" Margin="1 0 1 0" Grid.Column="2" PreviewTextInput="FloatValidationTextBox"/>
+                    <TextBox Text="{Binding Path=ValueW}" Padding="3" Margin="0 0 2 0" Grid.Column="3" PreviewTextInput="FloatValidationTextBox"/>
+                </Grid>
+            </StackPanel>
+        </DataTemplate>
+
+        <!-- Unknown Data Template (Could be removed)-->
+        <DataTemplate x:Key="PropertyTemplateUnknown" DataType="{x:Type local:PropertyVM}">
+            <TextBlock Text="UNKNOWN PROPERTY TYPE!" FontWeight="Bold"/>
+        </DataTemplate>
+
+
+        <!-- Editor Data Templates -->
+
+        <!-- Model Data Template -->
+        <DataTemplate x:Key="EditorTemplateModel" DataType="{x:Type local:EditorVM}">
+            <TextBlock Text="Model Editor"/>
+        </DataTemplate>
+
+        <!-- Material Data Template -->
+        <DataTemplate x:Key="EditorTemplateMaterial" DataType="{x:Type local:EditorVM}">
+            <TextBlock Text="Material Editor"/>
+        </DataTemplate>
+
+        <!-- Text Data Template -->
+        <DataTemplate x:Key="EditorTemplateText" DataType="{x:Type local:EditorVM}">
+            <TextBlock Text="Text Editor"/>
+        </DataTemplate>
+
+        <!-- Lua Data Template -->
+        <DataTemplate x:Key="EditorTemplateLua" DataType="{x:Type files:SourceContainerLuaVM}">
+            <avalon:TextEditor Document="{Binding Path=Document}" Name="TextEditor" ShowLineNumbers="True" SyntaxHighlighting="Lua" FontFamily="Consolas" FontSize="10pt"/>
+        </DataTemplate>
+
+        <!-- Texture Data Template -->
+        <DataTemplate x:Key="EditorTemplateTexture" DataType="{x:Type local:EditorVM}">
+            <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible">
+                <Image Source="{Binding Path=FilePath}" Stretch="None"/>
+            </ScrollViewer>
+        </DataTemplate>
+
+        <!-- Properties Data Template -->
+        <DataTemplate x:Key="EditorTemplateProperties" DataType="{x:Type files:SourceContainerPropertiesVM}">
+            <avalon:TextEditor Document="{Binding Path=Document}" Name="TextEditor" ShowLineNumbers="True" SyntaxHighlighting="XML" FontFamily="Consolas" FontSize="10pt"/>
+        </DataTemplate>
+
+        <!-- Spline Data Template -->
+        <DataTemplate x:Key="EditorTemplateSpline" DataType="{x:Type files:SourceContainerSplineVM}">
+            <ItemsControl ItemsSource="{Binding SplineData}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas Background="AliceBlue"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Path Data="{Binding Geometry}" Fill="{Binding Fill}"
+                  Stroke="{Binding Stroke}" StrokeThickness="{Binding StrokeThickness}"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </DataTemplate>
+
+
+        <!-- Directory Item Templates -->
+
     </Application.Resources>
 </Application>

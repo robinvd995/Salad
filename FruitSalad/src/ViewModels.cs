@@ -1,10 +1,13 @@
-﻿using System;
+﻿using FruitSalad.Director;
+using FruitSalad.Util;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace FruitSalad
 {
@@ -21,65 +24,104 @@ namespace FruitSalad
         }
     }
 
-    public class DirectorItem : ViewModelBase
+    public class EditorVM : ViewModelBase
     {
-        private string itemName;
-        private FileType itemType = FileType.Unknown;
-        private List<DirectorItem> children;
-        
-        public DirectorItem()
+        public EditorVM(FileType type, string filePath)
         {
-            children = new List<DirectorItem>();
-            AbsolutePath = "";
+            Type = type;
+            FilePath = filePath;
         }
 
-        public string ItemName
+        public FileType Type { get; private set; }
+        public string FilePath { get; private set; }
+        public string EditorTitle
         {
             get
             {
-                return itemName;
+                return Type.Name.FirstCharToUpper() + " (" + FilePath.Substring(FilePath.LastIndexOf('\\') + 1) + ")";
             }
-            set
+        }
+    }
+
+    public class EditorTextureVM : EditorVM
+    {
+        public EditorTextureVM(FileType fileType, string filePath)
+            : base(fileType, filePath)
+        {
+        }
+    }
+
+    public class DirectorItemVM : ViewModelBase
+    {
+        public static readonly ICommand directorActionCommand = new DirectorActionCommand();
+
+        public DirectorItemVM(DirectorItemData data)
+        {
+            Data = data;
+            Children = new List<DirectorItemVM>();
+            CommandList = new List<DirectorAction>();
+
+            foreach(Tuple<string,string> tuple in data.ItemType.ActionList)
             {
-                itemName = value;
-                OnPropertyChanged("ItemName");
+                DirectorActionParameter parameter = new DirectorActionParameter
+                {
+                    ActionId = tuple.Item1,
+                    ItemData = data,
+                };
+
+                CommandList.Add(new DirectorAction()
+                {
+                    Name = tuple.Item2,
+                    Parameter = parameter,
+                    Command = directorActionCommand
+                });
             }
         }
 
-        public string AbsolutePath { get; set; }
-
-        public string ImageUrl
+        public DirectorItemData Data { get; private set; }
+        public string ItemName { get { return Data.ItemName; } }
+        public string AbsolutePath { get { return Data.AbsolutePath; } }
+        public string ImageUrl { get { return Path.GetFullPath(Data.ItemType.GetIcon()); } }
+        public DirectoryTreeType ItemType { get { return Data.ItemType; } }
+        public List<DirectorItemVM> Children { get; set; }
+        public List<DirectorAction> CommandList { get; set; }
+        public ICommand DefaultCommand
         {
             get
             {
-                return Path.GetFullPath("res/16_16/" + itemType.IconPath);
+                return null;
             }
         }
+    }
 
-        public List<DirectorItem> Children
+    public class DirectorActionParameter
+    {
+        public string ActionId { get; set; }
+        public DirectorItemData ItemData { get; set; }
+    }
+
+    public class DirectorAction
+    {
+        public string Name { get; set; }
+        public ICommand Command { get; set; }
+        public DirectorActionParameter Parameter { get; set; }
+    }
+
+    public class DirectorActionCommand : ICommand
+    {
+        public event EventHandler CanExecuteChanged;
+
+        public bool CanExecute(object parameter)
         {
-            get
-            {
-                return children;
-            }
-            set
-            {
-                children = value;
-                OnPropertyChanged("Children");
-            }
+            return true;
         }
 
-        public FileType ItemType
+        public void Execute(object parameter)
         {
-            get
+            if(parameter is DirectorActionParameter)
             {
-                return itemType;
-            }
-            set
-            {
-                itemType = value;
-                OnPropertyChanged("ItemType");
-                OnPropertyChanged("ImageUrl");
+                DirectorActionParameter dap = parameter as DirectorActionParameter;
+                dap.ItemData.ItemType.HandleAction(dap.ActionId, dap.ItemData);
             }
         }
     }

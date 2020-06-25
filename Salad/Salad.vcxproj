@@ -172,6 +172,7 @@
     <ClInclude Include="src\Salad\ImGui\ImGuiLayer.h" />
     <ClInclude Include="src\Salad\Lua\LuaScript.h" />
     <ClInclude Include="src\Salad\OrthographicCameraController.h" />
+    <ClInclude Include="src\Salad\PerspectiveCameraController.h" />
     <ClInclude Include="src\Salad\Renderer\Buffer.h" />
     <ClInclude Include="src\Salad\Renderer\Camera.h" />
     <ClInclude Include="src\Salad\Renderer\Gui\Font.h" />
@@ -179,6 +180,7 @@
     <ClInclude Include="src\Salad\Renderer\Gui\FontManager.h" />
     <ClInclude Include="src\Salad\Renderer\Gui\Gui.h" />
     <ClInclude Include="src\Salad\Renderer\Gui\GuiTessellator.h" />
+    <ClInclude Include="src\Salad\Renderer\Primitives\Spline.h" />
     <ClInclude Include="src\Salad\Renderer\RenderAPI.h" />
     <ClInclude Include="src\Salad\Renderer\RenderCommand.h" />
     <ClInclude Include="src\Salad\Renderer\Renderer.h" />
@@ -214,12 +216,14 @@
     <ClCompile Include="src\Salad\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="src\Salad\Lua\LuaScript.cpp" />
     <ClCompile Include="src\Salad\OrthographicCameraController.cpp" />
+    <ClCompile Include="src\Salad\PerspectiveCameraController.cpp" />
     <ClCompile Include="src\Salad\Renderer\Buffer.cpp" />
     <ClCompile Include="src\Salad\Renderer\Camera.cpp" />
     <ClCompile Include="src\Salad\Renderer\Gui\Font.cpp" />
     <ClCompile Include="src\Salad\Renderer\Gui\FontManager.cpp" />
     <ClCompile Include="src\Salad\Renderer\Gui\Gui.cpp" />
     <ClCompile Include="src\Salad\Renderer\Gui\GuiTessellator.cpp" />
+    <ClCompile Include="src\Salad\Renderer\Primitives\Spline.cpp" />
     <ClCompile Include="src\Salad\Renderer\RenderAPI.cpp" />
     <ClCompile Include="src\Salad\Renderer\RenderCommand.cpp" />
     <ClCompile Include="src\Salad\Renderer\Renderer.cpp" />

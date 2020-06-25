@@ -20,7 +20,8 @@ namespace Salad {
 	}
 
 	void Renderer::beginScene(Camera& camera) {
-		m_SceneData->viewProjectionMatrix = camera.getViewProjectionMatrix();
+		m_SceneData->viewMatrix = camera.getViewMatrix();
+		m_SceneData->projectionMatrix = camera.getProjectionMatrix();
 	}
 
 	void Renderer::endScene() {
@@ -30,8 +31,9 @@ namespace Salad {
 	void Renderer::submit(const Ref<Shader> shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transformMat) {
 		shader->bind();
 		vertexArray->bind();
-		std::dynamic_pointer_cast<OpenGLShader>(shader)->setMat4("u_ViewProjection", m_SceneData->viewProjectionMatrix);
-		std::dynamic_pointer_cast<OpenGLShader>(shader)->setMat4("u_Transform", transformMat);
+		shader->setMat4("u_Projection", m_SceneData->projectionMatrix);
+		shader->setMat4("u_View", m_SceneData->viewMatrix);
+		shader->setMat4("u_Transform", transformMat);
 
 		RenderCommand::drawIndexed(vertexArray);
 	}

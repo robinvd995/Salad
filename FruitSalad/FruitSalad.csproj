@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\xunit.core.2.4.1\build\xunit.core.props" Condition="Exists('..\packages\xunit.core.2.4.1\build\xunit.core.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -14,6 +15,8 @@
     <WarningLevel>4</WarningLevel>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -35,6 +38,21 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="GlmNet, Version=0.7.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\GlmNet.0.7.0\lib\net40\GlmNet.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.AvalonEdit, Version=6.0.1.278, Culture=neutral, PublicKeyToken=9cc39be672370310, processorArchitecture=MSIL">
+      <HintPath>..\packages\AvalonEdit.6.0.1\lib\net45\ICSharpCode.AvalonEdit.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpGL, Version=2.4.1.2, Culture=neutral, PublicKeyToken=27fc851303210b27, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpGL.2.4.1.2\lib\net40-client\SharpGL.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpGL.SceneGraph, Version=2.4.1.2, Culture=neutral, PublicKeyToken=27fc851303210b27, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpGL.SceneGraph.2.4.1.2\lib\net40\SharpGL.SceneGraph.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpGL.WPF, Version=2.4.1.2, Culture=neutral, PublicKeyToken=27fc851303210b27, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpGL.WPF.2.4.1.2\lib\net40\SharpGL.WPF.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Windows.Forms" />
@@ -50,25 +68,107 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="xunit.abstractions, Version=2.0.0.0, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
+      <HintPath>..\packages\xunit.abstractions.2.0.3\lib\net35\xunit.abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="xunit.assert, Version=2.4.1.0, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
+      <HintPath>..\packages\xunit.assert.2.4.1\lib\netstandard1.1\xunit.assert.dll</HintPath>
+    </Reference>
+    <Reference Include="xunit.core, Version=2.4.1.0, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
+      <HintPath>..\packages\xunit.extensibility.core.2.4.1\lib\net452\xunit.core.dll</HintPath>
+    </Reference>
+    <Reference Include="xunit.execution.desktop, Version=2.4.1.0, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
+      <HintPath>..\packages\xunit.extensibility.execution.2.4.1\lib\net452\xunit.execution.desktop.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="DialogViewAlert.xaml.cs">
+      <DependentUpon>DialogViewAlert.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DialogViewYesNo.xaml.cs">
+      <DependentUpon>DialogViewYesNo.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DialogWindow.xaml.cs">
+      <DependentUpon>DialogWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="NewAssetWindow.xaml.cs">
+      <DependentUpon>NewAssetWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="NewWorkspaceWindow.xaml.cs">
       <DependentUpon>NewWorkspaceWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SharpGLWindow.xaml.cs">
+      <DependentUpon>SharpGLWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="src\Assets\Asset.cs" />
+    <Compile Include="src\Assets\AssetType.cs" />
+    <Compile Include="src\Dialogs.cs" />
+    <Compile Include="src\Director\DirectorItemData.cs" />
+    <Compile Include="src\Director\DirectorTree.cs" />
+    <Compile Include="src\Director\DirectorTreeType.cs" />
+    <Compile Include="src\Director\DirectorTreeTypeAsset.cs" />
+    <Compile Include="src\Director\DirectorTreeTypeFile.cs" />
+    <Compile Include="src\FileHandlers\FileHandlerAssetsFolder.cs" />
+    <Compile Include="src\FileHandlers\FileHandlerFolder.cs" />
+    <Compile Include="src\FileHandlers\FileHandlerMaterial.cs" />
+    <Compile Include="src\FileHandlers\FileHandlerModel.cs" />
+    <Compile Include="src\FileHandlers\FileHandlerOutputFolder.cs" />
+    <Compile Include="src\FileHandlers\FileHandlerProperties.cs" />
+    <Compile Include="src\FileHandlers\FileHandlerPropertiesFolder.cs" />
+    <Compile Include="src\FileHandlers\FileHandlerLua.cs" />
+    <Compile Include="src\FileHandlers\FileHandlerSourceFolder.cs" />
+    <Compile Include="src\FileHandlers\FileHandlerSpline.cs" />
+    <Compile Include="src\FileHandlers\FileHandlerText.cs" />
+    <Compile Include="src\FileHandlers\FileHandlerTexture.cs" />
+    <Compile Include="src\FileHandlers\FileHandlerWorkspace.cs" />
+    <Compile Include="src\FileHandlers\FileHandlerUnknown.cs" />
+    <Compile Include="src\Util\Spline.cs" />
+    <Compile Include="src\Util\Tree.cs" />
+    <Compile Include="src\SourceContainer.cs" />
+    <Compile Include="src\FileContainer.cs" />
+    <Compile Include="src\FileHandler.cs" />
+    <Compile Include="src\Util\FSFile.cs" />
+    <Compile Include="src\Util\Logger.cs" />
+    <Compile Include="src\Model\BMF\BMFExporter.cs" />
+    <Compile Include="src\Model\BMF\BMFModel.cs" />
+    <Compile Include="src\Model\BMF\IBMFCoverter.cs" />
+    <Compile Include="src\Model\Collada\ColladaConstants.cs" />
+    <Compile Include="src\Model\Collada\ColladaConverter.cs" />
+    <Compile Include="src\Model\Collada\ColladaDataStructure.cs" />
+    <Compile Include="src\Model\Collada\ColladaLoader.cs" />
+    <Compile Include="src\Model\Collada\ColladaNodes.cs" />
+    <Compile Include="src\Util\IFilterable.cs" />
+    <Compile Include="src\Model\IModelLoader.cs" />
+    <Compile Include="src\Model\Obj\ObjLoader.cs" />
+    <Compile Include="src\OpenGL\Shader.cs" />
     <Compile Include="src\Properties.cs" />
     <Compile Include="src\Constants.cs" />
-    <Compile Include="src\Enumeration.cs" />
     <Compile Include="src\FileType.cs" />
     <Compile Include="src\FruitSaladApp.cs" />
-    <Compile Include="src\UiHelper.cs" />
     <Compile Include="src\Utility.cs" />
     <Compile Include="src\ValueConverters.cs" />
     <Compile Include="src\ViewModels.cs" />
     <Compile Include="src\Workspace.cs" />
+    <Compile Include="src\WpfControls.cs" />
+    <Compile Include="src\XML\DataNode.cs" />
+    <Compile Include="src\XML\INodeFactory.cs" />
+    <Compile Include="src\XML\XMLParser.cs" />
+    <Page Include="DialogViewAlert.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="DialogViewYesNo.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="DialogWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -81,7 +181,15 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="NewAssetWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="NewWorkspaceWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SharpGLWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -104,6 +212,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -112,16 +221,37 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="res\16_16\properties.png" />
+    <Resource Include="res\16_16\workspace.png" />
+  </ItemGroup>
   <ItemGroup>
     <Resource Include="res\16_16\folder_closed.png" />
     <Resource Include="res\16_16\folder_open.png" />
     <Resource Include="res\16_16\image.png" />
     <Resource Include="res\16_16\material.png" />
     <Resource Include="res\16_16\model.png" />
+    <Resource Include="res\16_16\save_file.png" />
     <Resource Include="res\16_16\script.png" />
     <Resource Include="res\16_16\text.png" />
     <Resource Include="res\16_16\unknown.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="res\16_16\save.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="test\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Analyzer Include="..\packages\xunit.analyzers.0.10.0\analyzers\dotnet\cs\xunit.analyzers.dll" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\xunit.core.2.4.1\build\xunit.core.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\xunit.core.2.4.1\build\xunit.core.props'))" />
+    <Error Condition="!Exists('..\packages\xunit.core.2.4.1\build\xunit.core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\xunit.core.2.4.1\build\xunit.core.targets'))" />
+  </Target>
+  <Import Project="..\packages\xunit.core.2.4.1\build\xunit.core.targets" Condition="Exists('..\packages\xunit.core.2.4.1\build\xunit.core.targets')" />
 </Project>

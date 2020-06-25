@@ -69,6 +69,8 @@ namespace Salad {
 			Timestep timestep = time - m_LastFrameTime;
 			m_LastFrameTime = time;
 
+			Input::poll();
+
 			for (Layer* layer : m_LayerStack) {
 				layer->onUpdate(timestep);
 			}

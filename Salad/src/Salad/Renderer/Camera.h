@@ -19,7 +19,7 @@ namespace Salad {
 		float nearPlane;
 		float farPlane;
 
-		PerspectiveCameraProps(float pFov = 65.0f, float pAspectRatio = (16.0f / 9.0f), float pNearPlane = 0.1f, float pFarPlane = 1000.0f) :
+		PerspectiveCameraProps(float pFov = 90.0f, float pAspectRatio = (21.0f / 9.0f), float pNearPlane = 0.1f, float pFarPlane = 1000.0f) :
 			fov(pFov), aspectRatio(pAspectRatio), nearPlane(pNearPlane), farPlane(pFarPlane)
 		{}
 	};
@@ -34,7 +34,10 @@ namespace Salad {
 		const virtual glm::mat4& getViewProjectionMatrix() const override { return m_ViewProjectionMatrix; }
 		const virtual glm::mat4& getViewMatrix() const override { return m_ViewMatrix; }
 
-		void recalculateViewMatrix();
+		void setViewMatrix(glm::mat4& viewMatrix) { m_ViewMatrix = viewMatrix; }
+		void setProjectionMatrix(PerspectiveCameraProps properties) {}
+
+		void recalculateViewProjectionMatrix();
 
 	private:
 		PerspectiveCameraProps m_Properties;
@@ -42,9 +45,6 @@ namespace Salad {
 		glm::mat4 m_ProjectionMatrix;
 		glm::mat4 m_ViewMatrix;
 		glm::mat4 m_ViewProjectionMatrix;
-
-		glm::vec3 m_Position = { 0.0f, 0.0f, 0.0f };
-		glm::vec3 m_Rotation = { 0.0f, 0.0f, 0.0f };
 
 	};
 

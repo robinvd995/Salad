@@ -7,8 +7,9 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using FruitSalad.Director;
+using FruitSalad.Util;
 using Microsoft.Win32;
-
 
 namespace FruitSalad
 {
@@ -26,6 +27,8 @@ namespace FruitSalad
             viewModel = new MainWindowVM();
             DataContext = viewModel;
 
+            Logger.SetLogger(new TextBoxLogger(ConsoleBox));
+
             Instance = this;
         }
 
@@ -42,7 +45,7 @@ namespace FruitSalad
         private void MenuOpenClick(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Fruit Salad Workspace (*.fsws)|*.fsws|All Files (*.*)|*.*";
+            openFileDialog.Filter = Constants.FruitSaladWorkspaceFilter;
             if (openFileDialog.ShowDialog() == true)
             {
                 String filename = openFileDialog.FileName;
@@ -50,20 +53,35 @@ namespace FruitSalad
             }
         }
 
+        private void MenuSaveClick(object sender, RoutedEventArgs e)
+        {
+            FruitSaladApp.Instance.SaveFile();
+        }
+        private void MenuExitClick(object sender, RoutedEventArgs e)
+        {
+            FruitSaladApp.Instance.Exit();
+        }
+
         private void TreeItemDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            if (sender is TreeViewItem)
+            if (sender is DirectoryTreeViewItem)
             {
-                if (!((TreeViewItem)sender).IsSelected)
+                if (!((DirectoryTreeViewItem)sender).IsSelected)
                 {
                     return;
                 }
 
-                TreeViewItem item = (TreeViewItem)sender;
-                string filePath = item.Tag.ToString();
-                if(filePath.Length > 0)
+                DirectoryTreeViewItem item = (DirectoryTreeViewItem)sender;
+                string filePath = item.FilePath;
+                if (filePath.Length > 0)
                 {
-                    FruitSaladApp.Instance.OpenFile(filePath);
+                    FSFile file = new FSFile()
+                    {
+                        AbosultePath = filePath,
+                        Extension = item.FileType
+                    };
+
+                    FruitSaladApp.Instance.OpenFile(file);
                 }
             }
         }
@@ -73,27 +91,79 @@ namespace FruitSalad
             Regex regex = new Regex(@"^[0-9]*(?:\.[0-9]*)?$");
             e.Handled = !regex.IsMatch(e.Text);
         }
+
+        private void CommandBindingSaveFile(object sender, ExecutedRoutedEventArgs e)
+        {
+            Console.WriteLine("Saving!!!");
+            FruitSaladApp.Instance.SaveFile();
+        }
+
+        private void BuildWorkspaceClick(object sender, RoutedEventArgs e)
+        {
+            SharpGLWindow sharpGLWindow = new SharpGLWindow();
+            sharpGLWindow.ShowDialog();
+        }
+    }
+
+    public class DirectorVM : ViewModelBase
+    {
+        private List<DirectorItemVM> items = new List<DirectorItemVM>();
+
+        public DirectorVM()
+        {
+
+        }
+
+        public List<DirectorItemVM> DirectorItems
+        {
+            get
+            {
+                return items;
+            }
+        }
+
+        public void LoadFromTree(Tree<DirectorItemData> tree)
+        {
+            DirectorItemVM root = AddNode(tree.RootNode);
+            items = new List<DirectorItemVM>() { root };
+            OnPropertyChanged("DirectorItems");
+        }
+
+        private DirectorItemVM AddNode(TreeNode<DirectorItemData> node)
+        {
+            DirectorItemVM vmnode = new DirectorItemVM(node.NodeData);
+            foreach (TreeNode<DirectorItemData> child in node.Children)
+            {
+                vmnode.Children.Add(AddNode(child));
+            }
+
+            return vmnode;
+        }
     }
 
     public class MainWindowVM : ViewModelBase
     {
-        private List<DirectorItem> list = new List<DirectorItem>();
+        //private List<DirectorItemVM> list = new List<DirectorItemVM>();
+        private DirectorVM directorVM = new DirectorVM();
         private List<PropertyVM> properties = new List<PropertyVM>();
+        private SourceContainerVM sourceVM;
+        //private EditorVM editorVM;
 
         public MainWindowVM()
         {
         }
 
-        public List<DirectorItem> DirectorItems
+        public void SetDirectoryTree(Tree<DirectorItemData> tree)
+        {
+            directorVM.LoadFromTree(tree);
+            OnPropertyChanged("DirectoryTree");
+        }
+
+        public DirectorVM DirectoryTree
         {
             get
             {
-                return list;
-            }
-            set
-            {
-                list = value;
-                OnPropertyChanged("DirectorItems");
+                return directorVM;
             }
         }
 
@@ -110,171 +180,84 @@ namespace FruitSalad
             }
         }
 
-        public void LoadProperties(PropertyContainer container)
+        public SourceContainerVM SourceData
         {
-            List<PropertyVM> propertyList = new List<PropertyVM>();
-            Console.WriteLine("Loading Properties");
-            IEnumerator<Property> it = container.GetEnumerator();
-            while (it.MoveNext())
+            get
             {
-                Property property = it.Current;
-                PropertyVM propertyVM = null;
-                switch (property.Type)
-                {
-                    case PropertyType.Float:
-                        Console.WriteLine("Loading Float");
-                        propertyVM = new PropertyFloatVM(property);
-                        break;
+                return sourceVM;
+            }
+            set
+            {
+                sourceVM = value;
+                OnPropertyChanged("SourceData");
+            }
+        }
 
-                    case PropertyType.Float3:
-                        Console.WriteLine("Loading Float3");
-                        propertyVM = new PropertyFloat3VM(property);
-                        break;
+        public void LoadFile(FileContainer fileContainer)
+        {
+            LoadProperties(fileContainer.Properties);
+            SourceData = fileContainer.Source.GetViewModel();
+        }
+
+        private void LoadProperties(PropertyContainer container)
+        {
+            if (container == null)
+            {
+                Properties = new List<PropertyVM>();
+            }
+            else
+            {
+                List<PropertyVM> propertyList = new List<PropertyVM>();
+                IEnumerator<Property> it = container.GetEnumerator();
+                while (it.MoveNext())
+                {
+                    Property property = it.Current;
+                    PropertyVM propertyVM = property.Type.CreatePropertyViewModel(property);
+                    propertyList.Add(propertyVM);
                 }
 
-                propertyList.Add(propertyVM);
-            }
-
-            Properties = propertyList;
-        }
-    }
-
-    public class PropertyVM : ViewModelBase
-    {
-        protected Property propertyObj;
-
-        public PropertyVM(Property property)
-        {
-            propertyObj = property;
-        }
-
-        public string Name
-        {
-            get
-            {
-                return propertyObj.Name;
-            }
-            set
-            {
-                throw new Exception("Can not edit the name of a Property!");
-            }
-        }
-
-        public PropertyType Type
-        {
-            get
-            {
-                return propertyObj.Type;
-            }
-            set
-            {
-                throw new Exception("Can not edit the type of a Property!");
+                Properties = propertyList;
             }
         }
     }
 
-    public class PropertyFloatVM : PropertyVM
-    {
-
-        public PropertyFloatVM(Property property) :
-            base(property)
-        {}
-
-        public string Value
-        {
-            get
-            {
-                return propertyObj.GetValue<float>().ToString();
-            }
-            set
-            {
-                propertyObj.SetValue(value);
-                OnPropertyChanged("Value");
-            }
-        }
-    }
-
-    public class PropertyFloat3VM : PropertyVM
-    {
-        public PropertyFloat3VM(Property property) :
-            base(property)
-        {
-        }
-
-        public string ValueX
-        {
-            get
-            {
-                Float3 value = propertyObj.GetValue<Float3>();
-                return value.X.ToString();
-            }
-            set
-            {
-                float fvalue = float.Parse(value, CultureInfo.InvariantCulture.NumberFormat);
-                Float3 float3 = propertyObj.GetValue<Float3>();
-                float3.X = fvalue;
-                OnPropertyChanged("ValueX");
-            }
-        }
-
-        public string ValueY
-        {
-            get
-            {
-                Float3 value = propertyObj.GetValue<Float3>();
-                return value.Y.ToString();
-            }
-            set
-            {
-                float fvalue = float.Parse(value, CultureInfo.InvariantCulture.NumberFormat);
-                Float3 float3 = propertyObj.GetValue<Float3>();
-                float3.Y = fvalue;
-                OnPropertyChanged("ValueY");
-            }
-        }
-
-        public string ValueZ
-        {
-            get
-            {
-                Float3 value = propertyObj.GetValue<Float3>();
-                return value.Z.ToString();
-            }
-            set
-            {
-                float fvalue = float.Parse(value, CultureInfo.InvariantCulture.NumberFormat);
-                Float3 float3 = propertyObj.GetValue<Float3>();
-                float3.Z = fvalue;
-                OnPropertyChanged("ValueZ");
-            }
-        }
-    }
-
-    public class PropertyTemplateSelector : DataTemplateSelector
+    public class EditorTemplateSelector : DataTemplateSelector
     {
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
             FrameworkElement element = container as FrameworkElement;
 
-            if (element != null && item != null && item is PropertyVM)
+            if (element != null && item != null && item is SourceContainerVM)
             {
-                PropertyVM property = item as PropertyVM;
-
-                if(property.Type == PropertyType.Float)
+                SourceContainerVM source = item as SourceContainerVM;
+                string fileTypeName = source.GetFileType().Name.FirstCharToUpper();
+                try
                 {
-                    return element.FindResource("PropertyTemplateFloat") as DataTemplate;
+                    return element.FindResource("EditorTemplate" + fileTypeName) as DataTemplate;
                 }
-                if (property.Type == PropertyType.Float3)
+                catch(Exception)
                 {
-                    return element.FindResource("PropertyTemplateFloat3") as DataTemplate;
-                }
-                else
-                {
-                    return element.FindResource("PropertyTemplateUnknown") as DataTemplate;
+                    return null;
                 }
             }
 
             return null;
+        }
+    }
+
+    public class TextBoxLogger : ILogger
+    {
+        private readonly TextBox logTextBox;
+
+        public TextBoxLogger(TextBox textBox)
+        {
+            logTextBox = textBox;
+        }
+
+        public void Log(string s)
+        {
+            logTextBox.AppendText(s + Environment.NewLine);
+            logTextBox.ScrollToEnd();
         }
     }
 }

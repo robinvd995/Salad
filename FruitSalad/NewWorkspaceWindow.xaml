@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FruitSalad"
         mc:Ignorable="d"
-        Title="New Workspace" Height="340" Width="600">
+        WindowStartupLocation="CenterScreen"
+        Title="New Workspace" Height="400" Width="600">
 
     <Window.DataContext>
         <local:NewWorkspaceVM/>
@@ -31,6 +32,18 @@
             <Button Content="..." Grid.Column="2" Margin="2 0 2 0" Click="ButtonWorkspace"/>
         </Grid>
 
+        <CheckBox IsChecked="{Binding HasAssetDir, UpdateSourceTrigger=PropertyChanged}">
+            <TextBlock Text="Assets Directory"/>
+        </CheckBox>
+        <Grid HorizontalAlignment="Stretch" Margin="0 0 0 10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="60"/>
+            </Grid.ColumnDefinitions>
+            <TextBox Text="{Binding AssetDirectory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="{Binding IsAssetReadOnly}" Background="{Binding IsAssetReadOnly, Converter={StaticResource TextboxBackgroundConverter}}" HorizontalAlignment="Stretch" Grid.Column="0" Padding="4"/>
+            <Button Content="..." IsEnabled="{Binding HasAssetDir}" Grid.Column="1" Margin="2 0 2 0" Click="ButtonSource"/>
+        </Grid>
+        
         <CheckBox IsChecked="{Binding HasSourceDir, UpdateSourceTrigger=PropertyChanged}">
             <TextBlock Text="Source Directory"/>
         </CheckBox>

@@ -1,8 +1,7 @@
 #pragma once
 
 #include <Salad.h>
-#include <Salad/OrthographicCameraController.h>
-#include <Salad/Renderer/Gui/FontManager.h>
+#include <Salad/PerspectiveCameraController.h>
 
 class Sandbox3D : public Salad::Layer {
 
@@ -17,5 +16,10 @@ public:
 	virtual void onEvent(Salad::Event& e) override;
 
 private:
+
+	Salad::PerspectiveCameraController m_Camera;
+
+	Salad::Ref<Salad::Shader> m_Shader;
+	Salad::Ref<Salad::VertexArray> m_Cube;
 
 };

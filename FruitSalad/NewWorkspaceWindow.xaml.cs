@@ -76,7 +76,7 @@ namespace FruitSalad
 
         private void ButtonCreate(object sender, RoutedEventArgs e)
         {
-            FruitSaladApp.Instance.CreateNewWorkspace(viewModel.WorkspaceName, viewModel.WorkspaceDirectory, viewModel.SourceDirectory, viewModel.PropertyDirectory, viewModel.OutputDirectory);
+            FruitSaladApp.Instance.CreateNewWorkspace(viewModel.WorkspaceName, viewModel.WorkspaceDirectory, viewModel.SourceDirectory, viewModel.PropertyDirectory, viewModel.OutputDirectory, viewModel.AssetDirectory);
             Close();
         }
 
@@ -105,10 +105,12 @@ namespace FruitSalad
         private string workspaceRoot;
         private string workspaceDirectory;
 
+        private string customAssetDirectory = "";
         private string customSourceDirectory = "";
         private string customPropertyDirectory = "";
         private string customOutputDirectory = "";
 
+        private bool hasCustomAssetDir = false;
         private bool hasCustomSourceDir = false;
         private bool hasCustomPropertyDir = false;
         private bool hasCustomOutputDir = false;
@@ -154,9 +156,24 @@ namespace FruitSalad
                 workspaceDirectory = value;
 
                 OnPropertyChanged("WorkspaceDirectory");
+                OnPropertyChanged("AssetDirectory");
                 OnPropertyChanged("SourceDirectory");
                 OnPropertyChanged("PropertyDirectory");
                 OnPropertyChanged("OutputDirectory");
+            }
+        }
+
+        public string AssetDirectory
+        {
+            get
+            {
+                char separator = System.IO.Path.DirectorySeparatorChar;
+                return hasCustomAssetDir ? customAssetDirectory : workspaceDirectory + "assets" + separator;
+            }
+            set
+            {
+                customAssetDirectory = value;
+                OnPropertyChanged("AssetDirectory");
             }
         }
 
@@ -201,6 +218,23 @@ namespace FruitSalad
                 OnPropertyChanged("OutputDirectory");
             }
         }
+
+        public bool HasAssetDir
+        {
+            get
+            {
+                return hasCustomAssetDir;
+            }
+            set
+            {
+                hasCustomAssetDir = value;
+                OnPropertyChanged("HasAssetDir");
+                OnPropertyChanged("IsAssetReadOnly");
+                OnPropertyChanged("AssetDirectory");
+            }
+        }
+
+        public bool IsAssetReadOnly { get { return !HasAssetDir; } }
 
         public bool HasSourceDir
         {

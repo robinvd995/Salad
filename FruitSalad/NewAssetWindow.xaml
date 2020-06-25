@@ -1,0 +1,74 @@
+﻿<Window x:Class="FruitSalad.NewAssetWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FruitSalad"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
+        Title="New Asset" Height="500" Width="500">
+
+    <Window.DataContext>
+        <local:NewAssetWindowVM/>
+    </Window.DataContext>
+
+    <Window.Resources>
+        <local:WindowStateTemplateSelector x:Key="WindowStateTemplateSelector"/>
+
+        <DataTemplate x:Key="StateTemplateSelect" DataType="{x:Type local:NewAssetWindowVM}">
+            <ListBox ItemsSource="{Binding AssetTypes}" SelectedItem="{Binding SelectedItem}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate DataType="{x:Type local:AssetTypeVM}">
+                        <StackPanel Orientation="Horizontal" Height="40">
+                            <Image Source="{Binding Icon}" Width="32" Height="32"/>
+                            <TextBlock Text="{Binding Name}" VerticalAlignment="Center" Margin="10 0 10 0"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </DataTemplate>
+
+        <DataTemplate x:Key="StateTemplateSource" DataType="{x:Type local:NewAssetWindowVM}">
+            <StackPanel>
+                <TextBlock Text="Source File"/>
+                <StackPanel Orientation="Horizontal" Margin="0 4" Height="30">
+                    <TextBox Text="{Binding SourceFile}" Height="24" Padding="3" Margin="4 0 4 0"/>
+                    <Button Content="..." Width="60" Height="24"/>
+                </StackPanel>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="StateTemplateProperties" DataType="{x:Type local:NewAssetWindowVM}">
+            <StackPanel>
+                <TextBlock Text="Properties File"/>
+                <TextBox Text="{Binding PropertiesFile}"/>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="StateTemplateFinish" DataType="{x:Type local:NewAssetWindowVM}">
+            <StackPanel>
+                <TextBlock Text="{Binding SourceFile}"/>
+                <TextBlock Text="{Binding PropertiesFile}"/>
+                <TextBlock Text="{Binding SelectedItem.Name}"/>
+            </StackPanel>
+        </DataTemplate>
+    </Window.Resources>
+
+    <DockPanel LastChildFill="True">
+        <Grid DockPanel.Dock="Bottom" Margin="12 0 12 12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="Name:"/>
+            <TextBox Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center" Padding="4" Margin="4 0 4 0"/>
+            <Button Grid.Column="2" Width="80" Height="24" Content="{Binding ButtonText}" Click="ButtonClick"/>
+        </Grid>
+        <StackPanel DockPanel.Dock="Top" Margin="12 12 0 4">
+            <TextBlock Text="{Binding Description}"/>
+        </StackPanel>
+        <ContentControl Content="{Binding}" ContentTemplateSelector="{StaticResource WindowStateTemplateSelector}" Margin="12 0 12 12"/>
+        
+    </DockPanel>
+</Window>
