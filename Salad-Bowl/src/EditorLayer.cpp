@@ -526,12 +526,15 @@ namespace Salad {
 			glm::mat4 ettm = et.getWorldSpaceTransformationMatrix();
 
 			ImGuizmo::Manipulate(glm::value_ptr(viewMatrix), glm::value_ptr(projectionMatrix),
-				(ImGuizmo::OPERATION)m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(m_GizmoTransform));
+				(ImGuizmo::OPERATION)m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(ettm));
 
 			if(ImGuizmo::IsUsing()) {
-				float translation[3];
-				float rotation[3];
-				float scale[3];
+				glm::vec3 translation{ 0.0f }, scale{ 1.0f };
+				glm::quat orientation{};
+
+				Math::decomposeTransform(ettm, translation, orientation, scale);
+				et.set(translation, orientation, scale);
+
 				//ImGuizmo::DecomposeMatrixToComponents(glm::value_ptr(m_GizmoTransform), &translation[0], &rotation[0], &scale[0]);
 
 				//glm::vec3 deltaRotation = rotation - et.getRotation();

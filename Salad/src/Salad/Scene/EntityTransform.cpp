@@ -7,8 +7,8 @@ namespace Salad {
 		return other.getPosition() + getPosition();
 	}
 
-	glm::vec3 EntityTransform::getWorldSpaceRotation(EntityTransform& other) {
-		return other.getRotation() + getRotation();
+	glm::quat EntityTransform::getWorldSpaceRotation(EntityTransform& other) {
+		return other.getOrientation() + getOrientation();
 	}
 
 	glm::vec3 EntityTransform::getWorldSpaceScale(EntityTransform& other) {
@@ -21,14 +21,16 @@ namespace Salad {
 
 	void EntityTransform::calcWorldSpaceMatrix(EntityTransform& other) {
 		glm::vec3& pos = getWorldSpacePosition(other); //m_Transform.getPosition(); //glm::vec3(0.0f);//
-		glm::vec3& rotation = getWorldSpaceRotation(other); // m_Transform.getRotation(); //glm::vec3(0.0f);//
+		glm::quat& rotation = getWorldSpaceRotation(other); // m_Transform.getRotation(); //glm::vec3(0.0f);//
 		glm::vec3& scale = getWorldSpaceScale(other); // m_Transform.getScale(); //glm::vec3(1.0f);// 
 
 		m_WorldSpaceTransformMatrix = glm::mat4(1.0f);
 		m_WorldSpaceTransformMatrix = glm::translate(m_WorldSpaceTransformMatrix, pos);
-		m_WorldSpaceTransformMatrix = glm::rotate(m_WorldSpaceTransformMatrix, rotation.x, glm::vec3(1.0f, 0.0f, 0.0f));
-		m_WorldSpaceTransformMatrix = glm::rotate(m_WorldSpaceTransformMatrix, rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
-		m_WorldSpaceTransformMatrix = glm::rotate(m_WorldSpaceTransformMatrix, rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
+		m_WorldSpaceTransformMatrix *= glm::mat4_cast(rotation);
+		//m_WorldSpaceTransformMatrix *= rotation;
+		//m_WorldSpaceTransformMatrix = glm::rotate(m_WorldSpaceTransformMatrix, rotation.x, glm::vec3(1.0f, 0.0f, 0.0f));
+		//m_WorldSpaceTransformMatrix = glm::rotate(m_WorldSpaceTransformMatrix, rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
+		//m_WorldSpaceTransformMatrix = glm::rotate(m_WorldSpaceTransformMatrix, rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
 		m_WorldSpaceTransformMatrix = glm::scale(m_WorldSpaceTransformMatrix, scale);
 	}
 

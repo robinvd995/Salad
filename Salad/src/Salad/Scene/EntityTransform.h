@@ -34,12 +34,13 @@ namespace Salad {
 		void setScale(glm::vec3 scale) { setScale(scale.x, scale.y, scale.z); }
 		void scale(float x, float y, float z) { m_Transform.scale(x, y, z); m_TransformDirty = true; }
 
-		void set(glm::vec3& position, glm::vec3& rotation, glm::vec3& scale) { m_Transform.setValues(position, rotation, scale); m_TransformDirty = true; }
+		void set(glm::vec3& position, glm::quat& orientation, glm::vec3& scale) { m_Transform.setValues(position, orientation, scale); m_TransformDirty = true; }
 
 		glm::vec3 getPosition() { return m_Transform.getPosition(); }
-		glm::vec3 getRotation() { return m_Transform.getRotation(); }
+		glm::vec3 getEulerRotation() { return m_Transform.getEulerRotation(); }
 		glm::vec3 getScale() { return m_Transform.getScale(); }
 
+		glm::quat getOrientation() { return m_Transform.getOrientation(); }
 		// ----- Transform Exposure End -----
 
 		void updateTransform();
@@ -47,7 +48,7 @@ namespace Salad {
 
 		// ----- Hierarchy methods start -----
 		glm::vec3 getWorldSpacePosition(EntityTransform& other);
-		glm::vec3 getWorldSpaceRotation(EntityTransform& other);
+		glm::quat getWorldSpaceRotation(EntityTransform& other);
 		glm::vec3 getWorldSpaceScale(EntityTransform& other);
 
 		//void setParent(Entity parent);

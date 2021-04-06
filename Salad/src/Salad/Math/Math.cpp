@@ -1,6 +1,5 @@
 #include "sldpch.h"
 #include "Math.h"
-#include <glm/gtc/quaternion.hpp>
 
 
 #include <glm/gtc/epsilon.hpp>
@@ -9,7 +8,7 @@
 
 namespace Salad::Math {
 
-	bool decomposeTransform(const glm::mat4& transform, glm::vec3& translation, glm::vec3& rotation, glm::vec3& scale) {
+	bool decomposeTransform(const glm::mat4& transform, glm::vec3& translation, glm::quat& orientation, glm::vec3& scale) {
 
 		// SOURCE: glm::decompose in matrix_decompose.inl
 
@@ -123,17 +122,15 @@ namespace Salad::Math {
 			rotation.z = 0;
 		}*/
 
-		quat Orientation;
-
 		int i, j, k = 0;
 		T root, trace = Row[0].x + Row[1].y + Row[2].z;
 		if (trace > static_cast<T>(0)) 		{
 			root = sqrt(trace + static_cast<T>(1.0));
-			Orientation.w = static_cast<T>(0.5) * root;
+			orientation.w = static_cast<T>(0.5) * root;
 			root = static_cast<T>(0.5) / root;
-			Orientation.x = root * (Row[1].z - Row[2].y);
-			Orientation.y = root * (Row[2].x - Row[0].z);
-			Orientation.z = root * (Row[0].y - Row[1].x);
+			orientation.x = root * (Row[1].z - Row[2].y);
+			orientation.y = root * (Row[2].x - Row[0].z);
+			orientation.z = root * (Row[0].y - Row[1].x);
 		} // End if > 0
 		else 		{
 			static int Next[3] = { 1, 2, 0 };
@@ -145,16 +142,20 @@ namespace Salad::Math {
 
 			root = sqrt(Row[i][i] - Row[j][j] - Row[k][k] + static_cast<T>(1.0));
 
-			Orientation[i] = static_cast<T>(0.5) * root;
+			orientation[i] = static_cast<T>(0.5) * root;
 			root = static_cast<T>(0.5) / root;
-			Orientation[j] = root * (Row[i][j] + Row[j][i]);
-			Orientation[k] = root * (Row[i][k] + Row[k][i]);
-			Orientation.w = root * (Row[j][k] - Row[k][j]);
+			orientation[j] = root * (Row[i][j] + Row[j][i]);
+			orientation[k] = root * (Row[i][k] + Row[k][i]);
+			orientation.w = root * (Row[j][k] - Row[k][j]);
 		} // End if <= 0
 
-		rotation = glm::eulerAngles(Orientation);
+
 
 		return true;
+	}
+
+	glm::quat toQuat(glm::vec3 euler) {
+		return glm::quat(euler);
 	}
 
 }

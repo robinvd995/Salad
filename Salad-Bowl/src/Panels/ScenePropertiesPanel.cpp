@@ -61,14 +61,14 @@ namespace Salad {
 				auto& transform = entity.getComponent<TransformComponent>().Transform;
 
 				glm::vec3 position = transform.getPosition();
-				glm::vec3 rotation = glm::degrees(transform.getRotation());
+				glm::vec3 rotation = glm::degrees(glm::eulerAngles(transform.getOrientation()));
 				glm::vec3 scale = transform.getScale();
 
 				bool changed = false;
 				changed |= ImGuiWidgets::drawFloat3Control("Position", &position.x, &position.y, &position.z);
 				changed |= ImGuiWidgets::drawFloat3Control("Rotation", &rotation.x, &rotation.y, &rotation.z);
 				changed |= ImGuiWidgets::drawFloat3Control("Scale", &scale.x, &scale.y, &scale.z, 1.0f);
-				if (changed) transform.set(position, glm::radians(rotation), scale);
+				if (changed) transform.set(position, glm::quat(glm::radians(rotation)), scale);
 			});
 
 			// Render Camera Component
