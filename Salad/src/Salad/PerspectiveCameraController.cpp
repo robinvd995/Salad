@@ -6,7 +6,7 @@
 
 namespace Salad {
 
-	PerspectiveCameraController::PerspectiveCameraController(PerspectiveCameraProps props) :
+	/*PerspectiveCameraController::PerspectiveCameraController(PerspectiveCameraProps props) :
 		m_Camera(props)
 	{}
 
@@ -58,14 +58,31 @@ namespace Salad {
 			direction.y = sin(glm::radians(m_Pitch));
 			direction.z = sin(glm::radians(m_Yaw)) * cos(glm::radians(m_Pitch));
 			m_CameraFront = glm::normalize(direction);
-
-			Input::setMousePosRel(0.5f, 0.5f);
 		}
+
+		Input::lockMouseToCenter(m_Active);
 
 		m_Camera.setViewMatrix(glm::lookAt(m_CameraPos, m_CameraPos + m_CameraFront, m_CameraUp));
 	}
 
 	void PerspectiveCameraController::onEvent(Event& e) {
-
+		EventDispatcher dispatcher(e);
+		dispatcher.dispatch<MouseButtonPressedEvent>(SLD_BIND_EVENT_FN(PerspectiveCameraController::onMouseButtonPressedEvent));
+		dispatcher.dispatch<MouseButtonReleasedEvent>(SLD_BIND_EVENT_FN(PerspectiveCameraController::onMouseButtonReleasedEvent));
 	}
+
+	bool PerspectiveCameraController::onMouseButtonPressedEvent(MouseButtonPressedEvent& e) {
+		SLD_CORE_INFO("Mouse button pressed");
+		return false;
+	}
+
+	bool PerspectiveCameraController::onMouseButtonReleasedEvent(MouseButtonReleasedEvent& e) {
+		SLD_CORE_INFO("Mouse button released");
+		return false;
+	}
+
+	void PerspectiveCameraController::resizeCamera(PerspectiveCameraProps props) {
+		m_Camera.setProjectionMatrix(props);
+	}*/
+
 }

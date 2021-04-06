@@ -3,7 +3,7 @@
 #include <memory>
 
 #ifdef SLD_PLATFORM_WINDOWS
-	#if SLD_DYNAMIC_LINK
+	/*#if SLD_DYNAMIC_LINK
 		#ifdef SLD_BUILD_DLL
 			#define SALAD_API __declspec(dllexport)
 		#else
@@ -11,7 +11,7 @@
 		#endif
 	#else
 		#define SALAD_API
-	#endif
+	#endif*/
 #else
 	#error Salad only supports Windows!
 #endif

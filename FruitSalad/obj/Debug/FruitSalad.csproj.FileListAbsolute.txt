@@ -45,3 +45,4 @@ C:\Dev\Salad\FruitSalad\bin\Debug\xunit.core.xml
 C:\Dev\Salad\FruitSalad\bin\Debug\xunit.execution.desktop.xml
 C:\Dev\Salad\FruitSalad\obj\Debug\NewAssetWindow.g.cs
 C:\Dev\Salad\FruitSalad\obj\Debug\NewAssetWindow.baml
+C:\Dev\Salad\FruitSalad\obj\Debug\FruitSalad.csproj.CoreCompileInputs.cache

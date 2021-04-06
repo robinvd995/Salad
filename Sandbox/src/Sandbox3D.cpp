@@ -46,11 +46,66 @@ Sandbox3D::Sandbox3D() :
 	m_Cube->setIndexBuffer(indexBuffer);
 	m_Cube->unbind();
 
-	m_Shader = Shader::create("assets/shaders/Static.glsl");
+	m_Shader = Shader::create("assets/shaders/Diffuse.glsl");
 	
 	{
 		Salad::Ref<Salad::Texture2D> t0 = Salad::TextureManager::get().loadTexture2D("assets/textures/crate_diffuse.png");
 	}
+
+	float skyboxVertices[] = {       
+		-1.0f,  1.0f, -1.0f,
+		-1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+		 1.0f,  1.0f, -1.0f,
+		-1.0f,  1.0f, -1.0f,
+
+		-1.0f, -1.0f,  1.0f,
+		-1.0f, -1.0f, -1.0f,
+		-1.0f,  1.0f, -1.0f,
+		-1.0f,  1.0f, -1.0f,
+		-1.0f,  1.0f,  1.0f,
+		-1.0f, -1.0f,  1.0f,
+
+		 1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+
+		-1.0f, -1.0f,  1.0f,
+		-1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f, -1.0f,  1.0f,
+		-1.0f, -1.0f,  1.0f,
+
+		-1.0f,  1.0f, -1.0f,
+		 1.0f,  1.0f, -1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		-1.0f,  1.0f,  1.0f,
+		-1.0f,  1.0f, -1.0f,
+
+		-1.0f, -1.0f, -1.0f,
+		-1.0f, -1.0f,  1.0f,
+		 1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+		-1.0f, -1.0f,  1.0f,
+		 1.0f, -1.0f,  1.0f
+	};
+
+	m_SkyboxVAO = VertexArray::create();
+	Ref<Salad::VertexBuffer> skyboxVbo = VertexBuffer::create(skyboxVertices, sizeof(skyboxVertices), SLD_STATIC_DRAW);
+	skyboxVbo->setLayout({
+		{ "a_Position", Salad::ShaderDataType::Float3 }
+	});
+	m_SkyboxVAO->addVertexBuffer(skyboxVbo);
+	m_SkyboxVAO->unbind();
+
+	m_SkyboxShader = Shader::create("assets/shaders/Skybox.glsl");
+	m_SkyBoxTexture = TextureCubeMap::create("assets/textures/skybox/default", ".png");
 }
 
 void Sandbox3D::onAttach() {
@@ -73,11 +128,19 @@ void Sandbox3D::onUpdate(Salad::Timestep ts) {
 	transform = glm::translate(transform, glm::vec3(0.0f, 0.0f, -10.0f));
 
 	Salad::Renderer::beginScene(m_Camera.getCamera());
+
+	//skybox rendering
+	m_SkyBoxTexture->bind();
+	Salad::RenderCommand::depthMask(false);
+	Salad::Renderer::submitSkybox(m_SkyboxShader, m_SkyboxVAO);
+	Salad::RenderCommand::depthMask(true);
+
+	//cube rendering
 	Salad::TextureManager::get().getTexture2D("assets/textures/crate_diffuse.png")->bind();
 	Salad::Renderer::submit(m_Shader, m_Cube, transform);
 	Salad::Renderer::endScene();
 }
 
 void Sandbox3D::onEvent(Salad::Event& e) {
-
+	m_Camera.onEvent(e);
 }

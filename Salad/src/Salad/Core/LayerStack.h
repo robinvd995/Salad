@@ -10,7 +10,7 @@ namespace Salad {
 	typedef std::vector<Layer*> LStack;
 	typedef std::vector<Layer*>::iterator LStackIt;
 
-	class SALAD_API LayerStack{
+	class LayerStack{
 	public:
 
 		LayerStack();

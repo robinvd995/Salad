@@ -6,7 +6,7 @@
 
 namespace Salad {
 
-	OrthographicCameraController::OrthographicCameraController(float aspectRatio, bool rotation) :
+	/*OrthographicCameraController::OrthographicCameraController(float aspectRatio, bool rotation) :
 		m_AspectRatio(aspectRatio),
 		m_Camera(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, m_ZoomLevel, -m_ZoomLevel),
 		m_Rotation(rotation)
@@ -67,12 +67,12 @@ namespace Salad {
 		return false;
 	}
 
-	OrthographicCameraFollower::OrthographicCameraFollower(float aspectRatio, bool rotation) :
+	/*OrthographicCameraFollower::OrthographicCameraFollower(float aspectRatio, bool rotation) :
 		OrthographicCameraController(aspectRatio, rotation)
 	{}
 
 	void OrthographicCameraFollower::onUpdate(Timestep ts) {
-		glm::vec3 pos = m_Target.lock()->getComponent<EntityComponentTransform>()->cpyPosition();
+		glm::vec3 pos = m_Target.lock()->getComponent<EntityComponentTransform>()->getTransform()->cpyPosition();
 		m_CameraPosition.x = pos.x;
 		m_CameraPosition.y = pos.y;
 		m_CameraPosition.z = pos.z;
@@ -82,5 +82,5 @@ namespace Salad {
 
 	void OrthographicCameraFollower::setTarget(Ref<Entity> target) {
 		m_Target = target;
-	}
+	}*/
 }

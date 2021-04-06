@@ -22,4 +22,8 @@ private:
 	Salad::Ref<Salad::Shader> m_Shader;
 	Salad::Ref<Salad::VertexArray> m_Cube;
 
+	Salad::Ref<Salad::VertexArray> m_SkyboxVAO;
+	Salad::Ref<Salad::Shader> m_SkyboxShader;
+	Salad::Ref<Salad::TextureCubeMap> m_SkyBoxTexture;
+
 };

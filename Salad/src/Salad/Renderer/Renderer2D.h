@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Salad/Renderer/Texture.h"
-#include "Salad/Entity/Entity.h"
 #include "Salad/Renderer/Camera.h"
 #include "Salad/Renderer/TileMap.h"
 
@@ -18,7 +17,7 @@ namespace Salad {
 		static void shutdown();
 
 		// Primitive Shapes
-		static void beginScene(const OrthographicCamera camera);
+		static void beginScene(const Camera& camera, const glm::mat4& transform);
 		static void endScene();
 
 		static void drawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color, const float rotation = 0.0f);
@@ -28,8 +27,8 @@ namespace Salad {
 		static void drawTexturedQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture, const float rotation = 0.0f);
 
 		// Complex Shapes
-		static void drawSprite(const glm::vec2& position, const glm::vec2& size, const SpriteRenderInformation& sri);
-		static void drawSprite(const glm::vec3& position, const glm::vec2& size, const SpriteRenderInformation& sri);
+		//static void drawSprite(const glm::vec2& position, const glm::vec2& size, const SpriteRenderInformation& sri);
+		//static void drawSprite(const glm::vec3& position, const glm::vec2& size, const SpriteRenderInformation& sri);
 
 		static void drawTileMap(const glm::vec2& position, const glm::vec2& size, const Ref<TileMap> tilemap);
 		static void drawTileMap(const glm::vec3& position, const glm::vec2& size, const Ref<TileMap> tilemap);

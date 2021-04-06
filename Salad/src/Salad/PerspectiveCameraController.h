@@ -3,12 +3,13 @@
 #include "Salad/Renderer/Camera.h"
 #include "Salad/Core/Timestep.h"
 #include "Salad/Events/Event.h"
+#include "Salad/Events/MouseEvent.h"
 
 #include <glm/glm.hpp>
 
 namespace Salad {
 
-	class PerspectiveCameraController {
+	/*class PerspectiveCameraController {
 	
 	public:
 		PerspectiveCameraController(PerspectiveCameraProps props);
@@ -16,6 +17,15 @@ namespace Salad {
 		virtual void onUpdate(Timestep ts);
 		void onEvent(Event& e);
 		PerspectiveCamera getCamera() const { return m_Camera; }
+
+		void resizeCamera(PerspectiveCameraProps props);
+
+		inline glm::vec3 getCameraPosition() { return m_CameraPos; }
+
+	private:
+		bool onMouseButtonPressedEvent(MouseButtonPressedEvent& e);
+		bool onMouseButtonReleasedEvent(MouseButtonReleasedEvent& e);
+
 	private:
 		PerspectiveCamera m_Camera;
 
@@ -26,6 +36,6 @@ namespace Salad {
 		float m_Yaw = 0.0f, m_Pitch = 0.0f;
 		bool m_Active = false;
 		bool m_Pressed = false;
-	};
+	};*/
 
 }

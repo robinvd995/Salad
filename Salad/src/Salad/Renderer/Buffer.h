@@ -103,7 +103,7 @@ namespace Salad {
 		uint32_t m_Stride = 0;
 	};
 
-	class SALAD_API VertexBuffer {
+	class VertexBuffer {
 	public:
 		virtual ~VertexBuffer() {}
 
@@ -116,7 +116,7 @@ namespace Salad {
 		static Ref<VertexBuffer> create(float* vertices, uint32_t size, uint32_t drawMode);
 	};
 
-	class SALAD_API IndexBuffer {
+	class IndexBuffer {
 	public:
 		virtual ~IndexBuffer() {}
 
@@ -128,7 +128,7 @@ namespace Salad {
 		static Ref<IndexBuffer> create(uint32_t* indices, uint32_t size);
 	};
 
-	class Framebuffer {
+	/*class Framebuffer {
 	public:
 		virtual ~Framebuffer() = default;
 
@@ -141,6 +141,6 @@ namespace Salad {
 		virtual Ref<Texture2D> getColorBuffer() const = 0;
 
 		static Ref<Framebuffer> create(uint32_t width, uint32_t height);
-	};
+	};*/
 
 }

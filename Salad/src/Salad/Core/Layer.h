@@ -5,7 +5,7 @@
 #include "Salad/Core/Timestep.h"
 
 namespace Salad {
-	class SALAD_API Layer {
+	class Layer {
 
 	public:
 		Layer(const std::string& debugname = "Layer");

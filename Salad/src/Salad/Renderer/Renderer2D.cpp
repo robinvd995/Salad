@@ -1,7 +1,6 @@
 #include "sldpch.h"
 #include "Renderer2D.h"
 
-#include "Salad/Entity/Entity.h"
 #include "Salad/Renderer/VertexArray.h"
 #include "Salad/Renderer/Shader.h"
 #include "Salad/Renderer/RenderCommand.h"
@@ -53,9 +52,10 @@ namespace Salad {
 		delete s_Render2DData;
 	}
 
-	void Renderer2D::beginScene(const OrthographicCamera camera) {
+	void Renderer2D::beginScene(const Camera& camera, const glm::mat4& transform) {
 		s_Render2DData->textureShader->bind();
-		s_Render2DData->textureShader->setMat4("u_ViewProjection", camera.getViewProjectionMatrix());
+		glm::mat4 viewProjMatrix = camera.getProjection() * glm::inverse(transform);
+		s_Render2DData->textureShader->setMat4("u_ViewProjection", viewProjMatrix);
 	}
 
 	void Renderer2D::endScene() {
@@ -104,7 +104,7 @@ namespace Salad {
 		RenderCommand::drawIndexed(s_Render2DData->quadVertexArray);
 	}
 
-	void Renderer2D::drawSprite(const glm::vec2& position, const glm::vec2& size, const SpriteRenderInformation& sri) {
+	/*void Renderer2D::drawSprite(const glm::vec2& position, const glm::vec2& size, const SpriteRenderInformation& sri) {
 		drawSprite({ position.x, position.y, 0.0f }, size, sri);
 	}
 
@@ -124,7 +124,7 @@ namespace Salad {
 
 		s_Render2DData->quadVertexArray->bind();
 		RenderCommand::drawIndexed(s_Render2DData->quadVertexArray);
-	}
+	}*/
 
 	void Renderer2D::drawTileMap(const glm::vec2& position, const glm::vec2& size, const Ref<TileMap> tilemap) {
 		drawTileMap({ position.x, position.y, 0.0f }, size, tilemap);

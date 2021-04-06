@@ -7,7 +7,7 @@
 
 namespace Salad {
 
-	class SALAD_API ImGuiLayer : public Layer {
+	class ImGuiLayer : public Layer {
 
 	public:
 		ImGuiLayer();
@@ -19,6 +19,8 @@ namespace Salad {
 		virtual void onAttach() override;
 		virtual void onDetach() override;
 		virtual void onImGuiRender() override;
+		virtual void onEvent(Event& e) override;
+
 	private:
 		float m_Time = 0.0f;
 	};

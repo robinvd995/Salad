@@ -3,13 +3,21 @@
 
 #include "Sandbox2D.h"
 #include "Sandbox3D.h"
+#include "LightingSandbox.h"
 #include "GuiLayer.h"
+#include "GuiSandbox.h"
+#include "AnimationSandbox.h"
 
 class Sandbox : public Salad::Application {
 public:
 	Sandbox() {
+		//pushLayer(new Sandbox2D());
 		pushLayer(new Sandbox3D());
-		pushOverlay(new GuiLayer());
+		//pushLayer(new AnimationSandbox());
+		//pushLayer(new LightingSandbox());
+		//pushOverlay(new GuiSandbox());
+		//pushLayer(new GuiLayer());
+		//pushLayer(new SkeletalAnimationSandbox());
 	}
 	~Sandbox() {}
 };

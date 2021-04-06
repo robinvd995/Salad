@@ -17,6 +17,8 @@ namespace Salad {
 		static inline void setClearColor(const glm::vec4 color) { s_RenderAPI->setClearColor(color); }
 		static inline void clear() { s_RenderAPI->clear(); }
 		static inline void drawIndexed(const Ref<VertexArray>& vertexArray) { s_RenderAPI->drawIndexed(vertexArray); }
+		static inline void drawTriangles(const Ref<VertexArray>& vertexArray, uint32_t count) { s_RenderAPI->drawTriangles(vertexArray, count); }
+		static inline void depthMask(bool enable) { s_RenderAPI->depthMask(enable); }
 
 		static inline RenderFlags* getFlags() { return s_RenderFlags; }
 

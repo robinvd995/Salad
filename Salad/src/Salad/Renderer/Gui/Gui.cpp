@@ -27,10 +27,10 @@ namespace Salad {
 
 	void GuiWindow::initWindow() {
 		Ref<Texture2D> texture = TextureManager::get().loadTexture2D("assets/textures/ui.png");
-		m_Elements.push_back(createRef<GuiLabel>(88, 28, std::string("Hello World!"))); 
 		m_Elements.push_back(createRef<GuiCheckbox>(this, 0, 20, 80));
 		m_Elements.push_back(createRef<GuiTextbox>(this, 1, 52, 80, 224, 24));
 		m_Elements.push_back(createRef<GuiButton>(this, 20, 108, 256, 32));
+		m_Elements.push_back(createRef<GuiLabel>(88, 28, std::string("Hello World!")));
 		m_Elements.push_back(createRef<GuiElementWindowBackground>(this));
 	}
 
@@ -662,6 +662,8 @@ namespace Salad {
 
 	// -------- GuiTextbox End --------- //
 
+	// -------- GuiLabel Start --------- //
+
 	GuiLabel::GuiLabel(int x, int y, std::string& text) :
 		m_PosX(x),
 		m_PosY(y)
@@ -679,4 +681,5 @@ namespace Salad {
 		Salad::Renderer2D::drawVertexArray({ window->getWindowPosX() + m_PosX, window->getWindowPosY() + m_PosY }, { 1.0f, 1.0f }, m_Text);
 	}
 
+	// -------- GuiLabel End --------- //
 }

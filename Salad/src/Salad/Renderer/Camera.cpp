@@ -1,36 +1,42 @@
 #include "sldpch.h"
 #include "Camera.h"
 
+#include <glm/gtx/quaternion.hpp>
+
 namespace Salad {
 
-	PerspectiveCamera::PerspectiveCamera(PerspectiveCameraProps properties) :
-		m_Properties(properties),
-		m_ProjectionMatrix(glm::perspective(glm::radians(properties.fov), properties.aspectRatio, properties.nearPlane, properties.farPlane)),
-		m_ViewMatrix(1.0f)
-	{
-		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
+	Camera::Camera() {
+		setPerspectiveProjection(PerspectiveCameraProperties());
 	}
 
-	PerspectiveCamera::~PerspectiveCamera() {}
+	Camera::Camera(CameraType projectionType, const glm::mat4& projection) :
+		m_CameraProjectionType(projectionType),
+		m_Projection(projection)
+	{}
 
-	void PerspectiveCamera::recalculateViewProjectionMatrix() {
-		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
+	Camera::Camera(PerspectiveCameraProperties props) {
+		setPerspectiveProjection(props);
 	}
 
-	OrthographicCamera::OrthographicCamera(float left, float right, float bottom, float top) :
-		m_ProjectionMatrix(glm::ortho(left, right, bottom, top, -1.0f, 1.0f)), m_ViewMatrix(1.0f) {
-		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
+	Camera::Camera(OrthographicCameraProperties props) {
+		setOrthographicProjection(props);
 	}
 
-	void OrthographicCamera::setProjection(float left, float right, float bottom, float top) {
-		m_ProjectionMatrix = glm::ortho(left, right, bottom, top, -1.0f, 1.0f);
-		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
+	Camera::~Camera() {
+
 	}
 
-	void OrthographicCamera::recalculateViewMatrix() {
-		glm::mat4 transform = glm::translate(glm::mat4(1.0f), m_Position)
-			* glm::rotate(glm::mat4(1.0), glm::radians(m_Rotation), glm::vec3(0, 0, 1));
-		m_ViewMatrix = glm::inverse(transform);
-		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
+	void Camera::recalculateViewMatrix() {
+		switch(m_CameraProjectionType) {
+			case CameraType::Perspective: m_Projection = glm::perspective(
+				glm::radians(m_PerspectiveProperties.Fov), m_PerspectiveProperties.AspectRatio, 
+				m_PerspectiveProperties.NearClip, m_PerspectiveProperties.FarClip); 
+				break;
+			case CameraType::Orthographic: m_Projection = glm::ortho(
+				m_OrthographicProperties.Left, m_OrthographicProperties.Right,
+				m_OrthographicProperties.Bottom, m_OrthographicProperties.Top, 
+				m_OrthographicProperties.ZNear, m_OrthographicProperties.ZFar); 
+				break;
+		}
 	}
 }

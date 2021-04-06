@@ -50,7 +50,7 @@ namespace Salad {
 
 	// -------------Framebuffer------------------
 
-	OpenGLFramebuffer::OpenGLFramebuffer(uint32_t width, uint32_t height) :
+	/*OpenGLFramebuffer::OpenGLFramebuffer(uint32_t width, uint32_t height) :
 		m_Width(width),
 		m_Height(height) {
 		uint32_t fbo;
@@ -67,14 +67,6 @@ namespace Salad {
 
 		glBindTexture(GL_TEXTURE_2D, 0);
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorId, 0);
-
-		/*uint32_t rbo;
-		glGenRenderbuffers(1, &rbo);
-		glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, m_Width, m_Height);
-		glBindRenderbuffer(GL_RENDERBUFFER, 0);
-
-		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);*/
 
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 			SLD_CORE_ASSERT_FAIL("Error while creating a frame buffer object!");
@@ -96,5 +88,5 @@ namespace Salad {
 
 	void OpenGLFramebuffer::unbind() const {
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	}
+	}*/
 }

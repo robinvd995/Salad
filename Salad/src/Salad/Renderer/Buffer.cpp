@@ -26,7 +26,7 @@ namespace Salad {
 		return nullptr;
 	}
 
-	Ref<Framebuffer> Framebuffer::create(const uint32_t width, const uint32_t height) {
+	/*Ref<Framebuffer> Framebuffer::create(const uint32_t width, const uint32_t height) {
 		switch (Renderer::getAPI()) {
 			case RenderAPI::API::NONE: SLD_CORE_ASSERT(false, "Render API None is not supported!"); return nullptr;
 			case RenderAPI::API::OpenGL: return createRef<OpenGLFramebuffer>(width, height);
@@ -34,5 +34,5 @@ namespace Salad {
 
 		SLD_CORE_ASSERT(false, "Unknown renderer API!");
 		return nullptr;
-	}
+	}*/
 }

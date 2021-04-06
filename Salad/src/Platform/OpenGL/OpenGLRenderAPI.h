@@ -14,6 +14,9 @@ namespace Salad {
 
 		virtual void drawIndexed(const Ref<VertexArray>& vertexArray) override;
 
-	};
+		virtual void drawTriangles(const Ref<VertexArray>& vertexArray, uint32_t count) override;
 
+		virtual void depthMask(bool enabled) override;
+
+	};
 }

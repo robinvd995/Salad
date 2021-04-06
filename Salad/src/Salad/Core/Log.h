@@ -6,7 +6,7 @@
 
 namespace Salad {
 
-	class SALAD_API Log
+	class Log
 	{
 	public:
 		Log();

@@ -1,79 +1,67 @@
 #pragma once
 
 #include <glm/glm.hpp>
-#include <glm/gtx/quaternion.hpp>
 
 namespace Salad {
+
+	struct PerspectiveCameraProperties {
+	
+		float Fov, AspectRatio, NearClip, FarClip;
+
+		PerspectiveCameraProperties()
+			: Fov(65.0f), AspectRatio(16.0f / 9.0f), NearClip(0.1f), FarClip(1000.0f)
+		{}
+	};
+
+	struct OrthographicCameraProperties {
+	
+		float Left, Right, Top, Bottom, ZNear, ZFar;
+
+		OrthographicCameraProperties()
+			: Left(-16.0f), Right(16.0f), Top(9.0f), Bottom(-9.0f), ZNear(-1.0f), ZFar(1.0f)
+		{}
+	};
 
 	class Camera {
 
 	public:
-		const virtual glm::mat4& getProjectionMatrix() const = 0;
-		const virtual glm::mat4& getViewProjectionMatrix() const = 0;
-		const virtual glm::mat4& getViewMatrix() const = 0;
-	};
-
-	struct PerspectiveCameraProps {
-		float fov;
-		float aspectRatio;
-		float nearPlane;
-		float farPlane;
-
-		PerspectiveCameraProps(float pFov = 90.0f, float pAspectRatio = (21.0f / 9.0f), float pNearPlane = 0.1f, float pFarPlane = 1000.0f) :
-			fov(pFov), aspectRatio(pAspectRatio), nearPlane(pNearPlane), farPlane(pFarPlane)
-		{}
-	};
-
-	class PerspectiveCamera : public Camera {
+		enum class CameraType {
+			Perspective = 0, Orthographic = 1
+		};
 
 	public:
-		PerspectiveCamera(PerspectiveCameraProps properties);
-		~PerspectiveCamera();
+		Camera();
+		Camera(CameraType projectionType, const glm::mat4& projection);
+		Camera(PerspectiveCameraProperties props);
+		Camera(OrthographicCameraProperties props);
+		~Camera();
 
-		const virtual glm::mat4& getProjectionMatrix() const override { return m_ProjectionMatrix; }
-		const virtual glm::mat4& getViewProjectionMatrix() const override { return m_ViewProjectionMatrix; }
-		const virtual glm::mat4& getViewMatrix() const override { return m_ViewMatrix; }
+		inline const glm::mat4& getProjection() const { return m_Projection; }
 
-		void setViewMatrix(glm::mat4& viewMatrix) { m_ViewMatrix = viewMatrix; }
-		void setProjectionMatrix(PerspectiveCameraProps properties) {}
+		inline const bool isPrimaryCamera() const { return m_IsPrimaryCamera; }
+		inline void setPrimaryCamera(bool primary) { m_IsPrimaryCamera = primary; }
 
-		void recalculateViewProjectionMatrix();
+		inline CameraType getCameraProjectionType() { return m_CameraProjectionType; }
+		void setProjectionType(CameraType type) { m_CameraProjectionType = type; }
 
-	private:
-		PerspectiveCameraProps m_Properties;
-		
-		glm::mat4 m_ProjectionMatrix;
-		glm::mat4 m_ViewMatrix;
-		glm::mat4 m_ViewProjectionMatrix;
+		void setPerspectiveProjection(PerspectiveCameraProperties props) { m_PerspectiveProperties = props; }
+		void setOrthographicProjection(OrthographicCameraProperties props) { m_OrthographicProperties = props; }
 
-	};
+		PerspectiveCameraProperties& getPerspectiveProperties() { return m_PerspectiveProperties; }
+		OrthographicCameraProperties& getOrthographicProperties() { return m_OrthographicProperties; }
 
-	class OrthographicCamera {
-
-	public:
-		OrthographicCamera(float left, float right, float bottom, float top);
-
-		void setProjection(float left, float right, float bottom, float top);
-
-		const glm::vec3& getPosition() const { return m_Position; }
-		float getRotation() const { return m_Rotation; }
-
-		void setPosition(const glm::vec3& position) { m_Position = position; recalculateViewMatrix(); }
-		void setRotation(float rotation) { m_Rotation = rotation; recalculateViewMatrix(); }
-
-		const glm::mat4& getProjectionMatrix() const { return m_ProjectionMatrix; }
-		const glm::mat4& getViewMatrix() const { return m_ViewMatrix; }
-		const glm::mat4& getViewProjectionMatrix() const { return m_ViewProjectionMatrix; }
-
-	private:
+		// Rename to recalculate projection matrix
 		void recalculateViewMatrix();
 
 	private:
-		glm::mat4 m_ProjectionMatrix;
-		glm::mat4 m_ViewMatrix;
-		glm::mat4 m_ViewProjectionMatrix;
+		bool m_IsPrimaryCamera{ true };
+		bool m_FixedAspectRatio{ false };
+		CameraType m_CameraProjectionType{ CameraType::Perspective };
+		glm::mat4 m_Projection{ 1.0f };
 
-		glm::vec3 m_Position = { 0.0f, 0.0f, 0.0f };
-		float m_Rotation = 0.0f;
+		PerspectiveCameraProperties m_PerspectiveProperties;
+		OrthographicCameraProperties m_OrthographicProperties;
+
 	};
+
 }

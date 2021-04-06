@@ -6,7 +6,7 @@
 
 namespace Salad {
 
-	class SALAD_API MouseMoveEvent : public Event {
+	class MouseMoveEvent : public Event {
 
 	public:
 		MouseMoveEvent(float mx, float my) :
@@ -29,7 +29,7 @@ namespace Salad {
 		float m_MouseX, m_MouseY;
 	};
 
-	class SALAD_API MouseScrolledEvent : public Event {
+	class MouseScrolledEvent : public Event {
 
 	public:
 		MouseScrolledEvent(float xoffset, float yoffset) :
@@ -53,7 +53,7 @@ namespace Salad {
 		float m_XOffset, m_YOffset;
 	};
 
-	class SALAD_API MouseButtonEvent : public Event {
+	class MouseButtonEvent : public Event {
 	public:
 		inline int getMouseButton() { return m_Button; }
 
@@ -66,7 +66,7 @@ namespace Salad {
 		int m_Button;
 	};
 
-	class SALAD_API MouseButtonPressedEvent : public MouseButtonEvent {
+	class MouseButtonPressedEvent : public MouseButtonEvent {
 	public:
 		MouseButtonPressedEvent(int button) :
 			MouseButtonEvent(button)
@@ -83,7 +83,7 @@ namespace Salad {
 		EVENT_CLASS_TYPE(MouseButtonPressed)
 	};
 
-	class SALAD_API MouseButtonReleasedEvent : public MouseButtonEvent {
+	class MouseButtonReleasedEvent : public MouseButtonEvent {
 	
 	public:
 		MouseButtonReleasedEvent(int button) : 

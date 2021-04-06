@@ -4,7 +4,6 @@
 #include "Renderer2D.h"
 
 #include "RenderCommand.h"
-#include "Platform/OpenGL/OpenGLShader.h"
 
 namespace Salad {
 
@@ -19,22 +18,39 @@ namespace Salad {
 		RenderCommand::setViewport(0, 0, width, height);
 	}
 
-	void Renderer::beginScene(Camera& camera) {
+	/*void Renderer::beginScene(Camera& camera) {
 		m_SceneData->viewMatrix = camera.getViewMatrix();
 		m_SceneData->projectionMatrix = camera.getProjectionMatrix();
+	}*/
+
+	void Renderer::beginScene(const RenderCamera& camera) {
+		m_SceneData->viewMatrix = camera.view;
+		m_SceneData->projectionMatrix = camera.projection;
 	}
 
 	void Renderer::endScene() {
 
 	}
 
-	void Renderer::submit(const Ref<Shader> shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transformMat) {
+	void Renderer::submit(const Ref<Shader> shader, const Ref<VertexArray>& vertexArray, const Transform& transform) {
 		shader->bind();
 		vertexArray->bind();
 		shader->setMat4("u_Projection", m_SceneData->projectionMatrix);
 		shader->setMat4("u_View", m_SceneData->viewMatrix);
-		shader->setMat4("u_Transform", transformMat);
+		shader->setMat4("u_Transform", transform.getMatrix());
 
 		RenderCommand::drawIndexed(vertexArray);
+	}
+
+	void Renderer::submitSkybox(const Ref<Shader> shader, const Ref<VertexArray>& vertexArray) {
+
+		glm::mat4 view = glm::mat4(glm::mat3(m_SceneData->viewMatrix));
+
+		shader->bind();
+		vertexArray->bind();
+		shader->setMat4("u_Projection", m_SceneData->projectionMatrix);
+		shader->setMat4("u_View", view);
+
+		RenderCommand::drawTriangles(vertexArray, 36);
 	}
 }

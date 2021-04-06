@@ -4,11 +4,10 @@
 #include "Salad/Events/ApplicationEvent.h"
 #include "Salad/Events/MouseEvent.h"
 #include "Salad/Renderer/Camera.h"
-#include "Salad/Entity/Entity.h"
 
 namespace Salad {
 
-	class OrthographicCameraController {
+	/*class OrthographicCameraController {
 
 	public:
 		OrthographicCameraController(float aspectRatio, bool rotation = false);
@@ -42,5 +41,5 @@ namespace Salad {
 
 	private:
 		WeakRef<Entity> m_Target;
-	};
+	};*/
 }

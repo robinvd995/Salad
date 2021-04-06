@@ -22,3 +22,4 @@ C:\Dev\Salad\FruitSaladTests\bin\Debug\SharpGL.xml
 C:\Dev\Salad\FruitSaladTests\bin\Debug\SharpGL.WPF.xml
 C:\Dev\Salad\FruitSaladTests\bin\Debug\ICSharpCode.AvalonEdit.dll
 C:\Dev\Salad\FruitSaladTests\bin\Debug\ICSharpCode.AvalonEdit.xml
+C:\Dev\Salad\FruitSaladTests\obj\Debug\FruitSaladTests.csproj.CoreCompileInputs.cache

@@ -1,6 +1,6 @@
 workspace "Salad"
     architecture "x64"
-    startproject "Sandbox"
+    startproject "Salad-Bowl"
 
     configurations {
         "Debug",
@@ -16,9 +16,17 @@ IncludeDir["Glad"] = "Salad/vendor/Glad/include"
 IncludeDir["ImGui"] = "Salad/vendor/imgui"
 IncludeDir["glm"] = "Salad/vendor/glm"
 IncludeDir["stb_image"] = "Salad/vendor/stb_image"
+
+IncludeDir["entt"] = "Salad/vendor/entt/include"
+IncludeDir["json"] = "Salad/vendor/nlohmann/include"
+
 IncludeDir["lua53"] = "Salad/vendor/lua53/include"
 IncludeDir["LuaBridge"] = "Salad/vendor/LuaBridge/Source"
 IncludeDir["freetype"] = "Salad/vendor/freetype/include"
+IncludeDir["ImGuizmo"] = "Salad/vendor/ImGuizmo"
+
+--Salad-Bowl Include
+IncludeDir["assimp"] = "Salad-Bowl/vendor/assimp/include"
 
 group "Dependencies"
     include "Salad/vendor/GLFW"
@@ -26,6 +34,7 @@ group "Dependencies"
     include "Salad/vendor/imgui"
     include "Salad/vendor/lua53"
     include "Salad/vendor/freetype"
+    include "Salad-Bowl/vendor/assimp"
 group ""
 
 project "Salad"
@@ -47,7 +56,9 @@ project "Salad"
         "%{prj.name}/src/**.hpp",
         "%{prj.name}/src/**.cpp",
         "%{prj.name}/vendor/stb_image/**.h",
-        "%{prj.name}/vendor/stb_image/**.cpp"
+        "%{prj.name}/vendor/stb_image/**.cpp",
+        "%{prj.name}/vendor/ImGuizmo/ImGuizmo.h",
+        "%{prj.name}/vendor/ImGuizmo/ImGuizmo.cpp"
     }
 
     defines{
@@ -62,6 +73,9 @@ project "Salad"
         "%{IncludeDir.ImGui}",
         "%{IncludeDir.glm}",
         "%{IncludeDir.stb_image}",
+        "%{IncludeDir.entt}",
+        "%{IncludeDir.json}",
+        "%{IncludeDir.ImGuizmo}",
         "%{IncludeDir.lua53}",
         "%{IncludeDir.LuaBridge}",
         "%{IncludeDir.freetype}"
@@ -75,6 +89,9 @@ project "Salad"
         "freetype",
         "opengl32.lib"
     }
+
+    filter "files:Salad/vendor/ImGuizmo/**.cpp"
+        flags {"NoPCH"}
 
     filter "system:windows"
         systemversion "latest"
@@ -122,6 +139,7 @@ project "Sandbox"
         "Salad/src",
         "Salad/vendor",
         "%{IncludeDir.glm}",
+        "%{IncludeDir.entt}",
         "%{IncludeDir.LuaBridge}"
     }
 
@@ -150,6 +168,64 @@ project "Sandbox"
         defines "SLD_DIST"
         runtime "Release"
         optimize "on"
+
+project "Salad-Bowl"
+        location "Salad-Bowl"
+        kind "ConsoleApp"
+        language "C++"
+        cppdialect "C++17"
+        staticruntime "on"
+    
+        targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+        objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+    
+        files {
+            "%{prj.name}/src/**.c",
+            "%{prj.name}/src/**.h",
+            "%{prj.name}/src/**.hpp",
+            "%{prj.name}/src/**.cpp"
+        }
+    
+        includedirs {
+            "%{prj.name}/src",
+
+            "Salad/vendor/spdlog/include",
+            "Salad/src",
+            "Salad/vendor",
+            "%{IncludeDir.glm}",
+            "%{IncludeDir.entt}",
+            "%{IncludeDir.ImGuizmo}",
+
+            IncludeDir["assimp"]
+        }
+    
+        links {
+            "Salad",
+            "assimp"
+        }
+    
+        filter "system:windows"
+            systemversion "latest"
+    
+            defines{
+                "SLD_PLATFORM_WINDOWS"
+            }
+    
+        filter "configurations:Debug"
+            defines "SLD_DEBUG"
+            runtime "Debug"
+            symbols "on"
+    
+        filter "configurations:Release"
+            defines "SLD_RELEASE"
+            runtime "Release"
+            optimize "on"
+    
+        filter "configurations:Dist"
+            defines "SLD_DIST"
+            runtime "Release"
+            optimize "on"
+
 
 project "AssetGenerator"
     location "AssetGenerator"

@@ -9,6 +9,8 @@
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 
+#include <ImGuizmo.h>
+
 namespace Salad {
 
 	ImGuiLayer::ImGuiLayer() :
@@ -23,6 +25,7 @@ namespace Salad {
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
+        ImGuizmo::BeginFrame();
     }
 
     void ImGuiLayer::end() {
@@ -80,6 +83,14 @@ namespace Salad {
     void ImGuiLayer::onImGuiRender() {
         //static bool show = false;
         //ImGui::ShowDemoWindow(&show);
+    }
+
+    void ImGuiLayer::onEvent(Event& e) {
+        if(Application::variables().Flag_ImGuiBlockEvents) {
+            ImGuiIO& io = ImGui::GetIO();
+            e.handled |= e.isInCategory(EventCategoryMouse) & io.WantCaptureMouse;
+            e.handled |= e.isInCategory(EventCategoryKeyboard) & io.WantCaptureKeyboard;
+        }
     }
 
 }

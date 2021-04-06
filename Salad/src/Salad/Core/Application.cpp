@@ -17,12 +17,12 @@ namespace Salad {
 
 	Application* Application::s_Instance = nullptr;
 
-	Application::Application()
+	Application::Application(const std::string& name)
 	{
 		SLD_CORE_ASSERT(!s_Instance, "Application already exists!");
 		s_Instance = this;
 
-		m_Window = Scope<Window>(Window::create());
+		m_Window = Scope<Window>(Window::create(WindowProps(name)));
 		m_Window->setEventCallback(BIND_EVENT_FN(onEvent));
 		m_Window->setVSync(true);
 
@@ -46,7 +46,7 @@ namespace Salad {
 
 		for (LStackIt it = m_LayerStack.end(); it != m_LayerStack.begin(); ) {
 			(*--it)->onEvent(e);
-			if (e.isHandled())
+			if (e.handled)
 				break;
 		}
 	}
@@ -60,6 +60,11 @@ namespace Salad {
 		m_LayerStack.pushOverlay(overlay);
 		overlay->onAttach();
 	}
+
+	void Application::close() {
+		m_Running = false;
+	}
+
 
 	void Application::run() {
 
@@ -96,7 +101,7 @@ namespace Salad {
 			return false;
 		}
 		m_Minimized = false;
-		Renderer::onWindowResized(e.getWidth(), e.getHeight());
+		//Renderer::onWindowResized(e.getWidth(), e.getHeight());
 
 		return false;
 	}

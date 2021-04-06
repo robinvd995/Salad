@@ -2,7 +2,7 @@
 
 #include "Salad/Core/Core.h"
 
-namespace SALAD_API Salad {
+namespace Salad {
 
 	class GraphicsContext {
 

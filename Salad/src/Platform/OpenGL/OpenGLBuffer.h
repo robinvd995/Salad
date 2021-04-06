@@ -38,7 +38,7 @@ namespace Salad {
 		uint32_t m_Count;
 	};
 
-	class OpenGLFramebuffer : public Framebuffer {
+	/*class OpenGLFramebuffer : public Framebuffer {
 
 	public:
 		OpenGLFramebuffer(uint32_t width, uint32_t height);
@@ -57,5 +57,5 @@ namespace Salad {
 
 		uint32_t m_FramebufferId, m_RenderBufferId;
 		Ref<Texture2D> m_ColorBuffer;
-	};
+	};*/
 }

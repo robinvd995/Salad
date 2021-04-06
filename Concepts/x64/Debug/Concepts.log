@@ -1,0 +1,10 @@
+﻿  Entity.cpp
+C:\Dev\Salad\Concepts\Entity\Entity.cpp(9,38): error C2027: use of undefined type 'EntityComponentTest'
+C:\Dev\Salad\Concepts\Entity\Entity.h(22): message : see declaration of 'EntityComponentTest'
+C:\Dev\Salad\Concepts\Entity\Entity.h(23): message : see reference to function template instantiation 'std::shared_ptr<EntityComponentTest> Ent::getComponent<EntityComponentTest>(void)' being compiled
+C:\Dev\Salad\Concepts\Entity\Entity.cpp(9,1): error C3861: 'getStaticType': identifier not found
+C:\Dev\Salad\Concepts\Entity\Entity.cpp(10,1): error C2440: 'return': cannot convert from 'std::shared_ptr<EComponent>' to 'std::shared_ptr<EntityComponentTest>'
+C:\Dev\Salad\Concepts\Entity\Entity.cpp(10,4): message : No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+  EntityComponentTest.cpp
+C:\Dev\Salad\Concepts\Entity\EntityComponentTest.cpp(17,73): error C2929: 'std::shared_ptr<EntityComponentTest> Ent::getComponent<EntityComponentTest>(void)': explicit instantiation; cannot explicitly force and suppress instantiation of template-class member
+  Generating Code...

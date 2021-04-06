@@ -22,3 +22,6 @@
 [submodule "Salad/vendor/cpython"]
 	path = Salad/vendor/cpython
 	url = https://github.com/robinvd995/cpython
+[submodule "Salad/vendor/ImGuizmo"]
+	path = Salad/vendor/ImGuizmo
+	url = https://github.com/robinvd995/ImGuizmo

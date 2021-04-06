@@ -13,6 +13,7 @@ namespace Salad {
 
 		virtual uint32_t getWidth() const = 0;
 		virtual uint32_t getHeight() const = 0;
+		virtual uint32_t getRendererId() const = 0;
 
 		virtual void setData(void* data, uint32_t size) = 0;
 
@@ -26,5 +27,11 @@ namespace Salad {
 	private:
 		static Ref<Texture2D> create(const std::string& filepath);
 		static Ref<Texture2D> create(uint32_t width, uint32_t height);
+	};
+
+	class TextureCubeMap : public Texture {
+
+	public:
+		static Ref<TextureCubeMap> create(const std::string& filepath, const std::string& extension);
 	};
 }

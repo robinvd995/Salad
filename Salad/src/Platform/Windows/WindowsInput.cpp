@@ -1,82 +1,109 @@
 #include "sldpch.h"
-#include "WindowsInput.h"
+#include "Salad/Core/Input.h"
+
+#include <math.h>
+
+#include <GLFW/glfw3.h>
 
 #include "Salad/Core/Application.h"
-#include <GLFW/glfw3.h>
 
 namespace Salad {
 
-	Input* Input::s_Instance = new WindowsInput();
+	static struct MouseData {
+		std::pair<float, float> MousePos        { 0.0f, 0.0f };
+		std::pair<float, float> LastMousePos    { 0.0f, 0.0f };
+		std::pair<float, float> MouseDelta      { 0.0f, 0.0f };
+		std::pair<float, float> MousePosToSet   { 0.0f, 0.0f };
+		bool NeedToSetMousePos                  { false };
+		bool CenterMouse                        { false };
 
-	void WindowsInput::pollInputsImpl() {
-		m_MousePos = getMousePositionImpl();
+	} s_WindowsInputData;
 
-		m_MouseDelta.first = m_MousePos.first - m_LastMousePos.first;
-		m_MouseDelta.second = m_MousePos.second - m_LastMousePos.second;
+	void Input::poll() {
+		s_WindowsInputData.MousePos = getMousePosition();
 
-		if (m_NeedToSetMousePos) {
+		s_WindowsInputData.MouseDelta.first = s_WindowsInputData.MousePos.first - s_WindowsInputData.LastMousePos.first;
+		s_WindowsInputData.MouseDelta.second = s_WindowsInputData.MousePos.second - s_WindowsInputData.LastMousePos.second;
+
+		if (s_WindowsInputData.NeedToSetMousePos) {
 			GLFWwindow* window = static_cast<GLFWwindow*>(Application::get().getWindow().getNativeWindow());
-			glfwSetCursorPos(window, m_MousePosToSet.first, m_MousePosToSet.second);
-			m_NeedToSetMousePos = false;
-			m_LastMousePos.first = m_MousePosToSet.first;
-			m_LastMousePos.second = m_MousePosToSet.second;
+			glfwSetCursorPos(window, s_WindowsInputData.MousePosToSet.first, s_WindowsInputData.MousePosToSet.second);
+			s_WindowsInputData.NeedToSetMousePos = false;
+			s_WindowsInputData.LastMousePos.first = s_WindowsInputData.MousePosToSet.first;
+			s_WindowsInputData.LastMousePos.second = s_WindowsInputData.MousePosToSet.second;
 		}
 		else {
-			m_LastMousePos.first = m_MousePos.first;
-			m_LastMousePos.second = m_MousePos.second;
+			s_WindowsInputData.LastMousePos.first = s_WindowsInputData.MousePos.first;
+			s_WindowsInputData.LastMousePos.second = s_WindowsInputData.MousePos.second;
 		}
+
+		if(s_WindowsInputData.CenterMouse)
+			setMousePosRel(0.5f, 0.5f);
 	}
 
-	bool WindowsInput::isKeyPressedImpl(int keycode) {
+	bool Input::isKeyPressed(int keycode) {
 		GLFWwindow* window = static_cast<GLFWwindow*>(Application::get().getWindow().getNativeWindow());
 		int state = glfwGetKey(window, keycode);
 		return state == GLFW_PRESS || state == GLFW_REPEAT;
 	}
 
-	bool WindowsInput::isMouseButtonPressedImpl(int button) {
+	bool Input::isMouseButtonPressed(int button) {
 		GLFWwindow* window = static_cast<GLFWwindow*>(Application::get().getWindow().getNativeWindow());
 		int state = glfwGetMouseButton(window, button);
 		return state == GLFW_PRESS;
 	}
 
-	float WindowsInput::getMouseXImpl() {
-		auto [x, y] = getMousePositionImpl();
+	float Input::getMouseX() {
+		auto [x, y] = getMousePosition();
 		return x;
 	}
 
-	float WindowsInput::getMouseYImpl() {
-		auto[x, y] = getMousePositionImpl();
+	float Input::getMouseY() {
+		auto[x, y] = getMousePosition();
 		return y;
 	}
 
-	float WindowsInput::getMouseDeltaXImpl() {
-		return m_MouseDelta.first;
+	float Input::getMouseDeltaX() {
+		return s_WindowsInputData.MouseDelta.first;
 	}
 
-	float WindowsInput::getMouseDeltaYImpl() {
-		return m_MouseDelta.second;
+	float Input::getMouseDeltaY() {
+		return s_WindowsInputData.MouseDelta.second;
 	}
 
-	void WindowsInput::setMousePosImpl(float mouseX, float mouseY) {
-		m_MousePosToSet.first = mouseX;
-		m_MousePosToSet.second = mouseY;
-		m_NeedToSetMousePos = true;
+	void Input::setMousePos(float mouseX, float mouseY) {
+		s_WindowsInputData.MousePosToSet.first = mouseX;
+		s_WindowsInputData.MousePosToSet.second = mouseY;
+		s_WindowsInputData.NeedToSetMousePos = true;
 	}
 
-	void WindowsInput::setMousePosRelImpl(float mouseX, float mouseY) {
+	void Input::setMousePosRel(float mouseX, float mouseY) {
 		GLFWwindow* window = static_cast<GLFWwindow*>(Application::get().getWindow().getNativeWindow());
 		int width = 0, height = 0;
 		glfwGetWindowSize(window, &width, &height);
-		m_MousePosToSet.first = (float) width * mouseX;
-		m_MousePosToSet.second = (float) height * mouseY;
-		m_NeedToSetMousePos = true;
+		s_WindowsInputData.MousePosToSet.first = std::floor((float) width * mouseX);
+		s_WindowsInputData.MousePosToSet.second = std::floor((float) height * mouseY);
+		s_WindowsInputData.NeedToSetMousePos = true;
 	}
 
-	std::pair<float, float> WindowsInput::getMousePositionImpl() {
+	std::pair<float, float> Input::getMousePosition() {
 		GLFWwindow* window = static_cast<GLFWwindow*>(Application::get().getWindow().getNativeWindow());
 		double xpos, ypos;
 		glfwGetCursorPos(window, &xpos, &ypos);
 		return { (float)xpos, (float)ypos };
 	}
 
+	void Input::lockMouseToCenter(bool shouldLock) {
+		s_WindowsInputData.CenterMouse = shouldLock;
+	}
+
+	void Input::showCursor(bool shouldShow) {
+		GLFWwindow* window = static_cast<GLFWwindow*>(Application::get().getWindow().getNativeWindow());
+		glfwSetInputMode(window, GLFW_CURSOR, shouldShow ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
+	}
+
+	/*void Input::setMousePos(float x, float y) {
+		GLFWwindow* window = static_cast<GLFWwindow*>(Application::get().getWindow().getNativeWindow());
+		glfwSetCursorPos(window, x, y);
+	}*/
 }

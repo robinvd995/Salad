@@ -22,9 +22,6 @@
     <Filter Include="src\Salad\Debug">
       <UniqueIdentifier>{97D82EF6-0364-9CBA-0C75-1FAF787FF8BA}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Salad\Entity">
-      <UniqueIdentifier>{8D9E0BBF-7997-2A11-A2C9-0F968E210A1D}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\Salad\Events">
       <UniqueIdentifier>{253E94BF-1137-B311-3A69-989626C1921D}</UniqueIdentifier>
     </Filter>
@@ -37,8 +34,20 @@
     <Filter Include="src\Salad\Renderer">
       <UniqueIdentifier>{276A97EC-134E-5842-7CAE-529568B142C4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Salad\Renderer\Gui">
+      <UniqueIdentifier>{FB2819E1-E722-4233-D08F-D843BC28A89F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Salad\Renderer\Primitives">
+      <UniqueIdentifier>{A2E19903-0EFA-802D-D7A6-10C7437E15C7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Salad\Scene">
+      <UniqueIdentifier>{3E3B3DF7-AAC6-AABB-B3D7-2DB01FE206BC}</UniqueIdentifier>
+    </Filter>
     <Filter Include="vendor">
       <UniqueIdentifier>{B3738122-9F15-ACF8-88D0-BF4C74113349}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\ImGuizmo">
+      <UniqueIdentifier>{73BF7F4C-DF4A-ED10-E85B-700554664911}</UniqueIdentifier>
     </Filter>
     <Filter Include="vendor\stb_image">
       <UniqueIdentifier>{0DA0BA59-F998-D9AB-22CB-BE300E23B9B7}</UniqueIdentifier>
@@ -51,7 +60,16 @@
     <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h">
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
+    <ClInclude Include="src\Platform\OpenGL\OpenGLFont.h">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\OpenGL\OpenGLFramebuffer.h">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLRenderAPI.h">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\OpenGL\OpenGLRenderFlags.h">
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLShader.h">
@@ -62,9 +80,6 @@
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLVertexArray.h">
       <Filter>src\Platform\OpenGL</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Platform\Windows\WindowsInput.h">
-      <Filter>src\Platform\Windows</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h">
       <Filter>src\Platform\Windows</Filter>
@@ -105,14 +120,14 @@
     <ClInclude Include="src\Salad\Core\Timestep.h">
       <Filter>src\Salad\Core</Filter>
     </ClInclude>
+    <ClInclude Include="src\Salad\Core\Transform.h">
+      <Filter>src\Salad\Core</Filter>
+    </ClInclude>
     <ClInclude Include="src\Salad\Core\Window.h">
       <Filter>src\Salad\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Salad\Debug\Profiler.h">
       <Filter>src\Salad\Debug</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Salad\Entity\Entity.h">
-      <Filter>src\Salad\Entity</Filter>
     </ClInclude>
     <ClInclude Include="src\Salad\Events\ApplicationEvent.h">
       <Filter>src\Salad\Events</Filter>
@@ -135,19 +150,46 @@
     <ClInclude Include="src\Salad\OrthographicCameraController.h">
       <Filter>src\Salad</Filter>
     </ClInclude>
+    <ClInclude Include="src\Salad\PerspectiveCameraController.h">
+      <Filter>src\Salad</Filter>
+    </ClInclude>
     <ClInclude Include="src\Salad\Renderer\Buffer.h">
       <Filter>src\Salad\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Salad\Renderer\Camera.h">
       <Filter>src\Salad\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="src\Salad\Renderer\Framebuffer.h">
+      <Filter>src\Salad\Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="src\Salad\Renderer\GraphicsContext.h">
       <Filter>src\Salad\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Salad\Renderer\Gui\Font.h">
+      <Filter>src\Salad\Renderer\Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Salad\Renderer\Gui\FontManager.h">
+      <Filter>src\Salad\Renderer\Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Salad\Renderer\Gui\Gui.h">
+      <Filter>src\Salad\Renderer\Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Salad\Renderer\Gui\GuiManager.h">
+      <Filter>src\Salad\Renderer\Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Salad\Renderer\Gui\GuiTessellator.h">
+      <Filter>src\Salad\Renderer\Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Salad\Renderer\Primitives\Spline.h">
+      <Filter>src\Salad\Renderer\Primitives</Filter>
     </ClInclude>
     <ClInclude Include="src\Salad\Renderer\RenderAPI.h">
       <Filter>src\Salad\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Salad\Renderer\RenderCommand.h">
+      <Filter>src\Salad\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Salad\Renderer\RenderFlags.h">
       <Filter>src\Salad\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Salad\Renderer\Renderer.h">
@@ -177,29 +219,46 @@
     <ClInclude Include="src\Salad\Renderer\VertexArray.h">
       <Filter>src\Salad\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="src\Salad\Scene\Components.h">
+      <Filter>src\Salad\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Salad\Scene\Entity.h">
+      <Filter>src\Salad\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Salad\Scene\EntityTransform.h">
+      <Filter>src\Salad\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Salad\Scene\Scene.h">
+      <Filter>src\Salad\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Salad\Scene\SceneSerializer.h">
+      <Filter>src\Salad\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Salad\Scene\ScriptableEntity.h">
+      <Filter>src\Salad\Scene</Filter>
+    </ClInclude>
     <ClInclude Include="src\sldpch.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\ImGuizmo\ImGuizmo.h">
+      <Filter>vendor\ImGuizmo</Filter>
     </ClInclude>
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\Salad\Renderer\Gui\Gui.h" />
-    <ClInclude Include="src\Salad\Renderer\RenderFlags.h" />
-    <ClInclude Include="src\Platform\OpenGL\OpenGLRenderFlags.h" />
-    <ClInclude Include="src\Salad\Renderer\Gui\GuiTessellator.h" />
-    <ClInclude Include="src\Platform\OpenGL\OpenGLFont.h" />
-    <ClInclude Include="src\Salad\Renderer\Gui\Font.h">
-      <Filter>src\Salad\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Salad\Renderer\Gui\FontManager.h" />
-    <ClInclude Include="src\Salad\PerspectiveCameraController.h" />
-    <ClInclude Include="src\Salad\Renderer\Primitives\Spline.h" />
+    <ClInclude Include="src\Salad\Math\Math.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\OpenGL\OpenGLFont.cpp">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\OpenGL\OpenGLFramebuffer.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLRenderAPI.cpp">
@@ -235,8 +294,8 @@
     <ClCompile Include="src\Salad\Core\Log.cpp">
       <Filter>src\Salad\Core</Filter>
     </ClCompile>
-    <ClCompile Include="src\Salad\Entity\Entity.cpp">
-      <Filter>src\Salad\Entity</Filter>
+    <ClCompile Include="src\Salad\Core\Transform.cpp">
+      <Filter>src\Salad\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\Salad\ImGui\ImGuiBuild.cpp">
       <Filter>src\Salad\ImGui</Filter>
@@ -250,11 +309,35 @@
     <ClCompile Include="src\Salad\OrthographicCameraController.cpp">
       <Filter>src\Salad</Filter>
     </ClCompile>
+    <ClCompile Include="src\Salad\PerspectiveCameraController.cpp">
+      <Filter>src\Salad</Filter>
+    </ClCompile>
     <ClCompile Include="src\Salad\Renderer\Buffer.cpp">
       <Filter>src\Salad\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Salad\Renderer\Camera.cpp">
       <Filter>src\Salad\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Salad\Renderer\Framebuffer.cpp">
+      <Filter>src\Salad\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Salad\Renderer\Gui\Font.cpp">
+      <Filter>src\Salad\Renderer\Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Salad\Renderer\Gui\FontManager.cpp">
+      <Filter>src\Salad\Renderer\Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Salad\Renderer\Gui\Gui.cpp">
+      <Filter>src\Salad\Renderer\Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Salad\Renderer\Gui\GuiManager.cpp">
+      <Filter>src\Salad\Renderer\Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Salad\Renderer\Gui\GuiTessellator.cpp">
+      <Filter>src\Salad\Renderer\Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Salad\Renderer\Primitives\Spline.cpp">
+      <Filter>src\Salad\Renderer\Primitives</Filter>
     </ClCompile>
     <ClCompile Include="src\Salad\Renderer\RenderAPI.cpp">
       <Filter>src\Salad\Renderer</Filter>
@@ -289,20 +372,27 @@
     <ClCompile Include="src\Salad\Renderer\VertexArray.cpp">
       <Filter>src\Salad\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="src\Salad\Scene\Entity.cpp">
+      <Filter>src\Salad\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Salad\Scene\EntityTransform.cpp">
+      <Filter>src\Salad\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Salad\Scene\Scene.cpp">
+      <Filter>src\Salad\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Salad\Scene\SceneSerializer.cpp">
+      <Filter>src\Salad\Scene</Filter>
+    </ClCompile>
     <ClCompile Include="src\sldpch.cpp">
       <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\ImGuizmo\ImGuizmo.cpp">
+      <Filter>vendor\ImGuizmo</Filter>
     </ClCompile>
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\Salad\Renderer\Gui\Gui.cpp" />
-    <ClCompile Include="src\Salad\Renderer\Gui\GuiTessellator.cpp" />
-    <ClCompile Include="src\Platform\OpenGL\OpenGLFont.cpp" />
-    <ClCompile Include="src\Salad\Renderer\Gui\Font.cpp">
-      <Filter>src\Salad\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Salad\Renderer\Gui\FontManager.cpp" />
-    <ClCompile Include="src\Salad\PerspectiveCameraController.cpp" />
-    <ClCompile Include="src\Salad\Renderer\Primitives\Spline.cpp" />
+    <ClCompile Include="src\Salad\Math\Math.cpp" />
   </ItemGroup>
 </Project>

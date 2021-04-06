@@ -81,7 +81,7 @@ void Sandbox2D::onUpdate(Salad::Timestep ts) {
 		Salad::TextureManager::get().getTexture2D("assets/textures/tileset.png")->bind();
 		Salad::Renderer2D::drawTileMap({ 0.0f, 0.0f }, glm::vec2(0.5f), m_TileMap);
 		
-		Salad::Renderer2D::drawSprite(transform->cpyPosition(), transform->cpyScale(), ecsr->getSpriteRenderInformation());
+		Salad::Renderer2D::drawSprite(transform->getTransform()->cpyPosition(), transform->getTransform()->cpyScale(), ecsr->getSpriteRenderInformation());
 
 		Salad::Renderer2D::endScene();
 	}

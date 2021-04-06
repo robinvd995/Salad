@@ -8,7 +8,7 @@ struct GLFWwindow;
 
 namespace Salad {
 
-	class SALAD_API OpenGLContext : public GraphicsContext {
+	class OpenGLContext : public GraphicsContext {
 
 	public:
 		OpenGLContext(GLFWwindow* window);

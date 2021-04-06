@@ -10,10 +10,15 @@
 
 namespace Salad {
 
-	class SALAD_API Application
+	// TODO: Maybe change this?
+	struct ApplicationVariables {
+		bool Flag_ImGuiBlockEvents = false;
+	};
+
+	class Application
 	{
 	public:
-		Application();
+		Application(const std::string& appname = "Salad Application");
 		virtual ~Application();
 
 		void run();
@@ -22,6 +27,9 @@ namespace Salad {
 		void pushLayer(Layer* layer);
 		void pushOverlay(Layer* overlay);
 
+		void close();
+
+		inline static ApplicationVariables& variables() { return s_Instance->m_AppVariables; }
 		inline static Application& get() { return *s_Instance; }
 		inline Window& getWindow() { return *m_Window; }
 
@@ -36,6 +44,8 @@ namespace Salad {
 		LayerStack m_LayerStack;
 		float m_LastFrameTime = 0.0f;
 		//Ref<Camera> m_Camera;
+
+		ApplicationVariables m_AppVariables;
 
 	private:
 		static Application* s_Instance;
