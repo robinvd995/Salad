@@ -6,7 +6,8 @@
 #include "Entity.h"
 #include "Components.h"
 
-#include "glm/glm.hpp"
+#include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
 
 #include <iostream>
 #include <iomanip>
@@ -17,6 +18,7 @@ using json = nlohmann::json;
 // custom type serialization/deserialization
 namespace glm {
 
+	// Vec3 Serialization
 	void to_json(json& j, const glm::vec3& v) {
 		j = { { "x", v.x }, { "y", v.y }, { "z", v.z } };
 	}
@@ -25,6 +27,18 @@ namespace glm {
 		p.x = j.at("x").get<float>();
 		p.y = j.at("y").get<float>();
 		p.z = j.at("z").get<float>();
+	}
+
+	//Quaternion serialization
+	void to_json(json& j, const glm::quat& q) {
+		j = { { "x", q.x }, { "y", q.y }, { "z", q.z }, {"w", q.w} };
+	}
+
+	void from_json(const json& j, glm::quat& q) {
+		q.x = j.at("x").get<float>();
+		q.y = j.at("y").get<float>();
+		q.z = j.at("z").get<float>();
+		q.w = j.at("w").get<float>();
 	}
 }
 
@@ -60,7 +74,7 @@ namespace Salad {
 
 			serializeComponent<TransformComponent>("TransformComponent", entity, jEntity, [](json& jComponent, TransformComponent& component) {
 				jComponent["position"] = component.Transform.getPosition();
-				jComponent["rotation"] = component.Transform.getRotation();
+				jComponent["orientation"] = component.Transform.getOrientation();
 				jComponent["scale"] = component.Transform.getScale();
 			});
 

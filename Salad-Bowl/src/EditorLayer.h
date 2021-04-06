@@ -88,7 +88,7 @@ namespace Salad {
 		Ref<Texture2D> m_TextureButtonStop;
 
 		int m_GizmoType = -1;
-		glm::mat4 m_GizmoTransform{ 1.0f };
+		//glm::mat4 m_GizmoTransform{ 1.0f };
 	};
 
 }

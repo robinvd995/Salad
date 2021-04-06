@@ -28,12 +28,13 @@
                 "Tag": "Camera"
             },
             "TransformComponent": {
-                "position": {
+                "orientation": {
+                    "w": 0.0,
                     "x": 0.0,
                     "y": 0.0,
                     "z": 0.0
                 },
-                "rotation": {
+                "position": {
                     "x": 0.0,
                     "y": 0.0,
                     "z": 0.0
@@ -61,14 +62,15 @@
                 "Tag": "Platform"
             },
             "TransformComponent": {
+                "orientation": {
+                    "w": 0.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
                 "position": {
                     "x": 0.0,
                     "y": 0.004999999888241291,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "x": 0.0,
-                    "y": 0.0,
                     "z": 0.0
                 },
                 "scale": {
@@ -94,12 +96,13 @@
                 "Tag": "Leaves"
             },
             "TransformComponent": {
-                "position": {
+                "orientation": {
+                    "w": 0.0,
                     "x": 0.0,
                     "y": 0.0,
                     "z": 0.0
                 },
-                "rotation": {
+                "position": {
                     "x": 0.0,
                     "y": 0.0,
                     "z": 0.0
@@ -129,15 +132,16 @@
                 "Tag": "Tree"
             },
             "TransformComponent": {
+                "orientation": {
+                    "w": 0.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
                 "position": {
                     "x": 3.0,
                     "y": 0.0,
                     "z": -3.0
-                },
-                "rotation": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
                 },
                 "scale": {
                     "x": 0.4000000059604645,
@@ -165,14 +169,15 @@
                 "Tag": "Crate"
             },
             "TransformComponent": {
+                "orientation": {
+                    "w": 0.9238795042037964,
+                    "x": 0.0,
+                    "y": 0.3826834559440613,
+                    "z": 0.0
+                },
                 "position": {
                     "x": 0.0,
                     "y": 1.0,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "x": 0.0,
-                    "y": 0.0,
                     "z": 0.0
                 },
                 "scale": {
@@ -183,6 +188,5 @@
             },
             "id": 215487643135
         }
-    ],
-    "test": "testValue"
+    ]
 }
