@@ -15,6 +15,8 @@
 #include "EditorCamera.h"
 #include "EditorSelectionContext.h"
 
+#include "Salad/Renderer/PostProcessing.h"
+
 namespace Salad {
 
 	enum class EditorState {
@@ -109,6 +111,12 @@ namespace Salad {
 		uint32_t m_CurFrames = 0;
 		uint32_t m_CountedFrames = 0;
 		double m_CurFrameTimeClock = 0.0;
+
+		// Post processing
+		PostProcessingEffect m_PostProcessingOutline;
+		PostProcessingComposer m_PostProcessingComposer;
+		bool m_PostProcessingFramebufferResize = false;
+		uint32_t m_PostProcessingFramebufferWidth = 1280, m_PostProcessingFramebufferHeight = 720;
 	};
 
 }

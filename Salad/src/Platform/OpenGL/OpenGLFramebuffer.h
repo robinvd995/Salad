@@ -22,6 +22,8 @@ namespace Salad {
 		virtual void clearColorAttachment(uint32_t colorAttachmentId, const void* data) override;
 		virtual void clearColorBuffer(uint32_t bufferIndex, const void* data) override;
 
+		virtual void bindColorBufferAsTexture(uint32_t buffer, uint32_t textureSlot = 0) override;
+
 		virtual const FramebufferSpecification& getSpecification() const override { return m_Spec; }
 
 		virtual uint32_t getColorAttachment(uint32_t index = 0) const override { SLD_CORE_ASSERT((index < m_ColorAttachments.size()), ""); return m_ColorAttachments[index]; }

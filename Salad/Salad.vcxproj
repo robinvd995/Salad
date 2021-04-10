@@ -184,6 +184,7 @@
     <ClInclude Include="src\Salad\Renderer\Gui\Gui.h" />
     <ClInclude Include="src\Salad\Renderer\Gui\GuiManager.h" />
     <ClInclude Include="src\Salad\Renderer\Gui\GuiTessellator.h" />
+    <ClInclude Include="src\Salad\Renderer\PostProcessing.h" />
     <ClInclude Include="src\Salad\Renderer\Primitives\Spline.h" />
     <ClInclude Include="src\Salad\Renderer\RenderAPI.h" />
     <ClInclude Include="src\Salad\Renderer\RenderCommand.h" />
@@ -239,6 +240,7 @@
     <ClCompile Include="src\Salad\Renderer\Gui\Gui.cpp" />
     <ClCompile Include="src\Salad\Renderer\Gui\GuiManager.cpp" />
     <ClCompile Include="src\Salad\Renderer\Gui\GuiTessellator.cpp" />
+    <ClCompile Include="src\Salad\Renderer\PostProcessing.cpp" />
     <ClCompile Include="src\Salad\Renderer\Primitives\Spline.cpp" />
     <ClCompile Include="src\Salad\Renderer\RenderAPI.cpp" />
     <ClCompile Include="src\Salad\Renderer\RenderCommand.cpp" />

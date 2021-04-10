@@ -205,4 +205,11 @@ namespace Salad {
 	void OpenGLFramebuffer::clearColorBuffer(uint32_t bufferIndex, const void* data) {
 		glClearBufferfv(GL_COLOR, bufferIndex, (float*)data);
 	}
+
+	void OpenGLFramebuffer::bindColorBufferAsTexture(uint32_t buffer, uint32_t textureSlot) {
+		uint32_t textureId = getColorAttachment(buffer);
+		uint32_t textureUnit = GL_TEXTURE0 + textureSlot;
+		glActiveTexture(textureUnit);
+		glBindTexture(GL_TEXTURE_2D, textureId);
+	}
 }

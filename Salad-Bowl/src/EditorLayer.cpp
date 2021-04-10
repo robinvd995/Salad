@@ -258,7 +258,33 @@ namespace Salad {
 		// PostProcessingEffect bloom = ppPipeline->addEffect<PostProcessingBloomEffect>(gaussianblur);
 		// PostProcessingEffect outline = ppPipeline->addEffect<PostProcessingOutlineEffect>(outline);
 		// 
+		// pipeline.connect();
+		// 
 		// ----- PSEUDO END -----
+
+		//PostProcessing pipeline;
+		//PostProcessingEffect gaussianblur = pipeline.addEffect<PostProcessingBloom>();
+		{
+			auto ppShader = Shader::create("assets/shaders/postprocessing/Outline.glsl");
+			FramebufferSpecification ppFbSpec;
+			ppFbSpec.attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::DEPTH24STENCIL8 };
+			ppFbSpec.Width = 1280;
+			ppFbSpec.Height = 720;
+			auto ppFramebuffer = Framebuffer::create(ppFbSpec);
+
+			m_PostProcessingOutline = PostProcessingEffect(ppShader, ppFramebuffer);
+		}
+
+		{
+			auto ppShader = Shader::create("assets/shaders/postprocessing/Composer.glsl");
+			FramebufferSpecification ppFbSpec;
+			ppFbSpec.attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::DEPTH24STENCIL8 };
+			ppFbSpec.Width = 1280;
+			ppFbSpec.Height = 720;
+			auto ppFramebuffer = Framebuffer::create(ppFbSpec);
+
+			m_PostProcessingComposer = PostProcessingComposer(ppShader, ppFramebuffer);
+		}
 	}
 
 	void EditorLayer::onAttach() {
@@ -391,6 +417,15 @@ namespace Salad {
 
 		// unbind frame buffer
 		m_Framebuffer->unbind();
+
+		if(m_PostProcessingFramebufferResize){
+			m_PostProcessingOutline.getFramebuffer()->resize(m_PostProcessingFramebufferWidth, m_PostProcessingFramebufferHeight);
+			m_PostProcessingComposer.getFramebuffer()->resize(m_PostProcessingFramebufferWidth, m_PostProcessingFramebufferHeight);
+			m_PostProcessingFramebufferResize = false;
+		}
+
+		m_PostProcessingOutline.draw(m_Framebuffer);
+		m_PostProcessingComposer.draw(m_Framebuffer, m_PostProcessingOutline.getFramebuffer());
 	}
 
 	void EditorLayer::onEvent(Event& e) {
@@ -535,8 +570,14 @@ namespace Salad {
 		ImGui::SameLine();
 		ImGui::Text(std::to_string(m_CountedFrames).c_str());
 
-		
 		ImGui::End(); // Settings end
+
+		/*ImGui::Begin("Postprocessing test");
+		ImGui::Text("Postprocessing: ");
+		//uint32_t ppRenderId = m_PostProcessingOutline.getFramebuffer()->getColorAttachment(0);
+		uint32_t ppRenderId = m_PostProcessingComposer.getFramebuffer()->getColorAttachment(0);
+		ImGui::Image((void*)ppRenderId, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0,1 }, ImVec2{ 1, 0 });
+		ImGui::End();*/
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
 		ImGui::Begin("Viewport");
@@ -570,6 +611,9 @@ namespace Salad {
 			uint32_t viewportSizeY = (uint32_t)viewportPanelSize.y;
 
 			m_Framebuffer->resize(viewportSizeX, viewportSizeY);
+			m_PostProcessingFramebufferResize = true;
+			m_PostProcessingFramebufferWidth = viewportSizeX;
+			m_PostProcessingFramebufferHeight = viewportSizeY;
 
 			// TODO: Let camera handle viewport resizing based on projection type
 			PerspectiveCameraProperties camProps;
@@ -582,7 +626,7 @@ namespace Salad {
 			m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 		}
 
-		uint32_t viewportFramebufferRenderId = m_Framebuffer->getColorAttachment(RENDER_COLOR_ATTACHMENT);
+		uint32_t viewportFramebufferRenderId = m_PostProcessingComposer.getFramebuffer()->getColorAttachment(0);
 		ImGui::Image((void*)viewportFramebufferRenderId, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0,1 }, ImVec2{ 1, 0 });
 
 		//m_GizmoType = ImGuizmo::OPERATION::ROTATE;

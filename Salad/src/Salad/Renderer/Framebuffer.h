@@ -61,6 +61,8 @@ namespace Salad {
 		virtual void clearColorAttachment(uint32_t colorAttachmentId, const void* data) = 0;
 		virtual void clearColorBuffer(uint32_t bufferIndex, const void* data) = 0;
 
+		virtual void bindColorBufferAsTexture(uint32_t buffer, uint32_t textureSlot = 0) = 0;
+
 		virtual const FramebufferSpecification& getSpecification() const = 0;
 
 		virtual uint32_t getColorAttachment(uint32_t index = 0) const = 0;
