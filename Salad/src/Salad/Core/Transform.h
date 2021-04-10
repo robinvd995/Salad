@@ -28,7 +28,7 @@ namespace Salad {
 		void setValues(glm::vec3& position, glm::quat& rotation, glm::vec3& scale);
 
 		glm::vec3& getPosition() { return m_Position; }
-		glm::vec3& getEulerRotation() { return glm::vec3(0.0f); }
+		glm::vec3& getEulerRotation() { return glm::eulerAngles(m_Orientation); }
 		glm::quat& getOrientation() { return m_Orientation; }
 		glm::vec3& getScale() { return m_Scale; }
 

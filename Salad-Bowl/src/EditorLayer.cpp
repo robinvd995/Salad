@@ -16,6 +16,8 @@
 
 #include "Salad/Math/Math.h"
 
+#define RENDER_COLOR_ATTACHMENT 0
+
 namespace Salad {
 
 	EditorLayer::EditorLayer()
@@ -45,6 +47,7 @@ namespace Salad {
 		};
 
 		m_Scene = createRef<Scene>();
+		m_EditorSelectionContext = createRef<EditorSelectionContext>();
 
 		ColladaLoader loader;
 		auto cubeVao = VertexArray::create();
@@ -121,7 +124,7 @@ namespace Salad {
 		auto diffuseShader = Shader::create("assets/shaders/Diffuse.glsl");
 
 		auto cubeTexture = Salad::TextureManager::get().loadTexture2D("assets/textures/crate_diffuse.png");
-		auto grassTexture = Salad::TextureManager::get().loadTexture2D("assets/textures/grass_cartoon_large.png");
+		auto grassTexture = Salad::TextureManager::get().loadTexture2D("assets/textures/grass_painted_large.png");
 		auto leavesTexture = Salad::TextureManager::get().loadTexture2D("assets/textures/leaves_cartoon.png");
 		auto treeBarkTexture = Salad::TextureManager::get().loadTexture2D("assets/textures/tree_bark_cartoon.png");
 
@@ -171,16 +174,6 @@ namespace Salad {
 		m_LeavesEntity.addComponent<MeshComponent>(treeLeavesVao, diffuseShader, leavesTexture);
 
 		m_LeavesEntity.setParent(m_TreeEntity);
-		
-		/*Entity lc = m_Scene->createEntity("Leaves Child");
-		lc.setParent(m_LeavesEntity);*/
-
-		/*Entity parent0 = m_Scene->createEntity("Parent0");
-		Entity child0 = m_Scene->createEntity("Child0");
-		Entity child1 = m_Scene->createEntity("Child1");
-
-		child0.setParent(parent0);
-		child1.setParent(child0);*/
 
 		m_PlatformEntity = m_Scene->createEntity("Platform");
 		m_PlatformEntity.addComponent<MeshComponent>(cubeVao, diffuseShader, grassTexture);
@@ -247,11 +240,25 @@ namespace Salad {
 		m_SkyBoxTexture = TextureCubeMap::create("assets/textures/skybox/default", ".png");
 
 		FramebufferSpecification fbspec;
+		fbspec.attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::DEPTH24STENCIL8 };
 		fbspec.Width = 1280;
 		fbspec.Height = 720;
+
 		m_Framebuffer = Framebuffer::create(fbspec);
 
-		m_SceneHierarchyPanel.setContext(m_Scene);
+		m_SceneHierarchyPanel.setContext(m_Scene, m_EditorSelectionContext);
+
+		// Post processing setup
+
+		// ----- PSEUDO START -----
+		// 
+		// PostProcessing pipeline = new PostProcessing(m_Framebuffer);
+		// 
+		// PostProcessingEffect gaussianblur = ppPipeline->addEffect<PostProcessingGaussianBlur>(entrypoint);
+		// PostProcessingEffect bloom = ppPipeline->addEffect<PostProcessingBloomEffect>(gaussianblur);
+		// PostProcessingEffect outline = ppPipeline->addEffect<PostProcessingOutlineEffect>(outline);
+		// 
+		// ----- PSEUDO END -----
 	}
 
 	void EditorLayer::onAttach() {
@@ -324,13 +331,23 @@ namespace Salad {
 
 	void EditorLayer::onUpdate(Timestep ts) {
 
+		auto curTime = std::chrono::high_resolution_clock::now();
+		std::chrono::duration<double, std::milli> ms_double = curTime - m_PrevFrameStartTime;
+
+		m_CurFrames++;
+		if(ms_double.count() >= 1000.0) {
+			m_CountedFrames = m_CurFrames;
+			m_CurFrames = 0;
+			m_PrevFrameStartTime = curTime;
+		}
+
 		// bind frame buffer
 		m_Framebuffer->bind();
 
 		// Render
 		Salad::RenderCommand::clear();
 
-		// Very simple state chanGing code
+		// Very simple state changing code
 		// only used to test the editor camera vs runtime camera
 		// TODO: Make an actual state
 		/*if(Input::isKeyPressed(SLD_KEY_R)) {
@@ -346,27 +363,41 @@ namespace Salad {
 		Salad::Renderer::submitSkybox(m_SkyboxShader, m_SkyboxVAO);
 		Salad::RenderCommand::depthMask(true);
 
+		int clearData = -1;
+		m_Framebuffer->clearColorAttachment(1, &clearData);
+		float clearColor[4] = { 0, 0, 0, 1 };
+		m_Framebuffer->clearColorBuffer(2, &clearColor[0]);
+
 		switch(m_EditorState){
 			case EditorState::Editor: 
 				if (m_IsViewportFocused) m_EditorCamera.updateCamera(ts);
-				m_Scene->onUpdateEditor(ts, m_EditorCamera, m_EditorCamera.getViewMatrix());
+				m_Scene->onUpdateEditor(ts, m_EditorCamera, m_EditorCamera.getViewMatrix(), m_EditorSelectionContext->getSelectionContext());
 				break;
 			case EditorState::Runtime: m_Scene->onUpdate(ts);
 		}
 
+		if(m_ViewportMouseX >= 0.0f && m_ViewportMouseY >= 0.0f && m_ViewportMouseX < m_ViewportWidth && m_ViewportMouseY < m_ViewportHeight) {
+			int pixeldata = m_Framebuffer->readPixel(1, m_ViewportMouseX, m_ViewportMouseY);
+			if(pixeldata != clearData) {
+				m_HoveredEntity = { (uint32_t)pixeldata, m_Scene.get() };
+			}
+			else {
+				m_HoveredEntity = {};
+			}
+		}
+		else{
+			m_HoveredEntity = {};
+		}
+
 		// unbind frame buffer
 		m_Framebuffer->unbind();
-
-		//cube rendering
-		//Salad::TextureManager::get().getTexture2D("assets/textures/crate_diffuse.png")->bind();
-		//Salad::Renderer::submit(m_Shader, m_Cube, transform);
-		//Salad::Renderer::endScene();
 	}
 
 	void EditorLayer::onEvent(Event& e) {
 		EventDispatcher dispatcher(e);
 		dispatcher.dispatch<MouseScrolledEvent>(SLD_BIND_EVENT_FN(EditorLayer::onMouseScrolledEvent));
 		dispatcher.dispatch<KeyPressedEvent>(SLD_BIND_EVENT_FN(EditorLayer::onKeyPressedEvent));
+		dispatcher.dispatch<MouseButtonPressedEvent>(SLD_BIND_EVENT_FN(EditorLayer::onMousePressedEvent));
 		m_EditorCamera.onEvent(e);
 	}
 
@@ -387,7 +418,21 @@ namespace Salad {
 			case SLD_KEY_W: m_GizmoType = ImGuizmo::OPERATION::TRANSLATE; break;
 			case SLD_KEY_E: m_GizmoType = ImGuizmo::OPERATION::ROTATE; break;
 			case SLD_KEY_R: m_GizmoType = ImGuizmo::OPERATION::SCALE; break;
+			case SLD_KEY_ESCAPE: m_EditorSelectionContext->setSelectionContext({}); break;
 		}
+	}
+
+	bool EditorLayer::canMousePick() {
+		return m_HoveredEntity.isValid() && !m_ImGuizmoIsHovering;
+	}
+
+	bool EditorLayer::onMousePressedEvent(MouseButtonPressedEvent& e) {
+		if (e.getMouseButton() == 0 && canMousePick()) {
+			m_EditorSelectionContext->setSelectionContext(m_HoveredEntity);
+			return true;
+		}
+
+		return false;
 	}
 
 	void EditorLayer::onImGuiRender() { 
@@ -428,11 +473,11 @@ namespace Salad {
 		if (ImGui::BeginMenuBar()) {
 			if (ImGui::BeginMenu("File")) {
 
-				if (ImGui::MenuItem("New Scene")) { }
-				if (ImGui::MenuItem("Save Scene")) { serialize(); }
-				if (ImGui::MenuItem("Open Scene")) { deserialize(); }
+				if (ImGui::MenuItem("New Scene", "Ctrl+N")) { }
+				if (ImGui::MenuItem("Save Scene", "Ctrl+S")) { serialize(); }
+				if (ImGui::MenuItem("Open Scene", "Ctrl+O")) { deserialize(); }
 				ImGui::Separator();
-				if (ImGui::MenuItem("Exit")) { Application::get().close(); }
+				if (ImGui::MenuItem("Exit", "Alt+F4")) { Application::get().close(); }
 
 				ImGui::EndMenu();
 			}
@@ -457,7 +502,7 @@ namespace Salad {
 		}
 
 		if(m_ShowSceneHierarchyPanel) m_SceneHierarchyPanel.onImGuiRender();
-		if(m_ShowScenePropertiesPanel) m_ScenePropertiesPanel.onImGuiRender(m_SceneHierarchyPanel.getSelectionContext());
+		if(m_ShowScenePropertiesPanel) m_ScenePropertiesPanel.onImGuiRender(m_EditorSelectionContext->getSelectionContext());
 		if(m_ShowMaterialExplorerPanel) m_MaterialExplorerPanel.onImGuiRender(m_MaterialTexture->getRendererId());
 		if (m_ShowFileExplorerPanel) m_FileExplorerPanel.onImGuiRender();
 
@@ -470,15 +515,48 @@ namespace Salad {
 		ImGui::ImageButton((void*)m_TextureButtonStop->getRendererId(), ImVec2{ 32.0f, 32.0f }, ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f), 8);
 		ImGui::End();
 
-		ImGui::Begin("Settings");
+		ImGui::Begin("Info");
 
-		ImGui::Text("Text1");
-		ImGui::Text("Text2");
+		ImGui::Text("Hovered Entity: ");
+		ImGui::SameLine();
+		if(m_HoveredEntity){
+			TagComponent tag = m_HoveredEntity.getComponent<TagComponent>();
+			ImGui::Text(tag.Tag.c_str());
+		}
+		else {
+			ImGui::Text("None");
+		}
+
+		ImGui::Text("Gizmo Type: ");
+		ImGui::SameLine();
+		ImGui::Text(std::to_string(m_GizmoType).c_str());
+
+		ImGui::Text("FPS: ");
+		ImGui::SameLine();
+		ImGui::Text(std::to_string(m_CountedFrames).c_str());
+
 		
 		ImGui::End(); // Settings end
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
 		ImGui::Begin("Viewport");
+
+		auto mousePos = ImGui::GetMousePos();
+		auto windowPos = ImGui::GetWindowPos();
+		auto windowSize = ImGui::GetWindowSize();
+		auto contentRegion = ImGui::GetContentRegionAvail();
+
+		float horizontalWaste = windowSize.x - contentRegion.x;
+		float verticalWaste = windowSize.y - contentRegion.y;
+
+		int normalizeMousePosX = mousePos.x - windowPos.x - horizontalWaste;
+		int normalizeMousePosY = mousePos.y - windowPos.y - verticalWaste;
+
+		m_ViewportMouseX = normalizeMousePosX;
+		m_ViewportMouseY = contentRegion.y - normalizeMousePosY - 1;
+
+		m_ViewportWidth = contentRegion.x;
+		m_ViewportHeight = contentRegion.y;
 
 		m_IsViewportFocused = ImGui::IsWindowFocused();
 		m_IsViewportHovered = ImGui::IsWindowHovered();
@@ -504,13 +582,13 @@ namespace Salad {
 			m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 		}
 
-		uint32_t viewportFramebufferRenderId = m_Framebuffer->getColorAttachment();
+		uint32_t viewportFramebufferRenderId = m_Framebuffer->getColorAttachment(RENDER_COLOR_ATTACHMENT);
 		ImGui::Image((void*)viewportFramebufferRenderId, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0,1 }, ImVec2{ 1, 0 });
 
 		//m_GizmoType = ImGuizmo::OPERATION::ROTATE;
 
 		// Gizmo
-		Entity selectedEntity = m_SceneHierarchyPanel.getSelectionContext(); // TODO: central selected entity
+		Entity selectedEntity = m_EditorSelectionContext->getSelectionContext(); // TODO: central selected entity
 		if(selectedEntity && m_GizmoType != -1) {
 			ImGuizmo::SetOrthographic(false);
 			ImGuizmo::SetDrawlist();
@@ -534,21 +612,10 @@ namespace Salad {
 
 				Math::decomposeTransform(ettm, translation, orientation, scale);
 				et.set(translation, orientation, scale);
-
-				//ImGuizmo::DecomposeMatrixToComponents(glm::value_ptr(m_GizmoTransform), &translation[0], &rotation[0], &scale[0]);
-
-				//glm::vec3 deltaRotation = rotation - et.getRotation();
-
-				// TODO: FIX ROTATION, probably using quaternions instead of euler
-				//et.setPosition(translation[0], translation[1], translation[2]);
-				//et.setRotation(glm::radians(rotation[0]), glm::radians(rotation[1]), glm::radians(rotation[2]));
-				//et.setScale(scale[0], scale[1], scale[2]);
 			}
-
-			// Rotation
 		}
 
-
+		m_ImGuizmoIsHovering = ImGuizmo::IsOver();
 
 		ImGui::End(); // Viewport end
 		ImGui::PopStyleVar();
@@ -573,4 +640,3 @@ namespace Salad {
 	void EditorLayer::deserialize() {}
 
 }
-

@@ -34,6 +34,9 @@ namespace Salad {
 	};
 
 	struct MeshComponent {
+		std::string meshIdentifier = "mesh";
+		std::string materialIdentifier = "material";
+
 		Ref<VertexArray> MeshVertexArray;
 		Ref<Shader> MeshShader;
 		Ref<Texture2D> MeshTexture;

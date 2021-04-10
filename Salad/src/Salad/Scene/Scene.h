@@ -20,7 +20,7 @@ namespace Salad {
 		Scene();
 		~Scene();
 
-		void onUpdateEditor(Timestep& ts, Camera& camera, glm::mat4& transform);
+		void onUpdateEditor(Timestep& ts, Camera& camera, glm::mat4& transform, Entity& selectedEntity);
 		void onUpdate(Timestep& ts);
 
 		Entity createEntity(const std::string& tag = std::string("Unnamed Entity"));

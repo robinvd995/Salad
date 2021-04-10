@@ -196,7 +196,7 @@ namespace Salad {
 
 	void OpenGLShader::setInt(const std::string& name, const int value) {
 		GLuint location = glGetUniformLocation(m_ShaderId, name.c_str());
-		glUniform1i(location, value);
+		glUniform1iv(location, 1, &value);
 	}
 
 	void OpenGLShader::setFloat(const std::string& name, const float value) {

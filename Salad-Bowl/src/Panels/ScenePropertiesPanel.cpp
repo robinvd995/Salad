@@ -6,7 +6,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <imgui/imgui_internal.h>
 
-#include "Util/ImGuiWidgets.h"
+#include "Salad/ImGui/ImGuiWidgets.h"
 
 namespace Salad {
 
@@ -57,6 +57,7 @@ namespace Salad {
 			ImGui::Separator();
 			ImGui::Dummy({ 0.0f, 4.0f });
 
+			// Render Transform Component
 			drawComponent<TransformComponent>("Transform", entity, [](Entity entity) {
 				auto& transform = entity.getComponent<TransformComponent>().Transform;
 
@@ -96,7 +97,7 @@ namespace Salad {
 					cameraChangedFlag |= ImGuiWidgets::drawFloatControl("Far Clip",   &props.FarClip,   1000.0f);
 				}
 
-					// ORTHOGRAPHIC PROPERTIES
+				// ORTHOGRAPHIC PROPERTIES
 				if (curProjectionTypeId == 1) {
 					auto& props = cam.getOrthographicProperties();
 					cameraChangedFlag |= ImGuiWidgets::drawFloatControl("Left",       &props.Left,   -16.0f);
@@ -108,6 +109,12 @@ namespace Salad {
 				}
 
 				if (cameraChangedFlag) cam.recalculateViewMatrix();
+			});
+
+			drawComponent<MeshComponent>("Mesh Renderer", entity, [](Entity entity) {
+				auto& component = entity.getComponent<MeshComponent>();
+				ImGuiWidgets::drawTextboxControl("Mesh", &component.meshIdentifier);
+				ImGuiWidgets::drawTextboxControl("Material", &component.materialIdentifier);
 			});
 
 			if(ImGui::Button("Add Component")) {
@@ -126,241 +133,5 @@ namespace Salad {
 		}
 		ImGui::End();
 	}
-
-	/*bool ScenePropertiesPanel::drawComboBox(const char* label, const char** values, int size, int& selectedId) {
-		bool changed = false;
-
-		ImGui::PushID(label);
-
-		ImGui::Columns(2);
-		ImGui::SetColumnWidth(0, 100.0f);
-		ImGui::Text(label);
-		ImGui::NextColumn();
-
-		int contentWidth = ImGui::GetContentRegionAvailWidth();
-		ImGui::PushItemWidth(contentWidth);
-
-		const char* curString = values[selectedId];
-		if (ImGui::BeginCombo("##ComboBox", curString)) {
-
-			for (int i = 0; i < size; i++) {
-				bool isSelected = selectedId == i;
-				if (ImGui::Selectable(values[i], isSelected)) {
-					SLD_CORE_INFO(i);
-					selectedId = i;
-					changed = true;
-				}
-
-				if (isSelected) ImGui::SetItemDefaultFocus();
-			}
-
-			ImGui::EndCombo();
-		}
-
-		ImGui::PopItemWidth();
-
-		ImGui::Columns(1);
-		ImGui::PopID();
-
-		return changed;
-	}
-
-	bool ScenePropertiesPanel::drawCheckboxControl(const char* label, bool* value) {
-		ImGui::PushID(label);
-
-		ImGui::Columns(2);
-		ImGui::SetColumnWidth(0, 100.0f);
-		ImGui::Text(label);
-		ImGui::NextColumn();
-
-		bool changed = 0 | ImGui::Checkbox("##Checkbox", value);
-
-		ImGui::Columns(1);
-
-		ImGui::PopID();
-
-		return changed;
-	}
-
-	bool ScenePropertiesPanel::drawFloat3Control(const char* label, float* x, float* y, float* z, float resetValue) {
-
-		bool changed = false;
-
-		ImGuiIO& io = ImGui::GetIO();
-		auto& boldFont = io.Fonts->Fonts[1];
-
-		float lineHeight = boldFont->FontSize + GImGui->Style.FramePadding.y * 2.0f;
-		float buttonWidth = lineHeight + 3.0f;
-
-		ImVec2 buttonSize = { lineHeight + 3.0f, lineHeight };
-
-		ImGui::PushID(label);
-		
-		ImGui::Columns(2);
-		ImGui::SetColumnWidth(0, 100.0f);
-		ImGui::Text(label);
-		ImGui::NextColumn();
-		
-		float contentWidth = ImGui::GetContentRegionAvailWidth();
-		float dragFloatWidth = (contentWidth - (buttonWidth * 3.0f)) / 3.0f;
-
-		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0.0f, 1.0f });
-
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.8f, 0.2f, 0.2f, 1.0f });
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.9f, 0.3f, 0.3f, 1.0f });
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.8f, 0.1f, 0.1f, 1.0f });
-
-		ImGui::PushFont(boldFont);
-		if (ImGui::Button("X", buttonSize)) { *x = resetValue; changed = true; }
-		ImGui::PopFont();
-
-		ImGui::PopStyleColor(3);
-
-		ImGui::SameLine();
-		ImGui::PushItemWidth(dragFloatWidth);
-		changed |= ImGui::DragFloat("##X", x, 0.1f);
-		ImGui::PopItemWidth();
-		ImGui::SameLine();
-
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.2f, 0.7f, 0.2f, 1.0f });
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.3f, 0.8f, 0.3f, 1.0f });
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.1f, 0.7f, 0.1f, 1.0f });
-
-		ImGui::PushFont(boldFont);
-		if (ImGui::Button("Y", buttonSize)) { *y = resetValue; changed = true; }
-		ImGui::PopFont();
-
-		ImGui::PopStyleColor(3);
-
-		ImGui::SameLine();
-		ImGui::PushItemWidth(dragFloatWidth);
-		changed |= ImGui::DragFloat("##Y", y, 0.1f);
-		ImGui::PopItemWidth();
-		ImGui::SameLine();
-
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.2f, 0.2f, 0.8f, 1.0f });
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.3f, 0.3f, 0.9f, 1.0f });
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.1f, 0.1f, 0.8f, 1.0f });
-
-		ImGui::PushFont(boldFont);
-		if (ImGui::Button("Z", buttonSize)) { *z = resetValue; changed = true; }
-		ImGui::PopFont();
-
-		ImGui::PopStyleColor(3);
-
-		ImGui::SameLine();
-		ImGui::PushItemWidth(dragFloatWidth);
-		changed |= ImGui::DragFloat("##Z", z, 0.1f);
-		ImGui::PopItemWidth();
-
-		ImGui::PopStyleVar();
-
-		ImGui::Columns(1);
-
-		ImGui::PopID();
-
-		return changed;
-	}
-
-	bool ScenePropertiesPanel::drawFloat2Control(const char* label, float* x, float* y, float resetValue) {
-		bool changed = false;
-
-		ImGuiIO& io = ImGui::GetIO();
-		auto& boldFont = io.Fonts->Fonts[1];
-
-		ImGui::PushID(label);
-
-		ImGui::Columns(2);
-		ImGui::SetColumnWidth(0, 100.0f);
-		ImGui::Text(label);
-		ImGui::NextColumn();
-
-		float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
-		ImVec2 buttonSize = { lineHeight + 3.0f, lineHeight };
-
-		float contentWidth = ImGui::GetContentRegionAvailWidth();
-		float dragFloatWidth = (contentWidth - (buttonSize.x * 2.0f)) / 2.0f;
-
-		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0.0f, 1.0f });
-
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.2f, 0.2f, 0.2f, 1.0f });
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.3f, 0.3f, 0.3f, 1.0f });
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.1f, 0.1f, 0.1f, 1.0f });
-
-		ImGui::PushFont(boldFont);
-		if (ImGui::Button("X", buttonSize)) { *x = resetValue; changed = true; }
-		ImGui::PopFont();
-
-		ImGui::SameLine();
-		ImGui::PushItemWidth(dragFloatWidth);
-		changed |= ImGui::DragFloat("##X", x, 0.1f);
-		ImGui::PopItemWidth();
-		ImGui::SameLine();
-
-		ImGui::PushFont(boldFont);
-		if (ImGui::Button("Y", buttonSize)) { *y = resetValue; changed = true; }
-		ImGui::PopFont();
-
-		ImGui::SameLine();
-		ImGui::PushItemWidth(dragFloatWidth);
-		changed |= ImGui::DragFloat("##Y", y, 0.1f);
-		ImGui::PopItemWidth();
-
-		ImGui::PopStyleColor(3);
-
-		ImGui::PopStyleVar();
-
-		ImGui::Columns(1);
-
-		ImGui::PopID();
-
-		return changed;
-	}
-
-	bool ScenePropertiesPanel::drawFloatControl(const char* label, float* value, float resetValue) {
-
-		bool changed = false;
-
-		ImGuiIO& io = ImGui::GetIO();
-		auto& boldFont = io.Fonts->Fonts[1];
-
-		ImGui::PushID(label);
-
-		ImGui::Columns(2);
-		ImGui::SetColumnWidth(0, 100.0f);
-		ImGui::Text(label);
-		ImGui::NextColumn();
-
-		float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
-		ImVec2 buttonSize = { lineHeight + 3.0f, lineHeight };
-
-		float contentWidth = ImGui::GetContentRegionAvailWidth();
-		float dragFloatWidth = contentWidth - buttonSize.x;
-
-		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0.0f, 1.0f });
-
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.2f, 0.2f, 0.2f, 1.0f });
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.3f, 0.3f, 0.3f, 1.0f });
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.1f, 0.1f, 0.1f, 1.0f });
-
-		ImGui::PushFont(boldFont);
-		if (ImGui::Button("R", buttonSize)) { *value = resetValue; changed = true; }
-		ImGui::PopFont();
-
-		ImGui::PopStyleColor(3);
-
-		ImGui::SameLine();
-		ImGui::PushItemWidth(dragFloatWidth);
-		changed |= ImGui::DragFloat("##FLOAT", value, 0.1f);
-		ImGui::PopItemWidth();
-
-		ImGui::PopStyleVar();
-
-		ImGui::Columns(1);
-
-		ImGui::PopID();
-
-		return changed;
-	}*/
 
 }

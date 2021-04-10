@@ -13,6 +13,7 @@
 #include "Io/ColladaLoader.h"
 
 #include "EditorCamera.h"
+#include "EditorSelectionContext.h"
 
 namespace Salad {
 
@@ -34,8 +35,11 @@ namespace Salad {
 
 		virtual void onImGuiRender() override;
 
+		bool canMousePick();
+
 		bool onMouseScrolledEvent(MouseScrolledEvent& e);
 		bool onKeyPressedEvent(KeyPressedEvent& e);
+		bool onMousePressedEvent(MouseButtonPressedEvent& e);
 
 	private:
 		void serialize();
@@ -89,6 +93,22 @@ namespace Salad {
 
 		int m_GizmoType = -1;
 		//glm::mat4 m_GizmoTransform{ 1.0f };
+
+		int m_ViewportMouseX = 0, m_ViewportMouseY = 0;
+		int m_ViewportWidth = 0, m_ViewportHeight = 0;
+		Entity m_HoveredEntity;
+		bool m_ImGuizmoIsHovering = false;
+
+		// Move to Editor Scene
+		Ref<EditorSelectionContext> m_EditorSelectionContext;
+
+		// Frame timer
+		// Chrono stuff YUCK!
+		std::chrono::steady_clock::time_point m_PrevFrameStartTime;
+		double m_CurFrameTime = 0.0;
+		uint32_t m_CurFrames = 0;
+		uint32_t m_CountedFrames = 0;
+		double m_CurFrameTimeClock = 0.0;
 	};
 
 }

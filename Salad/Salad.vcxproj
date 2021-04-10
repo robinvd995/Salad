@@ -170,6 +170,7 @@
     <ClInclude Include="src\Salad\Events\KeyEvent.h" />
     <ClInclude Include="src\Salad\Events\MouseEvent.h" />
     <ClInclude Include="src\Salad\ImGui\ImGuiLayer.h" />
+    <ClInclude Include="src\Salad\ImGui\ImGuiWidgets.h" />
     <ClInclude Include="src\Salad\Lua\LuaScript.h" />
     <ClInclude Include="src\Salad\Math\Math.h" />
     <ClInclude Include="src\Salad\OrthographicCameraController.h" />
@@ -225,6 +226,7 @@
     <ClCompile Include="src\Salad\Core\Transform.cpp" />
     <ClCompile Include="src\Salad\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="src\Salad\ImGui\ImGuiLayer.cpp" />
+    <ClCompile Include="src\Salad\ImGui\ImGuiWidgets.cpp" />
     <ClCompile Include="src\Salad\Lua\LuaScript.cpp" />
     <ClCompile Include="src\Salad\Math\Math.cpp" />
     <ClCompile Include="src\Salad\OrthographicCameraController.cpp" />

@@ -5,20 +5,19 @@
 #include "Salad/Core/Log.h"
 #include "Salad/Scene/Scene.h"
 
+#include "EditorSelectionContext.h"
+
 namespace Salad {
 
 	class SceneHierarchyPanel {
 
 	public:
 		SceneHierarchyPanel() = default;
-		SceneHierarchyPanel(const Ref<Scene>& scene);
+		SceneHierarchyPanel(const Ref<Scene>& scene, const Ref<EditorSelectionContext>& selection);
 
-		void setContext(const Ref<Scene>& scene);
+		void setContext(const Ref<Scene>& scene, const Ref<EditorSelectionContext>& selection);
 
 		void onImGuiRender();
-
-		Entity getSelectionContext() { return m_EntitySelectionContext; }
-		bool hasSelectionContext() { return m_EntitySelectionContext.isValid(); }
 
 	private:
 
@@ -26,7 +25,7 @@ namespace Salad {
 
 	private:
 		Ref<Scene> m_Context;
-		Entity m_EntitySelectionContext;
+		Ref<EditorSelectionContext> m_SelectionContext;
 
 		friend class Scene;
 	};

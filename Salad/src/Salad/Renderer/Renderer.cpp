@@ -42,6 +42,19 @@ namespace Salad {
 		RenderCommand::drawIndexed(vertexArray);
 	}
 
+	void Renderer::submitEditorMesh(const Ref<Shader> shader, const Ref<VertexArray>& vertexArray, const Transform& transform, int tag, bool selected) {
+		shader->bind();
+		vertexArray->bind();
+		shader->setMat4("u_Projection", m_SceneData->projectionMatrix);
+		shader->setMat4("u_View", m_SceneData->viewMatrix);
+		shader->setMat4("u_Transform", transform.getMatrix());
+
+		shader->setInt("u_Tag", tag);
+		shader->setInt("u_Selected", selected ? 1 : 0);
+
+		RenderCommand::drawIndexed(vertexArray);
+	}
+
 	void Renderer::submitSkybox(const Ref<Shader> shader, const Ref<VertexArray>& vertexArray) {
 
 		glm::mat4 view = glm::mat4(glm::mat3(m_SceneData->viewMatrix));

@@ -24,7 +24,7 @@ namespace Salad {
 		m_Registry.destroy(entity);
 	}
 
-	void Scene::onUpdateEditor(Timestep& ts, Camera& camera, glm::mat4& viewMatrix) {
+	void Scene::onUpdateEditor(Timestep& ts, Camera& camera, glm::mat4& viewMatrix, Entity& selectedEntity) {
 
 		Salad::Renderer::beginScene({ camera.getProjection(), viewMatrix });
 
@@ -74,7 +74,7 @@ namespace Salad {
 			auto [t, m] = group.get<TransformComponent, MeshComponent>(entity);
 
 			m.MeshTexture->bind();
-			Salad::Renderer::submit(m.MeshShader, m.MeshVertexArray, t.Transform.getWorldSpaceTransformationMatrix());
+			Salad::Renderer::submitEditorMesh(m.MeshShader, m.MeshVertexArray, t.Transform.getWorldSpaceTransformationMatrix(), (int)entity, entity == selectedEntity);
 		}
 
 		Salad::Renderer::endScene();

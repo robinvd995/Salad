@@ -24,7 +24,9 @@ namespace Salad {
 		static void beginScene(const RenderCamera& camera);
 		static void endScene();
 
-		static void submit(const Ref<Shader> shader, const Ref<VertexArray>& vertexArray, const Transform& transformMat);
+		static void submit(const Ref<Shader> shader, const Ref<VertexArray>& vertexArray, const Transform& transform);
+		static void submitEditorMesh(const Ref<Shader> shader, const Ref<VertexArray>& vertexArray, const Transform& transform, int tag, bool selected);
+
 		static void submitSkybox(const Ref<Shader> shader, const Ref<VertexArray>& vertexArray);
 
 		inline static RenderAPI::API getAPI() { return RenderAPI::getAPI(); }
