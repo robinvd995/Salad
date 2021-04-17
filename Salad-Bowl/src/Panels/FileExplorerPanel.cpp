@@ -2,6 +2,8 @@
 
 #include "imgui/imgui.h"
 
+#include "ShaderBuilder.h"
+
 #include "Salad/Renderer/TextureManager.h"
 
 #include <iostream>
@@ -125,7 +127,12 @@ namespace Salad {
 	}
 
 	void FileExplorerPanel::onItemDoubleClicked(FileExplorerItem* item) {
-
+		switch(item->type) {
+			case FileExplorerItemType::GLSL:
+				ShaderBuilder builder;
+				EditorShader shader = builder.build(item->path);
+				break;
+		}
 	}
 
 	void FileExplorerPanel::refresh() {

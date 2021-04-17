@@ -102,7 +102,7 @@ namespace Salad {
 		bool m_ImGuizmoIsHovering = false;
 
 		// Move to Editor Scene
-		Ref<EditorSelectionContext> m_EditorSelectionContext;
+		//Ref<EditorSelectionContext> m_EditorSelectionContext;
 
 		// Frame timer
 		// Chrono stuff YUCK!

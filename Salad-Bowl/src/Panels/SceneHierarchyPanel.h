@@ -15,7 +15,7 @@ namespace Salad {
 		SceneHierarchyPanel() = default;
 		SceneHierarchyPanel(const Ref<Scene>& scene, const Ref<EditorSelectionContext>& selection);
 
-		void setContext(const Ref<Scene>& scene, const Ref<EditorSelectionContext>& selection);
+		void setContext(const Ref<Scene>& scene);
 
 		void onImGuiRender();
 
@@ -25,7 +25,7 @@ namespace Salad {
 
 	private:
 		Ref<Scene> m_Context;
-		Ref<EditorSelectionContext> m_SelectionContext;
+		Entity m_SelectedEntity;
 
 		friend class Scene;
 	};

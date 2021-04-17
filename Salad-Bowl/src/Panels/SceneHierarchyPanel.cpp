@@ -7,12 +7,11 @@
 namespace Salad {
 
 	SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& scene, const Ref<EditorSelectionContext>& selection) {
-		setContext(scene, selection);
+		setContext(scene);
 	}
 
-	void SceneHierarchyPanel::setContext(const Ref<Scene>& scene, const Ref<EditorSelectionContext>& selection) {
+	void SceneHierarchyPanel::setContext(const Ref<Scene>& scene) {
 		m_Context = scene;
-		m_SelectionContext = selection;
 	}
 
 	void SceneHierarchyPanel::onImGuiRender() {
@@ -24,7 +23,9 @@ namespace Salad {
 		});
 
 		if(ImGui::IsMouseDown(0) && ImGui::IsWindowHovered()) {
-			m_SelectionContext->setSelectionContext({});
+			m_SelectedEntity = {};
+			EditorSelectionContext::setSelectionContextNone();
+			//m_SelectionContext->setSelectionContext({});
 		}
 
 		if(ImGui::BeginPopupContextWindow(0, 1, false)) {
@@ -37,12 +38,13 @@ namespace Salad {
 
 	void SceneHierarchyPanel::drawEntityNode(Salad::Entity entity) {
 		TagComponent& tagc = entity.getComponent<TagComponent>();
-		
-		ImGuiTreeNodeFlags flags = ((m_SelectionContext->isEntitySelected(entity)) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
+
+		ImGuiTreeNodeFlags flags = ((m_SelectedEntity == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
 		bool opened = ImGui::TreeNodeEx((void*)(uint64_t)((uint32_t)entity), flags, tagc.Tag.c_str());
 
 		if(ImGui::IsItemClicked()) {
-			m_SelectionContext->setSelectionContext(entity);
+			m_SelectedEntity = entity;
+			EditorSelectionContext::setSelectionContext<EntitySelectionContext>(entity);
 		}
 
 		bool entityDeleted = false;
@@ -56,7 +58,7 @@ namespace Salad {
 		}
 
 		if (entityDeleted) {
-			if (m_SelectionContext->isEntitySelected(entity)) m_SelectionContext->setSelectionContext({});
+			if (m_SelectedEntity == entity) { m_SelectedEntity = {}; EditorSelectionContext::setSelectionContextNone(); }
 			m_Context->removeEntity(entity);
 		}
 	}

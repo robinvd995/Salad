@@ -9,7 +9,7 @@ namespace Salad {
 	public:
 		ScenePropertiesPanel() = default;
 
-		void onImGuiRender(Entity entity);
+		void onImGuiRender();
 
 	private:
 		template<typename T>

@@ -45,7 +45,7 @@ namespace Salad {
 		};*/
 
 		m_Scene = createRef<Scene>();
-		m_EditorSelectionContext = createRef<EditorSelectionContext>();
+		//m_EditorSelectionContext = createRef<EditorSelectionContext>();
 
 		ColladaLoader loader;
 		auto cubeVao = VertexArray::create();
@@ -244,7 +244,7 @@ namespace Salad {
 
 		m_Framebuffer = Framebuffer::create(fbspec);
 
-		m_SceneHierarchyPanel.setContext(m_Scene, m_EditorSelectionContext);
+		m_SceneHierarchyPanel.setContext(m_Scene);
 
 		// Post processing setup
 
@@ -346,10 +346,13 @@ namespace Salad {
 		m_EditorSettingsWindow.popID("Editor Camera");
 
 		m_FileExplorerPanel.init();
+
+		EditorSelectionContext::s_Instance = new EditorSelectionContext();
 	}
 
 	void EditorLayer::onDetach() {
-
+		delete EditorSelectionContext::s_Instance;
+		EditorSelectionContext::s_Instance = nullptr;
 	}
 
 	void EditorLayer::onUpdate(Timestep ts) {
@@ -392,10 +395,16 @@ namespace Salad {
 		m_Framebuffer->clearColorBuffer(2, &clearColor[0]);
 
 		switch(m_EditorState){
-			case EditorState::Editor: 
+			case EditorState::Editor: {
 				if (m_IsViewportFocused) m_EditorCamera.updateCamera(ts);
-				m_Scene->onUpdateEditor(ts, m_EditorCamera, m_EditorCamera.getViewMatrix(), m_EditorSelectionContext->getSelectionContext());
-				break;
+
+				Entity entity;
+				if(EditorSelectionContext::isSelectionContextType(EditorSelectionContextType::Entity)) {
+					EntitySelectionContext* selectionContext = EditorSelectionContext::getSelectionContext<EntitySelectionContext>();
+					entity = selectionContext->getSelectedEntity();
+				}
+				m_Scene->onUpdateEditor(ts, m_EditorCamera, m_EditorCamera.getViewMatrix(), entity);
+			} break;
 			case EditorState::Runtime: m_Scene->onUpdate(ts);
 		}
 
@@ -451,7 +460,8 @@ namespace Salad {
 			case SLD_KEY_W: m_GizmoType = ImGuizmo::OPERATION::TRANSLATE; break;
 			case SLD_KEY_E: m_GizmoType = ImGuizmo::OPERATION::ROTATE; break;
 			case SLD_KEY_R: m_GizmoType = ImGuizmo::OPERATION::SCALE; break;
-			case SLD_KEY_ESCAPE: m_EditorSelectionContext->setSelectionContext({}); break;
+			case SLD_KEY_ESCAPE: EditorSelectionContext::setSelectionContextNone(); break;
+			//case SLD_KEY_ESCAPE: m_EditorSelectionContext->setSelectionContext({}); break; -------------------------------------------------------------
 		}
 	}
 
@@ -461,7 +471,9 @@ namespace Salad {
 
 	bool EditorLayer::onMousePressedEvent(MouseButtonPressedEvent& e) {
 		if (e.getMouseButton() == 0 && canMousePick()) {
-			m_EditorSelectionContext->setSelectionContext(m_HoveredEntity);
+			//EntitySelectionContext context(m_HoveredEntity);
+			EditorSelectionContext::setSelectionContext<EntitySelectionContext>(m_HoveredEntity);
+			//m_EditorSelectionContext->setSelectionContext(m_HoveredEntity); --------------------------------------------------------------
 			return true;
 		}
 
@@ -535,7 +547,7 @@ namespace Salad {
 		}
 
 		if(m_ShowSceneHierarchyPanel) m_SceneHierarchyPanel.onImGuiRender();
-		if(m_ShowScenePropertiesPanel) m_ScenePropertiesPanel.onImGuiRender(m_EditorSelectionContext->getSelectionContext());
+		if(m_ShowScenePropertiesPanel) m_ScenePropertiesPanel.onImGuiRender();
 		if(m_ShowMaterialExplorerPanel) m_MaterialExplorerPanel.onImGuiRender(m_MaterialTexture->getRendererId());
 		if (m_ShowFileExplorerPanel) m_FileExplorerPanel.onImGuiRender();
 
@@ -631,30 +643,33 @@ namespace Salad {
 		//m_GizmoType = ImGuizmo::OPERATION::ROTATE;
 
 		// Gizmo
-		Entity selectedEntity = m_EditorSelectionContext->getSelectionContext(); // TODO: central selected entity
-		if(selectedEntity && m_GizmoType != -1) {
-			ImGuizmo::SetOrthographic(false);
-			ImGuizmo::SetDrawlist();
+		if(EditorSelectionContext::isSelectionContextType(EditorSelectionContextType::Entity)) {
+			EntitySelectionContext* context = EditorSelectionContext::getSelectionContext<EntitySelectionContext>();
+			Entity selectedEntity = context->getSelectedEntity(); // TODO: central selected entity
+			if (selectedEntity && m_GizmoType != -1) {
+				ImGuizmo::SetOrthographic(false);
+				ImGuizmo::SetDrawlist();
 
-			float windowWidth = (float)ImGui::GetWindowWidth();
-			float windowHeight = (float)ImGui::GetWindowHeight();
-			ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight);
+				float windowWidth = (float)ImGui::GetWindowWidth();
+				float windowHeight = (float)ImGui::GetWindowHeight();
+				ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight);
 
-			glm::mat4 viewMatrix = m_EditorCamera.getViewMatrix();
-			glm::mat4 projectionMatrix = m_EditorCamera.getProjection();
+				glm::mat4 viewMatrix = m_EditorCamera.getViewMatrix();
+				glm::mat4 projectionMatrix = m_EditorCamera.getProjection();
 
-			EntityTransform& et = selectedEntity.getComponent<TransformComponent>().Transform;
-			glm::mat4 ettm = et.getWorldSpaceTransformationMatrix();
+				EntityTransform& et = selectedEntity.getComponent<TransformComponent>().Transform;
+				glm::mat4 ettm = et.getWorldSpaceTransformationMatrix();
 
-			ImGuizmo::Manipulate(glm::value_ptr(viewMatrix), glm::value_ptr(projectionMatrix),
-				(ImGuizmo::OPERATION)m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(ettm));
+				ImGuizmo::Manipulate(glm::value_ptr(viewMatrix), glm::value_ptr(projectionMatrix),
+					(ImGuizmo::OPERATION)m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(ettm));
 
-			if(ImGuizmo::IsUsing()) {
-				glm::vec3 translation{ 0.0f }, scale{ 1.0f };
-				glm::quat orientation{};
+				if (ImGuizmo::IsUsing()) {
+					glm::vec3 translation{ 0.0f }, scale{ 1.0f };
+					glm::quat orientation{};
 
-				Math::decomposeTransform(ettm, translation, orientation, scale);
-				et.set(translation, orientation, scale);
+					Math::decomposeTransform(ettm, translation, orientation, scale);
+					et.set(translation, orientation, scale);
+				}
 			}
 		}
 
