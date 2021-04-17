@@ -41,7 +41,7 @@ namespace Salad {
 		m_Shader->bind();
 		m_VertexArray->bind();
 
-		m_Shader->setFloat4("u_OutlineColor", { 0.1f, 0.5f, 0.8f, 1.0f });
+		m_Shader->setFloat4("u_OutlineColor", { 0.3f, 0.8f, 1.0f, 1.0f });
 
 		otherFramebuffer->bindColorBufferAsTexture(2, 0);
 

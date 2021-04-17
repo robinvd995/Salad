@@ -8,6 +8,10 @@
 
 namespace Salad {
 
+	class PostProcessor {
+
+	};
+
 	class PostProcessingEffect {
 
 	public:

@@ -9,8 +9,9 @@ namespace Salad {
 	struct MaterialExplorerItem {
 
 		std::string materialName;
+		uint32_t materialViewId;
 
-		MaterialExplorerItem(std::string& name) : materialName(name) {}
+		MaterialExplorerItem(std::string& name, uint32_t viewid) : materialName(name), materialViewId(viewid) {}
 	
 	};
 
@@ -18,10 +19,10 @@ namespace Salad {
 	
 	public:
 		MaterialExplorerPanel() {
-			for(int i = 0; i < 10; i++) {
+			for(uint32_t i = 0; i < 10; i++) {
 				std::string name = "Material ";
 				name.append(std::to_string(i));
-				m_MaterialItems.push_back({ name });
+				m_MaterialItems.push_back({ name, i });
 			}
 
 			updateFilter();
@@ -39,6 +40,7 @@ namespace Salad {
 		std::vector<MaterialExplorerItem*> m_FilteredItems;
 
 		std::string m_Filter;
+		uint32_t m_Selected;
 	};
 
 }

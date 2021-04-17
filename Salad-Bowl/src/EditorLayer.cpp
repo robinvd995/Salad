@@ -16,13 +16,11 @@
 
 #include "Salad/Math/Math.h"
 
-#define RENDER_COLOR_ATTACHMENT 0
-
 namespace Salad {
 
 	EditorLayer::EditorLayer()
 	{
-		float minX = -0.5f, minY = -0.5f, minZ = -0.5f, minU = 0.0f, minV = 0.0f;
+		/*float minX = -0.5f, minY = -0.5f, minZ = -0.5f, minU = 0.0f, minV = 0.0f;
 		float maxX = 0.5f, maxY = 0.5f, maxZ = 0.5f, maxU = 1.0f, maxV = 1.0f;
 
 		float vertexData[] = {
@@ -44,7 +42,7 @@ namespace Salad {
 			2, 3, 7, 2, 7, 6, // Back Face
 			0, 2, 6, 0, 6, 4, // Left Face
 			1, 3, 7, 1, 7, 5  // Right Face
-		};
+		};*/
 
 		m_Scene = createRef<Scene>();
 		m_EditorSelectionContext = createRef<EditorSelectionContext>();
@@ -61,7 +59,7 @@ namespace Salad {
 				{ "a_Position", Salad::ShaderDataType::Float3 },
 				{ "a_TexCoord", Salad::ShaderDataType::Float2 },
 				{ "a_Normal",   Salad::ShaderDataType::Float3 }
-				});
+			});
 
 			cubeVao->addVertexBuffer(cubeVbo);
 			Ref<IndexBuffer> indexBuffer = IndexBuffer::create(&cubeMesh->getIndexBuffer().front(), cubeMesh->getIndexBuffer().size());
@@ -293,10 +291,8 @@ namespace Salad {
 		ImGuiStyle& style = ImGui::GetStyle();
 		ImGuiIO& io = ImGui::GetIO();
 		// Styling
-		//io.FontDefault = io.Fonts->AddFontFromFileTTF("assets/fonts/pt_sans/PTSans-Regular.ttf", 18.0f);
 		io.FontDefault = io.Fonts->AddFontFromFileTTF("assets/fonts/open_sans/OpenSans-Regular.ttf", 18.0f);
 		io.Fonts->AddFontFromFileTTF("assets/fonts/open_sans/OpenSans-Bold.ttf", 18.0f);
-		//io.FontDefault = io.Fonts->AddFontFromFileTTF("assets/fonts/arial.ttf", 16.0f);
 
 		// TODO: Fix the system to where you can push and id or "section" to have the same labels available
 
@@ -349,6 +345,7 @@ namespace Salad {
 
 		m_EditorSettingsWindow.popID("Editor Camera");
 
+		m_FileExplorerPanel.init();
 	}
 
 	void EditorLayer::onDetach() {
@@ -433,11 +430,12 @@ namespace Salad {
 		dispatcher.dispatch<MouseScrolledEvent>(SLD_BIND_EVENT_FN(EditorLayer::onMouseScrolledEvent));
 		dispatcher.dispatch<KeyPressedEvent>(SLD_BIND_EVENT_FN(EditorLayer::onKeyPressedEvent));
 		dispatcher.dispatch<MouseButtonPressedEvent>(SLD_BIND_EVENT_FN(EditorLayer::onMousePressedEvent));
-		m_EditorCamera.onEvent(e);
+		if(!e.handled)
+			m_EditorCamera.onEvent(e);
 	}
 
 	bool EditorLayer::onMouseScrolledEvent(MouseScrolledEvent& e) {
-		return false;
+		return !m_IsViewportHovered;
 	}
 
 	bool EditorLayer::onKeyPressedEvent(KeyPressedEvent& e) {
@@ -578,6 +576,7 @@ namespace Salad {
 		uint32_t ppRenderId = m_PostProcessingComposer.getFramebuffer()->getColorAttachment(0);
 		ImGui::Image((void*)ppRenderId, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0,1 }, ImVec2{ 1, 0 });
 		ImGui::End();*/
+		bool sameline = true;
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
 		ImGui::Begin("Viewport");

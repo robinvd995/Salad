@@ -31,7 +31,7 @@ void main() {
 
 	vec2 tex_offset = 1.0 / textureSize(u_Texture, 0);
 
-	int bordersize = 3;
+	int bordersize = 2;
 
 	float avg = 0.0;
 

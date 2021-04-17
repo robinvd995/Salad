@@ -68,15 +68,19 @@ namespace Salad {
             MaterialExplorerItem* item = m_FilteredItems[n];
 
             // Draw material
-            ImGui::BeginGroup();
+            ImVec2 p = ImGui::GetCursorScreenPos();
+            bool selected = m_Selected == item->materialViewId;
+            if(ImGui::Selectable("##selectabletest", &selected, 0, ImVec2(100.0f, 120.0f))) {
+                m_Selected = item->materialViewId;
+            }
+            float lastGroupX2 = ImGui::GetItemRectMax().x;
+            float nextGroupX2 = lastGroupX2 + style.ItemSpacing.x + materialSize.x;
+            if (n + 1 < m_FilteredItems.size() && nextGroupX2 < windowVisibleX2)
+                ImGui::SameLine();
+            //if (sameline) ImGui::SameLine();
+            ImVec2 afterScreenPos = ImGui::GetCursorScreenPos();
 
-            ImGui::Image((void*)textureid, materialSize, ImVec2{ 0,1 }, ImVec2{ 1, 0 });
-
-
-            ImGui::Text(item->materialName.c_str());
-            
             ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0.0f, 10.0f });
-            ImGui::EndGroup();
             if (ImGui::BeginPopupContextItem(item->materialName.c_str(), ImGuiMouseButton_Right)) {
                 ImGui::Text(item->materialName.c_str());
                 ImGui::Separator();
@@ -86,10 +90,16 @@ namespace Salad {
             }
             ImGui::PopStyleVar();
 
-            float lastGroupX2 = ImGui::GetItemRectMax().x;
-            float nextGroupX2 = lastGroupX2 + style.ItemSpacing.x + materialSize.x;
-            if (n + 1 < m_FilteredItems.size() && nextGroupX2 < windowVisibleX2)
-                ImGui::SameLine();
+            ImGui::GetWindowDrawList()->AddImage((void*)textureid, ImVec2(p.x + 4, p.y + 4), ImVec2(p.x + 96, p.y + 96), ImVec2(0, 0), ImVec2(1, 1));
+
+            ImGui::SetCursorScreenPos(ImVec2(p.x + 4, p.y + 100));
+            ImGui::PushItemWidth(120.0f);
+            ImGui::BeginChild("testchildwindow", ImVec2(92.0f, 20.0f));
+            ImGui::Text(item->materialName.c_str());
+            ImGui::EndChild();
+            ImGui::PopItemWidth();
+            ImGui::SetCursorScreenPos(afterScreenPos);
+
             ImGui::PopID();
         }
 
