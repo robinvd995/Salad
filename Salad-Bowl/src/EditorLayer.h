@@ -89,9 +89,7 @@ namespace Salad {
 		float m_EditorCameraSensitivity = 0.5f;
 
 		// Editor Button Textures
-		Ref<Texture2D> m_TextureButtonPlay;
-		Ref<Texture2D> m_TextureButtonPause;
-		Ref<Texture2D> m_TextureButtonStop;
+		Ref<Texture2D> m_EditorIcons;
 
 		int m_GizmoType = -1;
 		//glm::mat4 m_GizmoTransform{ 1.0f };
@@ -105,7 +103,7 @@ namespace Salad {
 		//Ref<EditorSelectionContext> m_EditorSelectionContext;
 
 		// Frame timer
-		// Chrono stuff YUCK!
+		// Chrono stuff ooofff!
 		std::chrono::steady_clock::time_point m_PrevFrameStartTime;
 		double m_CurFrameTime = 0.0;
 		uint32_t m_CurFrames = 0;

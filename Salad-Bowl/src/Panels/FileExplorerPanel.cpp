@@ -20,7 +20,9 @@ namespace Salad {
 			{"png", FileExplorerItemType::Texture},
 			{"dae", FileExplorerItemType::Model},
 			{"glsl", FileExplorerItemType::GLSL},
-			{"ttf", FileExplorerItemType::TrueTypeFont}
+			{"ttf", FileExplorerItemType::TrueTypeFont},
+			{"cs", FileExplorerItemType::SharpScript},
+			{"lua", FileExplorerItemType::LuaScript}
 		};
 
 		static const std::map<FileExplorerItemType, std::pair<float, float>> s_FileTypeIconCoordinateMap{
@@ -29,8 +31,16 @@ namespace Salad {
 			{ FileExplorerItemType::Model, { 0.125f, 0.0f } },
 			{ FileExplorerItemType::Texture, { 0.25f, 0.0f } },
 			{ FileExplorerItemType::GLSL, { 0.375f, 0.0f } },
-			{ FileExplorerItemType::TrueTypeFont, { 0.625f, 0.0f } }
+			{ FileExplorerItemType::TrueTypeFont, { 0.625f, 0.0f } },
+			{ FileExplorerItemType::SharpScript, {0.75f, 0.0f} },
+			{ FileExplorerItemType::LuaScript, {0.875f, 0.0f} }
 		};
+
+		std::string popDirectory(std::string& path) {
+			size_t index = path.find_last_of("/", path.size() - 2);
+			if (index == std::string::npos) return path;
+			return path.substr(0, index);
+		}
 
 		std::string fileNameFromPath(std::string& path) {
 			size_t index = path.find_last_of('/');
@@ -127,6 +137,14 @@ namespace Salad {
 		scopeToFolder(path, false);
 	}
 
+	void FileExplorerPanel::scopeToParent() {
+		std::string parentDir = Util::popDirectory(m_CurrentDirectory);
+		if(parentDir != m_CurrentDirectory) {
+			std::string s = parentDir.append("/");
+			scopeToFolder(s);
+		}
+	}
+
 	void FileExplorerPanel::onItemDoubleClicked(FileExplorerItem* item) {
 		switch(item->type) {
 			case FileExplorerItemType::GLSL: {
@@ -136,7 +154,7 @@ namespace Salad {
 			} break;
 
 			case FileExplorerItemType::Texture: {
-				EditorTexture texture(item->path);
+				EditorTexture texture(item->path, item->filename);
 				EditorSelectionContext::setSelectionContext<TextureSelectionContext>(texture);
 			} break;
 		}
@@ -146,20 +164,29 @@ namespace Salad {
 		scopeToFolder(m_CurrentDirectory, false);
 	}
 
-	void FileExplorerPanel::onImGuiRender() {
+	void FileExplorerPanel::onImGuiRender(uint32_t textureid) {
 
 		ImGui::Begin("File Explorer");
 
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 2.0f, 4.0f });
-		if(ImGui::Button("<", ImVec2(24.0f, 24.0f))) {
+		//if(ImGui::Button("<", ImVec2(24.0f, 24.0f))) {
+		ImGui::PushID(0);
+		if (ImGui::ImageButton((void*)textureid, ImVec2{ 16.0f, 16.0f }, ImVec2(0.0f, 0.125f), ImVec2(0.0625f, 0.1875f), 4)) {
 			scopeToPrevious();
 		}
+		ImGui::PopID();
 		ImGui::SameLine();
-		ImGui::Button("^", ImVec2(24.0f, 24.0f));
+		ImGui::PushID(1);
+		if (ImGui::ImageButton((void*)textureid, ImVec2{ 16.0f, 16.0f }, ImVec2(0.0625f, 0.125f), ImVec2(0.125f, 0.1875f), 4)) {
+			scopeToParent();
+		}
+		ImGui::PopID();
 		ImGui::SameLine();
-		if (ImGui::Button("F5", ImVec2(24.0f, 24.0f))) {
+		ImGui::PushID(2);
+		if (ImGui::ImageButton((void*)textureid, ImVec2{ 16.0f, 16.0f }, ImVec2(0.0f, 0.1875f), ImVec2(0.0625f, 0.25f), 4)) {
 			refresh();
 		}
+		ImGui::PopID();
 		ImGui::PopStyleVar();
 		ImGui::SameLine();
 		ImGui::Text(m_CurrentDirectory.c_str());

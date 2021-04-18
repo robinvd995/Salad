@@ -115,9 +115,11 @@ namespace Salad {
 		cubeVao->unbind();*/
 
 		// Load editor textures
-		m_TextureButtonPlay = Salad::TextureManager::get().loadTexture2D("assets/textures/buttons/button_play.png");
-		m_TextureButtonPause = Salad::TextureManager::get().loadTexture2D("assets/textures/buttons/button_pause.png");
-		m_TextureButtonStop = Salad::TextureManager::get().loadTexture2D("assets/textures/buttons/button_stop.png");
+		//m_TextureButtonPlay = Salad::TextureManager::get().loadTexture2D("assets/textures/buttons/button_play.png");
+		//m_TextureButtonPause = Salad::TextureManager::get().loadTexture2D("assets/textures/buttons/button_pause.png");
+		//m_TextureButtonStop = Salad::TextureManager::get().loadTexture2D("assets/textures/buttons/button_stop.png");
+
+		m_EditorIcons = Salad::TextureManager::get().loadTexture2D("assets/textures/editor_icons.png");
 
 		auto diffuseShader = Shader::create("assets/shaders/Diffuse.glsl");
 
@@ -549,15 +551,15 @@ namespace Salad {
 		if(m_ShowSceneHierarchyPanel) m_SceneHierarchyPanel.onImGuiRender();
 		if(m_ShowScenePropertiesPanel) m_ScenePropertiesPanel.onImGuiRender();
 		if(m_ShowMaterialExplorerPanel) m_MaterialExplorerPanel.onImGuiRender(m_MaterialTexture->getRendererId());
-		if (m_ShowFileExplorerPanel) m_FileExplorerPanel.onImGuiRender();
+		if (m_ShowFileExplorerPanel) m_FileExplorerPanel.onImGuiRender(m_EditorIcons->getRendererId());
 
 		ImGui::Begin("Runtime");
 		ImVec2 runtimeButtonSize = {64.0f, 64.0f};
-		ImGui::ImageButton((void*)m_TextureButtonPlay->getRendererId(), ImVec2{ 32.0f, 32.0f }, ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f), 8);
+		ImGui::ImageButton((void*)m_EditorIcons->getRendererId(), ImVec2{ 32.0f, 32.0f }, ImVec2(0.125f, 0.0f), ImVec2(0.25f, 0.125f), 8);
 		ImGui::SameLine();
-		ImGui::ImageButton((void*)m_TextureButtonPause->getRendererId(), ImVec2{ 32.0f, 32.0f }, ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f), 8);
+		ImGui::ImageButton((void*)m_EditorIcons->getRendererId(), ImVec2{ 32.0f, 32.0f }, ImVec2(0.25f, 0.0f), ImVec2(0.375f, 0.125f), 8);
 		ImGui::SameLine();
-		ImGui::ImageButton((void*)m_TextureButtonStop->getRendererId(), ImVec2{ 32.0f, 32.0f }, ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f), 8);
+		ImGui::ImageButton((void*)m_EditorIcons->getRendererId(), ImVec2{ 32.0f, 32.0f }, ImVec2(0.0f, 0.0f), ImVec2(0.125f, 0.125f), 8);
 		ImGui::End();
 
 		ImGui::Begin("Info");

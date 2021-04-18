@@ -16,6 +16,8 @@ namespace Salad {
 		Texture = 2,
 		GLSL = 3,
 		TrueTypeFont = 4,
+		SharpScript = 5,
+		LuaScript = 6
 	};
 
 	struct FileExplorerItem {
@@ -38,12 +40,13 @@ namespace Salad {
 		virtual ~FileExplorerPanel() {}
 
 		void init();
-		void onImGuiRender();
+		void onImGuiRender(uint32_t to_be_replaced_button_texture_id);
 
 	private:
 
 		void scopeToFolder(std::string& path, bool pushPrev = true);
 		void scopeToPrevious();
+		void scopeToParent();
 
 		void onItemDoubleClicked(FileExplorerItem* item);
 		//void onItemRightClicked(FileExplorerItem* item);

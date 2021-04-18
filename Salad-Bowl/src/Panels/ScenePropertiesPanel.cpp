@@ -14,6 +14,11 @@ namespace Salad {
 
 	static char s_TagBuffer[256];
 	static const char* s_CameraProjectionStrings[2] = { "Perspective", "Orthographic" };
+	static const char* s_TextureMinFilterStyleStrings[6] = { "Linear", "Nearest", "Nearest Mipmap Nearest", 
+		"Linear Mipmap Nearest", "Nearest Mipmap Linear", "Linear Mipmap Linear" };
+
+	static const char* s_TextureMagFilterStyleStrings[2] = { "Linear", "Nearest" };
+	static const char* s_TextureWrapStyleStrings[5] = { "Repeat", "Clamp Edge", "Clamp Border", "Mirrored Repeat", "Mirrored Clamp Edge" };
 
 	namespace Util {
 
@@ -232,8 +237,57 @@ namespace Salad {
 		TextureSelectionContext* context = EditorSelectionContext::getSelectionContext<TextureSelectionContext>();
 		EditorTexture& texture = context->getTexture();
 
-		ImGui::Text(texture.getFilePath().c_str());
-		ImGui::Image((void*)texture.getTextureRenderId(), { 200.0f, 200.0f }, { 0, 0 }, { 1, 1 }, { 1,1,1,1 }, { 0.75f,0.75f,0.75f,1 });
+		ImGui::Columns(2);
+		ImGui::SetColumnWidth(0, 100.0f);
+		ImGui::Text("Texture");
+		ImGui::NextColumn();
+		ImGui::Text(texture.getFileName().c_str());
+		ImGui::Columns(1);
+
+		ImGui::Separator();
+
+		Util::drawTreeNode("Texture Preview", (void*)0, [&texture]() {
+			float texSize = 256;
+			ImGui::Image((void*)texture.getTextureRenderId(), { texSize, texSize }, { 0, 0 }, { 1, 1 }, { 1,1,1,1 }, { 0.75f,0.75f,0.75f,1 });
+		});
+
+		Util::drawTreeNode("Texture Properties", (void*)1, [&texture]() {
+			ImGui::Columns(2);
+			ImGui::SetColumnWidth(0, 100.0f);
+			ImGui::Text("Dimensions");
+			ImGui::NextColumn();
+			std::string dimString = std::to_string(texture.getTextureWidth()).append(" x ").append(std::to_string(texture.getTextureHeight()));
+			ImGui::Text(dimString.c_str());
+			ImGui::Columns(1);
+
+			ImGui::Dummy({ 0.0f, 4.0f });
+
+			int minFilter = static_cast<int>(texture.getTextureMinFilter());
+			if(ImGuiWidgets::drawComboBox("Min Filter", s_TextureMinFilterStyleStrings, 6, minFilter)) {
+				texture.setTextureMinFilter(static_cast<TextureMinFilterStyle>(minFilter));
+			}
+
+			int magFilter = static_cast<int>(texture.getTextureMagFilter());
+			if (ImGuiWidgets::drawComboBox("Mag Filter", s_TextureMagFilterStyleStrings, 2, magFilter)) {
+				texture.setTextureMagFilter(static_cast<TextureMagFilterStyle>(magFilter));
+			}
+
+			int wrapS = static_cast<int>(texture.getTextureWrapS());
+			if (ImGuiWidgets::drawComboBox("Wrap S", s_TextureWrapStyleStrings, 5, wrapS)) {
+				texture.setTextureWrapS(static_cast<TextureWrapStyle>(wrapS));
+			}
+
+			int wrapT = static_cast<int>(texture.getTextureWrapT());
+			if (ImGuiWidgets::drawComboBox("Wrap T", s_TextureWrapStyleStrings, 5, wrapT)) {
+				texture.setTextureWrapT(static_cast<TextureWrapStyle>(wrapT));
+			}
+
+			int wrapR = static_cast<int>(texture.getTextureWrapR());
+			if(ImGuiWidgets::drawComboBox("Wrap R", s_TextureWrapStyleStrings, 5, wrapR)) {
+				texture.setTextureWrapR(static_cast<TextureWrapStyle>(wrapR));
+			}
+		});
+		
 	}
 
 	void ScenePropertiesPanel::onImGuiRender() {
