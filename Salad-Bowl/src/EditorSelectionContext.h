@@ -1,7 +1,9 @@
 #pragma once
 
 #include "Salad/Scene/Entity.h"
-#include "EditorShader.h"
+
+#include "Assets/EditorShader.h"
+#include "Assets/EditorTexture.h"
 
 namespace Salad {
 
@@ -9,7 +11,8 @@ namespace Salad {
 		None = 0,
 		Entity = 1,
 		EntityGroup = 2,
-		Shader = 3
+		Shader = 3,
+		Texture
 	};
 
 	class EntitySelectionContext { 
@@ -20,6 +23,7 @@ namespace Salad {
 		~EntitySelectionContext() = default;
 
 		static EditorSelectionContextType getSelectionType() { return EditorSelectionContextType::Entity; }
+		static void deallocate(void* ptr) { delete ((EntitySelectionContext*) ptr); }
 
 		void setSelectedEntity(Entity entity) { m_SelectedEntity = entity; }
 		Entity getSelectedEntity() { return m_SelectedEntity; }
@@ -39,11 +43,28 @@ namespace Salad {
 		~ShaderSelectionContext() = default;
 
 		static EditorSelectionContextType getSelectionType() { return EditorSelectionContextType::Shader; }
+		static void deallocate(void* ptr) { delete ((ShaderSelectionContext*)ptr); }
 
 		EditorShader& getEditorShader() { return m_EditorShader; }
 
 	private:
 		EditorShader m_EditorShader;
+	};
+
+	class TextureSelectionContext {
+	
+	public:
+		TextureSelectionContext() = delete;
+		TextureSelectionContext(EditorTexture& texture) : m_Texture(texture) { m_Texture.loadTexture(); };
+		~TextureSelectionContext() = default;
+
+		static void deallocate(void* ptr) { delete ((TextureSelectionContext*)ptr); }
+		static EditorSelectionContextType getSelectionType() { return EditorSelectionContextType::Texture; }
+
+		EditorTexture& getTexture() { return m_Texture; }
+
+	private:
+		EditorTexture m_Texture;
 	};
 
 	class EditorSelectionContext {
@@ -64,11 +85,16 @@ namespace Salad {
 		EditorSelectionContext() = default;
 		~EditorSelectionContext() { setSelectionContextNoneImpl(); }
 
+		void clearCurrentContext() {
+			m_DeallocFunction(m_SelectionContext);
+		}
+
 		template<typename T, typename... Args>
 		void setSelectionContextImpl(Args&&... args) {
-			if (m_SelectionContext != nullptr) delete m_SelectionContext;
+			if (m_SelectionContext != nullptr) clearCurrentContext();
 
 			m_ContextType = T::getSelectionType();
+			m_DeallocFunction = T::deallocate;
 			T* selectionContext = new T(args...);
 			m_SelectionContext = (void*)selectionContext;
 		}
@@ -81,14 +107,15 @@ namespace Salad {
 		}
 
 		void setSelectionContextNoneImpl() {
+			if (m_SelectionContext != nullptr) clearCurrentContext();
 			m_ContextType = EditorSelectionContextType::None;
-			if (m_SelectionContext != nullptr) delete m_SelectionContext;
 			m_SelectionContext = nullptr;
 		}
 
 	private:
 		EditorSelectionContextType m_ContextType;
 		void* m_SelectionContext;
+		std::function<void(void*)> m_DeallocFunction;
 
 		inline static EditorSelectionContext* s_Instance;
 
