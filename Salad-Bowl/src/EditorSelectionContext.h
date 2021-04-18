@@ -22,9 +22,11 @@ namespace Salad {
 		EntitySelectionContext(Entity entity) : m_SelectedEntity(entity) {}
 		~EntitySelectionContext() = default;
 
+		// Selection Context Mandatory Functions
 		static EditorSelectionContextType getSelectionType() { return EditorSelectionContextType::Entity; }
 		static void deallocate(void* ptr) { delete ((EntitySelectionContext*) ptr); }
 
+		// EntitySelectionContext specific functions
 		void setSelectedEntity(Entity entity) { m_SelectedEntity = entity; }
 		Entity getSelectedEntity() { return m_SelectedEntity; }
 		bool isSelectionValid() { return m_SelectedEntity.isValid(); }
@@ -42,9 +44,11 @@ namespace Salad {
 		ShaderSelectionContext(EditorShader& shader) : m_EditorShader(shader) {}
 		~ShaderSelectionContext() = default;
 
+		// Selection Context Mandatory Functions
 		static EditorSelectionContextType getSelectionType() { return EditorSelectionContextType::Shader; }
 		static void deallocate(void* ptr) { delete ((ShaderSelectionContext*)ptr); }
 
+		// ShaderSelectionContext specific functions
 		EditorShader& getEditorShader() { return m_EditorShader; }
 
 	private:
@@ -58,9 +62,11 @@ namespace Salad {
 		TextureSelectionContext(EditorTexture& texture) : m_Texture(texture) { m_Texture.loadTexture(); };
 		~TextureSelectionContext() = default;
 
-		static void deallocate(void* ptr) { delete ((TextureSelectionContext*)ptr); }
+		// Selection Context Mandatory Functions
 		static EditorSelectionContextType getSelectionType() { return EditorSelectionContextType::Texture; }
+		static void deallocate(void* ptr) { delete ((TextureSelectionContext*)ptr); }
 
+		// TextureSelectionContext specific functions
 		EditorTexture& getTexture() { return m_Texture; }
 
 	private:

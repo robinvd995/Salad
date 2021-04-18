@@ -69,6 +69,7 @@ namespace Salad {
 	}
 
 	OpenGLTexture2D::~OpenGLTexture2D() {
+		//SLD_CORE_INFO("Texture deleted!");
 		glDeleteTextures(1, &m_TextureId);
 	}
 

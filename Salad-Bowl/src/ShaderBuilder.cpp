@@ -292,6 +292,7 @@ namespace Salad {
 					}
 				}
 
+				stage.shaderType = stagetype;
 				shader.m_ShaderStages.insert({ stagetype, stage });
 
 			}
@@ -344,7 +345,7 @@ namespace Salad {
 	EditorShader ShaderBuilder::build(const std::string& filepath) {
 
 		// Create an new instance of a shader
-		EditorShader shader;
+		EditorShader shader(filepath);
 		uint32_t errorCode = 0;
 
 		// Parse file to get the variables and the sources

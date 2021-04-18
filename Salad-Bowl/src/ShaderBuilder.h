@@ -7,7 +7,7 @@
 
 #include <ostream>
 
-#include "EditorShader.h"
+#include "Assets/EditorShader.h"
 
 // ----- Defines Start -----
 

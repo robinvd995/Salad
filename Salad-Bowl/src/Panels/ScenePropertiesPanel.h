@@ -12,7 +12,11 @@ namespace Salad {
 		void onImGuiRender();
 
 	private:
-		template<typename T>
-		void drawComponent(const char* label, Entity entity, std::function<void(Entity)> lambda);
+		void renderEntityProperties();
+		void renderEditorShaderProperties();
+		void renderEditorTextureProperties();
+
+		/*template<typename T>
+		void drawComponent(const char* label, Entity entity, std::function<void(Entity)> lambda);*/
 	};
 }

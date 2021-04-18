@@ -2,6 +2,8 @@
 
 #include "Salad/Core/Core.h"
 
+#include <iostream>
+
 #include <string>
 
 namespace Salad {
@@ -24,7 +26,9 @@ namespace Salad {
 
 		friend class TextureManager;
 
-	private:
+	public:
+		virtual ~Texture2D() = default;
+
 		static Ref<Texture2D> create(const std::string& filepath);
 		static Ref<Texture2D> create(uint32_t width, uint32_t height);
 	};

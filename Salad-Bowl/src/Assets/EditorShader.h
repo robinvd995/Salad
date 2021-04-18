@@ -87,7 +87,10 @@ namespace Salad {
 
 	public:
 		EditorShader() = default;
+		EditorShader(const std::string& filepath) : m_FilePath(filepath) {}
 		~EditorShader() {}
+
+		const std::string& getFilePath() { return m_FilePath; }
 
 		bool hasStage(ShaderStageType type) { return m_ShaderStages.find(type) != m_ShaderStages.end(); }
 		ShaderStage& getStage(ShaderStageType type) { /*TODO: Assert*/ return m_ShaderStages.find(type)->second; }
@@ -107,6 +110,8 @@ namespace Salad {
 	private:
 		std::map<ShaderStageType, ShaderStage> m_ShaderStages;
 		ShaderVertexBufferLayout m_VertexBufferLayout;
+
+		std::string m_FilePath;
 
 		friend class ShaderBuilder;
 

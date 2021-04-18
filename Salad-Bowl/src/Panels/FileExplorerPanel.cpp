@@ -5,6 +5,7 @@
 #include "ShaderBuilder.h"
 
 #include "Salad/Renderer/TextureManager.h"
+#include "EditorSelectionContext.h"
 
 #include <iostream>
 #include <filesystem>
@@ -128,10 +129,16 @@ namespace Salad {
 
 	void FileExplorerPanel::onItemDoubleClicked(FileExplorerItem* item) {
 		switch(item->type) {
-			case FileExplorerItemType::GLSL:
+			case FileExplorerItemType::GLSL: {
 				ShaderBuilder builder;
 				EditorShader shader = builder.build(item->path);
-				break;
+				EditorSelectionContext::setSelectionContext<ShaderSelectionContext>(shader);
+			} break;
+
+			case FileExplorerItemType::Texture: {
+				EditorTexture texture(item->path);
+				EditorSelectionContext::setSelectionContext<TextureSelectionContext>(texture);
+			} break;
 		}
 	}
 
