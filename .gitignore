@@ -12,3 +12,4 @@ bin-int/
 *.vpp.working
 *.vpp.working-journal
 *.lck
+Salad/vendor/freetype/
