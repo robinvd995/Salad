@@ -2,8 +2,6 @@
 
 #include "Salad/Core/Core.h"
 
-#include <iostream>
-
 #include <string>
 
 namespace Salad {
