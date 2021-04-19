@@ -4,7 +4,7 @@
 namespace Salad{
 
 	Ref<Texture2D> TextureManager::loadTexture2D(const std::string& filepath) {
-		Ref<Texture2D> textureRef = Texture2D::create(filepath);
+		Ref<Texture2D> textureRef = Texture2D::create(filepath, TextureFilterWrapSpecification());
 		m_Texture2DCollection[filepath] = textureRef;
 		return textureRef;
 	}

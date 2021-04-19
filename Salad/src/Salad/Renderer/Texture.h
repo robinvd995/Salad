@@ -20,6 +20,37 @@ namespace Salad {
 		virtual void bind(uint32_t slot = 0) const = 0;
 	};
 
+	enum class TextureMinFilterSpecification {
+		Linear = 0,
+		Nearest = 1,
+		NearestMipmapNearest = 2,
+		LinearMipmapNearest = 3,
+		NearestMipmapLinear = 4,
+		LinearMipmapLinear = 5
+	};
+
+	enum class TextureMagFilterSpecification {
+		Linear = 0,
+		Nearest = 1
+	};
+
+	enum class TextureWrapSpecification {
+		Repeat = 0,
+		ClampToEdge = 1,
+		ClampToBorder = 2,
+		MirroredRepeat = 3,
+		MirroredClampToEdge = 4
+	};
+
+	struct TextureFilterWrapSpecification {
+		TextureMinFilterSpecification minFilter = TextureMinFilterSpecification::Linear;
+		TextureMagFilterSpecification magFilter = TextureMagFilterSpecification::Linear;
+
+		TextureWrapSpecification wrapS = TextureWrapSpecification::Repeat;
+		TextureWrapSpecification wrapT = TextureWrapSpecification::Repeat;
+		TextureWrapSpecification wrapR = TextureWrapSpecification::Repeat;
+	};
+
 	class Texture2D : public Texture {
 
 		friend class TextureManager;
@@ -27,7 +58,7 @@ namespace Salad {
 	public:
 		virtual ~Texture2D() = default;
 
-		static Ref<Texture2D> create(const std::string& filepath);
+		static Ref<Texture2D> create(const std::string& filepath, TextureFilterWrapSpecification filterWrapSpec);
 		static Ref<Texture2D> create(uint32_t width, uint32_t height);
 	};
 

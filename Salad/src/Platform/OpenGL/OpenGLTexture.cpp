@@ -5,6 +5,21 @@
 
 namespace Salad {
 
+	static GLint s_GLMinFilterSpecMapper[] = { 
+		GL_LINEAR, GL_NEAREST, 
+		GL_NEAREST_MIPMAP_NEAREST, GL_LINEAR_MIPMAP_NEAREST,
+		GL_NEAREST_MIPMAP_LINEAR, GL_LINEAR_MIPMAP_LINEAR
+	};
+
+	static GLint s_GLMagFilterSpecMapper[] = {
+		GL_LINEAR, GL_NEAREST
+	};
+
+	static GLint s_GLWrapSpecMapper[] = {
+		GL_REPEAT, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER,
+		GL_MIRRORED_REPEAT, GL_MIRROR_CLAMP_TO_EDGE
+	};
+
 	// ----- Texture2D -----
 
 	OpenGLTexture2D::OpenGLTexture2D(uint32_t width, uint32_t height) :
@@ -21,10 +36,11 @@ namespace Salad {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	}
 
-	OpenGLTexture2D::OpenGLTexture2D(const std::string& filepath) :
+	OpenGLTexture2D::OpenGLTexture2D(const std::string& filepath, TextureFilterWrapSpecification filterWrapSpec) :
 		m_FilePath(filepath),
 		m_Width(0),
-		m_Height(0)
+		m_Height(0),
+		m_TextureFilterWrapSpec(filterWrapSpec)
 	{
 		int width, height, channels;
 		//stbi_set_flip_vertically_on_load(1);
@@ -48,8 +64,8 @@ namespace Salad {
 		glGenTextures(1, &m_TextureId);
 		glBindTexture(GL_TEXTURE_2D, m_TextureId);
 
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, s_GLMinFilterSpecMapper[static_cast<int>(m_TextureFilterWrapSpec.minFilter)]);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, s_GLMinFilterSpecMapper[static_cast<int>(m_TextureFilterWrapSpec.magFilter)]);
 
 		glTexImage2D(GL_TEXTURE_2D, 0, m_InternalFormat, width, height, 0, m_DataFormat, GL_UNSIGNED_BYTE, data);
 

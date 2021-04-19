@@ -5,28 +5,6 @@
 
 namespace Salad {
 
-	enum class TextureMinFilterStyle {
-		Linear = 0,
-		Nearest = 1,
-		NearestMipmapNearest = 2,
-		LinearMipmapNearest = 3,
-		NearestMipmapLinear = 4,
-		LinearMipmapLinear = 5
-	};
-
-	enum class TextureMagFilterStyle {
-		Linear = 0,
-		Nearest = 1
-	};
-
-	enum class TextureWrapStyle {
-		Repeat = 0,
-		ClampToEdge = 1,
-		ClampToBorder = 2,
-		MirroredRepeat = 3,
-		MirroredClampToEdge = 4
-	};
-
 	class EditorTexture {
 	
 	public:
@@ -35,7 +13,7 @@ namespace Salad {
 		EditorTexture(const EditorTexture& other) = default;
 		~EditorTexture() = default;
 
-		void loadTexture() { m_Texture = Texture2D::create(m_FilePath); }
+		Ref<Texture2D> loadTexture() { m_Texture = Texture2D::create(m_FilePath, m_TextureFilterWrapSpec); return m_Texture; }
 
 		std::string& getFileName() { return m_FileName; }
 		std::string& getFilePath() { return m_FilePath; }
@@ -46,31 +24,25 @@ namespace Salad {
 		uint32_t getTextureHeight() { return m_Texture->getHeight(); }
 
 		// Texture filter/wrapping settings
-		TextureMinFilterStyle getTextureMinFilter() { return m_TextureMinFilter; }
-		TextureMagFilterStyle getTextureMagFilter() { return m_TextureMagFilter; }
+		TextureMinFilterSpecification getTextureMinFilter() { return m_TextureFilterWrapSpec.minFilter; }
+		TextureMagFilterSpecification getTextureMagFilter() { return m_TextureFilterWrapSpec.magFilter; }
 
-		TextureWrapStyle getTextureWrapS() { return m_TextureWrapS; }
-		TextureWrapStyle getTextureWrapT() { return m_TextureWrapT; }
-		TextureWrapStyle getTextureWrapR() { return m_TextureWrapR; }
+		TextureWrapSpecification getTextureWrapS() { return m_TextureFilterWrapSpec.wrapS; }
+		TextureWrapSpecification getTextureWrapT() { return m_TextureFilterWrapSpec.wrapT; }
+		TextureWrapSpecification getTextureWrapR() { return m_TextureFilterWrapSpec.wrapR; }
 
-		void setTextureMinFilter(TextureMinFilterStyle filter) { m_TextureMinFilter = filter; }
-		void setTextureMagFilter(TextureMagFilterStyle filter) { m_TextureMagFilter = filter; }
+		void setTextureMinFilter(TextureMinFilterSpecification filter) { m_TextureFilterWrapSpec.minFilter = filter; }
+		void setTextureMagFilter(TextureMagFilterSpecification filter) { m_TextureFilterWrapSpec.magFilter = filter; }
 
-		void setTextureWrapS(TextureWrapStyle wrap) { m_TextureWrapS = wrap; }
-		void setTextureWrapT(TextureWrapStyle wrap) { m_TextureWrapT = wrap; }
-		void setTextureWrapR(TextureWrapStyle wrap) { m_TextureWrapR = wrap; }
+		void setTextureWrapS(TextureWrapSpecification wrap) { m_TextureFilterWrapSpec.wrapS = wrap; }
+		void setTextureWrapT(TextureWrapSpecification wrap) { m_TextureFilterWrapSpec.wrapT = wrap; }
+		void setTextureWrapR(TextureWrapSpecification wrap) { m_TextureFilterWrapSpec.wrapR = wrap; }
 
 	private:
 		std::string m_FilePath;
 		std::string m_FileName;
 		Ref<Texture2D> m_Texture;
 
-		TextureMinFilterStyle m_TextureMinFilter = TextureMinFilterStyle::NearestMipmapLinear;
-		TextureMagFilterStyle m_TextureMagFilter = TextureMagFilterStyle::Linear;
-
-		TextureWrapStyle m_TextureWrapS = TextureWrapStyle::Repeat;
-		TextureWrapStyle m_TextureWrapT = TextureWrapStyle::Repeat;
-		TextureWrapStyle m_TextureWrapR = TextureWrapStyle::Repeat;
+		TextureFilterWrapSpecification m_TextureFilterWrapSpec;
 	};
-
 }

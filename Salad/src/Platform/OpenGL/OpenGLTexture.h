@@ -11,7 +11,7 @@ namespace Salad {
 	public:
 		virtual ~OpenGLTexture2D();
 
-		OpenGLTexture2D(const std::string& filepath);
+		OpenGLTexture2D(const std::string& filepath, TextureFilterWrapSpecification);
 		OpenGLTexture2D(uint32_t width, uint32_t height);
 		OpenGLTexture2D(uint32_t textureId, uint32_t width, uint32_t height, GLenum internalFormat, GLenum dataFormat);
 
@@ -29,6 +29,7 @@ namespace Salad {
 		uint32_t m_TextureId;
 
 		GLenum m_InternalFormat, m_DataFormat;
+		TextureFilterWrapSpecification m_TextureFilterWrapSpec;
 	};
 
 	class OpenGLCubeMap : public TextureCubeMap {
