@@ -59,7 +59,7 @@ namespace Salad {
 	
 	public:
 		TextureSelectionContext() = delete;
-		TextureSelectionContext(EditorTexture& texture) : m_Texture(texture) { m_Texture.loadTexture(); };
+		TextureSelectionContext(EditorTexture& texture) : m_Texture(texture) {};
 		~TextureSelectionContext() = default;
 
 		// Selection Context Mandatory Functions

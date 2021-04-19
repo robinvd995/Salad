@@ -12,9 +12,12 @@
 #include <map>
 #include <algorithm>
 
+#include "Assets/AssetLoader.h"
+#include "Util/FileUtils.hpp";
+
 namespace Salad {
 
-	namespace Util {
+	namespace Helper {
 
 		static const std::map<std::string, FileExplorerItemType> s_FileTypeMap{
 			{"png", FileExplorerItemType::Texture},
@@ -36,30 +39,6 @@ namespace Salad {
 			{ FileExplorerItemType::LuaScript, {0.875f, 0.0f} }
 		};
 
-		std::string popDirectory(std::string& path) {
-			size_t index = path.find_last_of("/", path.size() - 2);
-			if (index == std::string::npos) return path;
-			return path.substr(0, index);
-		}
-
-		std::string fileNameFromPath(std::string& path) {
-			size_t index = path.find_last_of('/');
-			if (index == std::string::npos) return path;
-			return path.substr(index + 1);
-		}
-
-		bool fileExtensionFromName(std::string& filename, std::string* extension) {
-			size_t index = filename.find_last_of('.');
-			if (index == std::string::npos) return false;
-			*extension = filename.substr(index + 1);
-			return true;
-		}
-
-		bool fileExtensionFromPath(std::string& path, std::string* extension) {
-			std::string filename = fileNameFromPath(path);
-			return fileExtensionFromName(path, extension);
-		}
-
 		FileExplorerItemType itemTypeFromExtension(std::string& extension) {
 			auto it = s_FileTypeMap.find(extension);
 			if (it != s_FileTypeMap.end()) return it->second;
@@ -68,7 +47,7 @@ namespace Salad {
 
 		FileExplorerItemType itemTypeFromFilename(std::string& filename) {
 			std::string extension;
-			bool hasExtension = Util::fileExtensionFromName(filename, &extension);
+			bool hasExtension = FileUtil::fileExtensionFromName(filename, &extension);
 			if (hasExtension) {
 				return itemTypeFromExtension(extension);
 			}
@@ -77,10 +56,17 @@ namespace Salad {
 			}
 		}
 
-		std::pair<float,float> textureCoordsForType(FileExplorerItemType type) {
+		std::pair<float, float> textureCoordsForType(FileExplorerItemType type) {
 			auto it = s_FileTypeIconCoordinateMap.find(type);
 			if (it == s_FileTypeIconCoordinateMap.end()) return { 0.5f, 0.0f };
 			return it->second;
+		}
+
+		bool shouldIgnoreExtension(std::vector<std::string>& ignoreList, std::string& extension) {
+			for (std::string& ignore : ignoreList) {
+				if (extension == ignore) return true;
+			}
+			return false;
 		}
 
 	}
@@ -108,13 +94,21 @@ namespace Salad {
 			FileExplorerItem* item = new FileExplorerItem(index++);
 
 			item->path = entry.path().string();
-			item->filename = Util::fileNameFromPath(item->path);
+			item->filename = FileUtil::fileNameFromPath(item->path);
 
 			if (entry.is_directory()) {
 				item->type = FileExplorerItemType::Folder;
 			}
 			else {
-				item->type = Util::itemTypeFromFilename(item->filename);
+				std::string extension;
+				bool hasExtension = FileUtil::fileExtensionFromName(item->filename, &extension);
+				if (hasExtension) {
+					if (Helper::shouldIgnoreExtension(m_ExtensionIgnoreList, extension)) { delete item; continue; }
+					item->type = Helper::itemTypeFromExtension(extension);
+				}
+				else {
+					item->type = FileExplorerItemType::Unknown;
+				}
 			}
 
 			m_Items.push_back(item);
@@ -138,7 +132,7 @@ namespace Salad {
 	}
 
 	void FileExplorerPanel::scopeToParent() {
-		std::string parentDir = Util::popDirectory(m_CurrentDirectory);
+		std::string parentDir = FileUtil::popDirectory(m_CurrentDirectory);
 		if(parentDir != m_CurrentDirectory) {
 			std::string s = parentDir.append("/");
 			scopeToFolder(s);
@@ -154,7 +148,7 @@ namespace Salad {
 			} break;
 
 			case FileExplorerItemType::Texture: {
-				EditorTexture texture(item->path, item->filename);
+				EditorTexture texture = Asset::loadEditorTexture(item->path);
 				EditorSelectionContext::setSelectionContext<TextureSelectionContext>(texture);
 			} break;
 		}
@@ -223,7 +217,7 @@ namespace Salad {
 			ImVec2 afterScreenPos = ImGui::GetCursorScreenPos();
 
 			ImVec2 iconSize = ImVec2{ 32.0f, 32.0f };
-			std::pair<float, float> texCoords = Util::textureCoordsForType(item->type);
+			std::pair<float, float> texCoords = Helper::textureCoordsForType(item->type);
 			ImGui::GetWindowDrawList()->AddImage((void*)m_FileIconTextureMap->getRendererId(), ImVec2(p.x + 4, p.y + 4), ImVec2(p.x + 36, p.y + 36), 
 				ImVec2(texCoords.first, texCoords.second), ImVec2(texCoords.first + 0.125f, texCoords.second + 0.125f));
 

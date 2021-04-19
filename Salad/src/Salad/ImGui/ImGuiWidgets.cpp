@@ -98,7 +98,6 @@ namespace Salad {
 			for (int i = 0; i < size; i++) {
 				bool isSelected = selectedId == i;
 				if (ImGui::Selectable(values[i], isSelected)) {
-					SLD_CORE_INFO(i);
 					selectedId = i;
 					changed = true;
 				}

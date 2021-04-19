@@ -9,6 +9,7 @@
 #include "Salad/ImGui/ImGuiWidgets.h"
 
 #include "EditorSelectionContext.h"
+#include "Assets/AssetLoader.h"
 
 namespace Salad {
 
@@ -263,28 +264,25 @@ namespace Salad {
 			ImGui::Dummy({ 0.0f, 4.0f });
 
 			int minFilter = static_cast<int>(texture.getTextureMinFilter());
-			if(ImGuiWidgets::drawComboBox("Min Filter", s_TextureMinFilterStyleStrings, 6, minFilter)) {
-				texture.setTextureMinFilter(static_cast<TextureMinFilterSpecification>(minFilter));
-			}
-
 			int magFilter = static_cast<int>(texture.getTextureMagFilter());
-			if (ImGuiWidgets::drawComboBox("Mag Filter", s_TextureMagFilterStyleStrings, 2, magFilter)) {
-				texture.setTextureMagFilter(static_cast<TextureMagFilterSpecification>(magFilter));
-			}
-
 			int wrapS = static_cast<int>(texture.getTextureWrapS());
-			if (ImGuiWidgets::drawComboBox("Wrap S", s_TextureWrapStyleStrings, 5, wrapS)) {
-				texture.setTextureWrapS(static_cast<TextureWrapSpecification>(wrapS));
-			}
-
 			int wrapT = static_cast<int>(texture.getTextureWrapT());
-			if (ImGuiWidgets::drawComboBox("Wrap T", s_TextureWrapStyleStrings, 5, wrapT)) {
-				texture.setTextureWrapT(static_cast<TextureWrapSpecification>(wrapT));
-			}
-
 			int wrapR = static_cast<int>(texture.getTextureWrapR());
-			if(ImGuiWidgets::drawComboBox("Wrap R", s_TextureWrapStyleStrings, 5, wrapR)) {
+
+			bool textureChanged = false;
+			textureChanged |= ImGuiWidgets::drawComboBox("Min Filter", s_TextureMinFilterStyleStrings, 6, minFilter);
+			textureChanged |= ImGuiWidgets::drawComboBox("Mag Filter", s_TextureMagFilterStyleStrings, 2, magFilter);
+			textureChanged |= ImGuiWidgets::drawComboBox("Wrap S", s_TextureWrapStyleStrings, 5, wrapS);
+			textureChanged |= ImGuiWidgets::drawComboBox("Wrap T", s_TextureWrapStyleStrings, 5, wrapT);
+			textureChanged |= ImGuiWidgets::drawComboBox("Wrap R", s_TextureWrapStyleStrings, 5, wrapR);
+
+			if (textureChanged) {
+				texture.setTextureMinFilter(static_cast<TextureMinFilterSpecification>(minFilter));
+				texture.setTextureMagFilter(static_cast<TextureMagFilterSpecification>(magFilter));
+				texture.setTextureWrapS(static_cast<TextureWrapSpecification>(wrapS));
+				texture.setTextureWrapT(static_cast<TextureWrapSpecification>(wrapT));
 				texture.setTextureWrapR(static_cast<TextureWrapSpecification>(wrapR));
+				Asset::saveEditorTexture(texture);
 			}
 		});
 		

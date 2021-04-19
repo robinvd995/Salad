@@ -195,6 +195,7 @@ project "Salad-Bowl"
             "%{IncludeDir.glm}",
             "%{IncludeDir.entt}",
             "%{IncludeDir.ImGuizmo}",
+            "%{IncludeDir.json}",
 
             IncludeDir["assimp"]
         }

@@ -36,7 +36,7 @@ namespace Salad {
 	
 	public:
 
-		FileExplorerPanel() {}
+		FileExplorerPanel() { m_ExtensionIgnoreList.push_back("asset"); }
 		virtual ~FileExplorerPanel() {}
 
 		void init();
@@ -61,6 +61,8 @@ namespace Salad {
 		int m_Selected = -1;
 		
 		std::stack<std::string> m_PreviousDirectories;
+
+		std::vector<std::string> m_ExtensionIgnoreList;
 	};
 
 

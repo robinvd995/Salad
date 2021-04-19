@@ -189,6 +189,9 @@
     <ClInclude Include="src\Salad\Renderer\Gui\GuiTessellator.h">
       <Filter>src\Salad\Renderer\Gui</Filter>
     </ClInclude>
+    <ClInclude Include="src\Salad\Renderer\PostProcessing.h">
+      <Filter>src\Salad\Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="src\Salad\Renderer\Primitives\Spline.h">
       <Filter>src\Salad\Renderer\Primitives</Filter>
     </ClInclude>
@@ -255,7 +258,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\Salad\Renderer\PostProcessing.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp">
@@ -351,6 +353,9 @@
     <ClCompile Include="src\Salad\Renderer\Gui\GuiTessellator.cpp">
       <Filter>src\Salad\Renderer\Gui</Filter>
     </ClCompile>
+    <ClCompile Include="src\Salad\Renderer\PostProcessing.cpp">
+      <Filter>src\Salad\Renderer</Filter>
+    </ClCompile>
     <ClCompile Include="src\Salad\Renderer\Primitives\Spline.cpp">
       <Filter>src\Salad\Renderer\Primitives</Filter>
     </ClCompile>
@@ -408,6 +413,5 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\Salad\Renderer\PostProcessing.cpp" />
   </ItemGroup>
 </Project>

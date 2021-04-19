@@ -9,7 +9,9 @@ namespace Salad {
 	
 	public:
 		EditorTexture() = delete;
-		EditorTexture(std::string& path, std::string& name) : m_FilePath(path), m_FileName(name) {}
+		EditorTexture(std::string& path, std::string& name, Ref<Texture2D> texture, TextureFilterWrapSpecification filterWrapSpec) 
+			: m_FilePath(path), m_FileName(name), m_Texture(texture), m_TextureFilterWrapSpec(filterWrapSpec)
+		{}
 		EditorTexture(const EditorTexture& other) = default;
 		~EditorTexture() = default;
 
