@@ -127,7 +127,9 @@ namespace Salad {
 		}
 	}
 
-	
+	void ScenePropertiesPanel::init() {
+
+	}
 
 	void ScenePropertiesPanel::renderEntityProperties() {
 		EntitySelectionContext* context = EditorSelectionContext::getSelectionContext<EntitySelectionContext>();
@@ -282,6 +284,8 @@ namespace Salad {
 				texture.setTextureWrapS(static_cast<TextureWrapSpecification>(wrapS));
 				texture.setTextureWrapT(static_cast<TextureWrapSpecification>(wrapT));
 				texture.setTextureWrapR(static_cast<TextureWrapSpecification>(wrapR));
+				texture.updateTextureFilterWrapSpec();
+
 				Asset::saveEditorTexture(texture);
 			}
 		});

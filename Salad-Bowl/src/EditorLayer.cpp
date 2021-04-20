@@ -298,8 +298,10 @@ namespace Salad {
 
 		// TODO: Fix the system to where you can push and id or "section" to have the same labels available
 
+		EditorSettings::s_Instance = new EditorSettings();
+
 		// Settings
-		EditorCameraControlSettings& cameraSettings = m_EditorCamera.getCameraControlSettings();
+		/*EditorCameraControlSettings& cameraSettings = m_EditorCamera.getCameraControlSettings();
 		m_EditorSettingsWindow.createGroup("Editor Camera");
 
 		// Freeflight settings
@@ -345,9 +347,12 @@ namespace Salad {
 
 		m_EditorSettingsWindow.pushProperty("Editor Camera", PropertyType::Float, "Max Camera Angle", &cameraSettings.maxCameraAngle);
 
-		m_EditorSettingsWindow.popID("Editor Camera");
+		m_EditorSettingsWindow.popID("Editor Camera");*/
 
 		m_FileExplorerPanel.init();
+		m_EditorCamera.init();
+
+		EditorSettings::s_Instance->deserializeSettings();
 
 		EditorSelectionContext::s_Instance = new EditorSelectionContext();
 	}
@@ -355,6 +360,9 @@ namespace Salad {
 	void EditorLayer::onDetach() {
 		delete EditorSelectionContext::s_Instance;
 		EditorSelectionContext::s_Instance = nullptr;
+
+		delete EditorSettings::s_Instance;
+		EditorSettings::s_Instance = nullptr;
 	}
 
 	void EditorLayer::onUpdate(Timestep ts) {
@@ -690,6 +698,11 @@ namespace Salad {
 			ImGui::End();
 		}
 
+		if(m_EditorSettingsWindow.m_PreviousShowWindow && !m_EditorSettingsWindow.m_ShowWindow) {
+			EditorSettings::s_Instance->serializeSettings();
+		}
+
+		m_EditorSettingsWindow.m_PreviousShowWindow = m_EditorSettingsWindow.m_ShowWindow;
 	}
 
 	void EditorLayer::serialize() {

@@ -84,6 +84,21 @@ namespace Salad {
 		glTextureSubImage2D(m_TextureId, 0, 0, 0, m_Width, m_Height, m_DataFormat, GL_UNSIGNED_BYTE, data);
 	}
 
+	void OpenGLTexture2D::updateFilterWrapSpecification(TextureFilterWrapSpecification& spec) {
+		m_TextureFilterWrapSpec = spec;
+
+		glBindTexture(GL_TEXTURE_2D, m_TextureId);
+
+		// Min/Mag Filters
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, s_GLMinFilterSpecMapper[static_cast<int>(m_TextureFilterWrapSpec.minFilter)]);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, s_GLMinFilterSpecMapper[static_cast<int>(m_TextureFilterWrapSpec.magFilter)]);
+
+		// Wrap
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, s_GLWrapSpecMapper[static_cast<int>(m_TextureFilterWrapSpec.wrapS)]);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, s_GLWrapSpecMapper[static_cast<int>(m_TextureFilterWrapSpec.wrapT)]);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, s_GLWrapSpecMapper[static_cast<int>(m_TextureFilterWrapSpec.wrapR)]);
+	};
+
 	OpenGLTexture2D::~OpenGLTexture2D() {
 		//SLD_CORE_INFO("Texture deleted!");
 		glDeleteTextures(1, &m_TextureId);
@@ -140,6 +155,8 @@ namespace Salad {
 	void OpenGLCubeMap::bind(uint32_t slot) const {
 		glBindTexture(GL_TEXTURE_CUBE_MAP, m_TextureId);
 	}
+
+	void OpenGLCubeMap::updateFilterWrapSpecification(TextureFilterWrapSpecification& spec) {};
 
 	OpenGLCubeMap::~OpenGLCubeMap() {
 		

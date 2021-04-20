@@ -7,6 +7,16 @@
 
 namespace Salad {
 
+	void drawPropertyList(EditorSettingsPropertyList& proplist) {
+		for(auto& prop : proplist.properties) {
+			switch (prop.type) {
+				case EditorSettingsPropertyType::Float: ImGuiWidgets::drawFloatControl(prop.name.c_str(), (float*)prop.data, true, 0.0f); break;
+				case EditorSettingsPropertyType::Flag: ImGuiWidgets::drawCheckboxControl(prop.name.c_str(), (bool*)prop.data); break;
+				case EditorSettingsPropertyType::String: ImGuiWidgets::drawTextboxControl(prop.name.c_str(), (std::string*)prop.data); break;
+			}
+		}
+	}
+
 	void EditorSettingsWindow::onImGuiRender() {
 		int height = ImGui::GetContentRegionAvail().y;
 		{
@@ -14,46 +24,48 @@ namespace Salad {
 			ImGui::BeginChild("EditorSettingsSelector", ImVec2(200.0f, height), false, window_flags);
 			ImGui::Dummy({ 0.0f, 2.0f });
 
-			auto& group = m_Settings.m_PropertyMap;
+			auto& groups = EditorSettings::s_Instance->m_Groups;
 
-			for (auto it = group.begin(); it != group.end(); it++) {
-				if (ImGui::Selectable(it->first.c_str(), m_SelectedGroup == it->first)) {
-					m_SelectedGroup = it->first;
+			for (auto& it = groups.begin(); it != groups.end(); it++) {
+				if (ImGui::Selectable(it->groupId.c_str(), m_SelectedGroup == it->groupId)) {
+					m_SelectedGroup = it->groupId;
 				}
-
 			}
 			ImGui::EndChild();
 		}
-
+		
 		ImGui::SameLine();
 
 		if(!m_SelectedGroup.empty()) {
+			ImGui::PushID(m_SelectedGroup.c_str());
 			ImGuiWindowFlags window_flags = 0;
 			ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 1.0f);
 			ImGui::BeginChild("EditorSettingsProperties", ImVec2(0, height), true, window_flags);
 
-			float prevColWidth = ImGuiWidgets::getColWidth();
-			ImGuiWidgets::setColWidth(200.0f);
+			EditorSettingsGroup* group = EditorSettings::s_Instance->getGroupFromId(m_SelectedGroup);
 
-			auto& properties = m_Settings.m_PropertyMap[m_SelectedGroup];
-			for(auto& prop : properties) {
-				switch(prop.type) {
-					case PropertyType::Float: ImGuiWidgets::drawFloatControl(prop.name.c_str(), (float*)prop.data, true, 0.0f); break;
-					// Float slider, maybe t case PropertyType::Float: ImGuiWidgets::drawFloatSlider(prop.name.c_str(), (float*)prop.data, 0.01f, 1.0f); break;
-					case PropertyType::Flag: ImGuiWidgets::drawCheckboxControl(prop.name.c_str(), (bool*)prop.data); break;
-					case PropertyType::Seperator: ImGui::Separator(); break;
-					case PropertyType::Tag: ImGui::Text(prop.name.c_str()); break;
-					case PropertyType::ID: ImGui::PushID(prop.name.c_str()); break;
-					case PropertyType::PopID: ImGui::PopID(); break;
-						
+			if (group != nullptr) {
+				float prevColWidth = ImGuiWidgets::getColWidth();
+				ImGuiWidgets::setColWidth(200.0f);
+
+				for (auto it = group->subGroups.begin(); it != group->subGroups.end(); it++) {
+					ImGui::PushID(it->first.c_str());
+					if (ImGui::TreeNodeEx(it->first.c_str(), 0)) {
+						EditorSettingsPropertyList& proplist = it->second;
+						drawPropertyList(proplist);
+						ImGui::TreePop();
+					}
+					ImGui::PopID();
 				}
-			}
+				drawPropertyList(group->propertyList);
 
-			ImGuiWidgets::setColWidth(prevColWidth);
+				ImGuiWidgets::setColWidth(prevColWidth);
+			}
 
 			//ImGui::Columns(1);
 			ImGui::EndChild();
 			ImGui::PopStyleVar();
+			ImGui::PopID();
 		}
 	}
 

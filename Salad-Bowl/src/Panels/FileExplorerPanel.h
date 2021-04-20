@@ -36,7 +36,7 @@ namespace Salad {
 	
 	public:
 
-		FileExplorerPanel() { m_ExtensionIgnoreList.push_back("asset"); }
+		FileExplorerPanel() {}
 		virtual ~FileExplorerPanel() {}
 
 		void init();
@@ -53,6 +53,8 @@ namespace Salad {
 
 		void refresh();
 
+		void updateIgnoredExtensions();
+
 	private:
 		std::string m_CurrentDirectory;
 		std::vector<FileExplorerItem*> m_Items;
@@ -63,6 +65,9 @@ namespace Salad {
 		std::stack<std::string> m_PreviousDirectories;
 
 		std::vector<std::string> m_ExtensionIgnoreList;
+
+		std::string m_IgnoredExtensions = "asset";
+		std::string m_PreviousIgnoredExtensions;
 	};
 
 

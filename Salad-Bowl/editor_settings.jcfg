@@ -1,0 +1,76 @@
+{
+    "Editor_Settings": [
+        {
+            "groupid": "File Explorer",
+            "properties": [
+                {
+                    "data": "asset psd",
+                    "name": "Ignored Extensions"
+                }
+            ],
+            "subgroups": []
+        },
+        {
+            "groupid": "Editor Camera",
+            "properties": [
+                {
+                    "data": 85.0,
+                    "name": "Max Camera Angle"
+                }
+            ],
+            "subgroups": [
+                {
+                    "name": "Freeflight Mode",
+                    "properties": [
+                        {
+                            "data": 0.05000000074505806,
+                            "name": "Sensitivity"
+                        },
+                        {
+                            "data": false,
+                            "name": "Invert Horizontal"
+                        },
+                        {
+                            "data": false,
+                            "name": "Invert Vertical"
+                        }
+                    ]
+                },
+                {
+                    "name": "Orbit Mode",
+                    "properties": [
+                        {
+                            "data": 0.20000000298023224,
+                            "name": "Sensitivity"
+                        },
+                        {
+                            "data": false,
+                            "name": "Invert Horizontal"
+                        },
+                        {
+                            "data": false,
+                            "name": "Invert Vertical"
+                        }
+                    ]
+                },
+                {
+                    "name": "Scroll Mode",
+                    "properties": [
+                        {
+                            "data": 2.0,
+                            "name": "Sensitivity"
+                        },
+                        {
+                            "data": false,
+                            "name": "Invert Horizontal"
+                        },
+                        {
+                            "data": false,
+                            "name": "Invert Vertical"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

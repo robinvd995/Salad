@@ -8,6 +8,8 @@
 #include <glm/glm.hpp>
 #include <glm/glm/ext/matrix_transform.hpp>
 
+#include "EditorSettings.hpp"
+
 namespace Salad {
 
 	const bool EditorCamera::s_LockMouseForMode[] = { false, true, true, true };
@@ -17,6 +19,32 @@ namespace Salad {
 		Camera(Salad::PerspectiveCameraProperties()) 
 	{
 		recalcEditorViewMatrix();
+	}
+
+	void EditorCamera::init() {
+		EditorSettings::pushGroup("Editor Camera");
+
+		EditorSettings::pushSubGroup("Freeflight Mode");
+		EditorSettings::pushFloat("Sensitivity", &m_ControlSettings.ff_Sensitivity);
+		EditorSettings::pushBool("Invert Horizontal", &m_ControlSettings.ff_InvertHorizontal);
+		EditorSettings::pushBool("Invert Vertical", &m_ControlSettings.ff_InvertVertical);
+		EditorSettings::popSubGroup();
+
+		EditorSettings::pushSubGroup("Orbit Mode");
+		EditorSettings::pushFloat("Sensitivity", &m_ControlSettings.or_Sensitivity);
+		EditorSettings::pushBool("Invert Horizontal", &m_ControlSettings.or_InvertHorizontal);
+		EditorSettings::pushBool("Invert Vertical", &m_ControlSettings.or_InvertVertical);
+		EditorSettings::popSubGroup();
+
+		EditorSettings::pushSubGroup("Scroll Mode");
+		EditorSettings::pushFloat("Sensitivity", &m_ControlSettings.sc_Sensitivity);
+		EditorSettings::pushBool("Invert Horizontal", &m_ControlSettings.sc_InvertHorizontal);
+		EditorSettings::pushBool("Invert Vertical", &m_ControlSettings.sc_InvertVertical);
+		EditorSettings::popSubGroup();
+
+		EditorSettings::pushFloat("Max Camera Angle", &m_ControlSettings.maxCameraAngle);
+
+		EditorSettings::popGroup();
 	}
 
 	void EditorCamera::updateCamera(Timestep ts) {
@@ -60,13 +88,13 @@ namespace Salad {
 	}
 
 	void EditorCamera::orbit(Timestep ts) {
-		float speed = m_ControlSettings.or_Sensitivity * ts;
+		float speed = m_ControlSettings.or_Sensitivity * ts * 100;
 
 		float mouseDeltaX = Input::getMouseDeltaX();
 		float mouseDeltaY = -Input::getMouseDeltaY();
 
-		m_Rotation.y -= mouseDeltaX * m_ControlSettings.ff_Sensitivity * (m_ControlSettings.ff_InvertHorizontal ? -1.0f : 1.0f);
-		m_Rotation.x += mouseDeltaY * m_ControlSettings.ff_Sensitivity * (m_ControlSettings.ff_InvertVertical ? -1.0f : 1.0f);
+		m_Rotation.y -= mouseDeltaX * speed * (m_ControlSettings.ff_InvertHorizontal ? -1.0f : 1.0f);
+		m_Rotation.x += mouseDeltaY * speed * (m_ControlSettings.ff_InvertVertical ? -1.0f : 1.0f);
 
 		if (m_Rotation.x > m_ControlSettings.maxCameraAngle) {
 			m_Rotation.x = m_ControlSettings.maxCameraAngle;

@@ -9,6 +9,7 @@ namespace Salad {
 	public:
 		ScenePropertiesPanel() = default;
 
+		void init();
 		void onImGuiRender();
 
 	private:

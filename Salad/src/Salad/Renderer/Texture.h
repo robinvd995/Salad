@@ -6,20 +6,6 @@
 
 namespace Salad {
 
-	class Texture {
-
-	public:
-		virtual ~Texture() = default;
-
-		virtual uint32_t getWidth() const = 0;
-		virtual uint32_t getHeight() const = 0;
-		virtual uint32_t getRendererId() const = 0;
-
-		virtual void setData(void* data, uint32_t size) = 0;
-
-		virtual void bind(uint32_t slot = 0) const = 0;
-	};
-
 	enum class TextureMinFilterSpecification {
 		Linear = 0,
 		Nearest = 1,
@@ -49,6 +35,22 @@ namespace Salad {
 		TextureWrapSpecification wrapS = TextureWrapSpecification::Repeat;
 		TextureWrapSpecification wrapT = TextureWrapSpecification::Repeat;
 		TextureWrapSpecification wrapR = TextureWrapSpecification::Repeat;
+	};
+
+	class Texture {
+
+	public:
+		virtual ~Texture() = default;
+
+		virtual uint32_t getWidth() const = 0;
+		virtual uint32_t getHeight() const = 0;
+		virtual uint32_t getRendererId() const = 0;
+
+		virtual void setData(void* data, uint32_t size) = 0;
+
+		virtual void updateFilterWrapSpecification(TextureFilterWrapSpecification& spec) = 0;
+
+		virtual void bind(uint32_t slot = 0) const = 0;
 	};
 
 	class Texture2D : public Texture {

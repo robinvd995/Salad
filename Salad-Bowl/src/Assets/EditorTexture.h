@@ -40,6 +40,10 @@ namespace Salad {
 		void setTextureWrapT(TextureWrapSpecification wrap) { m_TextureFilterWrapSpec.wrapT = wrap; }
 		void setTextureWrapR(TextureWrapSpecification wrap) { m_TextureFilterWrapSpec.wrapR = wrap; }
 
+		TextureFilterWrapSpecification& getTextureFilterWrapSpecification() { return m_TextureFilterWrapSpec; }
+
+		void updateTextureFilterWrapSpec() { m_Texture->updateFilterWrapSpecification(m_TextureFilterWrapSpec); }
+
 	private:
 		std::string m_FilePath;
 		std::string m_FileName;

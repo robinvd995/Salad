@@ -35,4 +35,11 @@ namespace Salad::FileUtil {
 		/*if(good) */ifs.close();
 		return good;
 	}
+
+	inline bool fileExists(const std::string& path) {
+		std::ifstream ifs(path);
+		bool good = ifs.good();
+		ifs.close();
+		return good;
+	}
 }

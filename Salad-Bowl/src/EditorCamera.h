@@ -39,6 +39,7 @@ namespace Salad {
 	public:
 
 		EditorCamera();
+		void init();
 
 		void updateCamera(Timestep ts);
 		void onEvent(Event& e);

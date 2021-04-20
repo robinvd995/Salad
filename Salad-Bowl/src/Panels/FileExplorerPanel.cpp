@@ -15,6 +15,8 @@
 #include "Assets/AssetLoader.h"
 #include "Util/FileUtils.hpp";
 
+#include "EditorSettings.hpp"
+
 namespace Salad {
 
 	namespace Helper {
@@ -76,10 +78,18 @@ namespace Salad {
 
 		std::string path = "assets/";
 		scopeToFolder(path);
+
+		updateIgnoredExtensions();
+
+		EditorSettings::pushGroup("File Explorer");
+		EditorSettings::pushString("Ignored Extensions", &m_IgnoredExtensions);
+		EditorSettings::popGroup();
 	}
 
 	void FileExplorerPanel::scopeToFolder(std::string& path, bool pushPrev) {
 		if(!m_CurrentDirectory.empty() && pushPrev) m_PreviousDirectories.push(m_CurrentDirectory);
+
+		updateIgnoredExtensions();
 
 		m_CurrentDirectory = path;
 		for(auto item : m_Items) {
@@ -156,6 +166,30 @@ namespace Salad {
 
 	void FileExplorerPanel::refresh() {
 		scopeToFolder(m_CurrentDirectory, false);
+	}
+
+	void FileExplorerPanel::updateIgnoredExtensions() {
+
+		if (m_PreviousIgnoredExtensions == m_IgnoredExtensions) return;
+
+		m_ExtensionIgnoreList.clear();
+
+		std::string extension = "";
+		for(int i = 0; i < m_IgnoredExtensions.size(); i++) {
+			char c = m_IgnoredExtensions[i];
+			if(c == ' ') {
+				if (extension.size() == 0) continue;
+				m_ExtensionIgnoreList.push_back(extension);
+				extension = "";
+			}
+			else {
+				extension += c;
+			}
+		}
+
+		if (extension.size() > 0) m_ExtensionIgnoreList.push_back(extension);
+
+		m_PreviousIgnoredExtensions = m_IgnoredExtensions;
 	}
 
 	void FileExplorerPanel::onImGuiRender(uint32_t textureid) {
