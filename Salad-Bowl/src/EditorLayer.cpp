@@ -14,6 +14,8 @@
 
 #include <glm/gtx/matrix_decompose.hpp>
 
+#include "ImGui/EditorStyles.hpp"
+
 #include "Salad/Math/Math.h"
 
 namespace Salad {
@@ -290,70 +292,19 @@ namespace Salad {
 	void EditorLayer::onAttach() {
 		Salad::RenderCommand::setClearColor(glm::vec4(0.05f, 0.05f, 0.85f, 1.0f));
 
-		ImGuiStyle& style = ImGui::GetStyle();
-		ImGuiIO& io = ImGui::GetIO();
-		// Styling
-		io.FontDefault = io.Fonts->AddFontFromFileTTF("assets/fonts/open_sans/OpenSans-Regular.ttf", 18.0f);
-		io.Fonts->AddFontFromFileTTF("assets/fonts/open_sans/OpenSans-Bold.ttf", 18.0f);
-
-		// TODO: Fix the system to where you can push and id or "section" to have the same labels available
-
-		EditorSettings::s_Instance = new EditorSettings();
-
 		// Settings
-		/*EditorCameraControlSettings& cameraSettings = m_EditorCamera.getCameraControlSettings();
-		m_EditorSettingsWindow.createGroup("Editor Camera");
-
-		// Freeflight settings
-		m_EditorSettingsWindow.pushTag("Editor Camera", "Freeflight Mode");
-		m_EditorSettingsWindow.pushID("Editor Camera", "FreeflightMode");
-		m_EditorSettingsWindow.pushSeperator("Editor Camera");
-
-		m_EditorSettingsWindow.pushProperty("Editor Camera", PropertyType::Float, "FF Sensitivity", &cameraSettings.ff_Sensitivity);
-		m_EditorSettingsWindow.pushProperty("Editor Camera", PropertyType::Flag, "FF Invert Horizontal", &cameraSettings.ff_InvertHorizontal);
-		m_EditorSettingsWindow.pushProperty("Editor Camera", PropertyType::Flag, "FF Invert Vertical", &cameraSettings.ff_InvertVertical);
-
-		m_EditorSettingsWindow.pushSeperator("Editor Camera");
-		m_EditorSettingsWindow.popID("Editor Camera");
-
-		// Orbit settings
-		m_EditorSettingsWindow.pushTag("Editor Camera", "Orbit Mode");
-		m_EditorSettingsWindow.pushID("Editor Camera", "OrbitMode");
-		m_EditorSettingsWindow.pushSeperator("Editor Camera");
-
-		m_EditorSettingsWindow.pushProperty("Editor Camera", PropertyType::Float, "OR Sensitivity", &cameraSettings.or_Sensitivity);
-		m_EditorSettingsWindow.pushProperty("Editor Camera", PropertyType::Flag, "OR Invert Horizontal", &cameraSettings.or_InvertHorizontal);
-		m_EditorSettingsWindow.pushProperty("Editor Camera", PropertyType::Flag, "OR Invert Vertical", &cameraSettings.or_InvertVertical);
-
-		m_EditorSettingsWindow.pushSeperator("Editor Camera");
-		m_EditorSettingsWindow.popID("Editor Camera");
-
-		// Scroll settings
-		m_EditorSettingsWindow.pushTag("Editor Camera", "Translation Mode");
-		m_EditorSettingsWindow.pushID("Editor Camera", "TranslateMode");
-		m_EditorSettingsWindow.pushSeperator("Editor Camera");
-
-		m_EditorSettingsWindow.pushProperty("Editor Camera", PropertyType::Float, "TR Sensitivity", &cameraSettings.sc_Sensitivity);
-		m_EditorSettingsWindow.pushProperty("Editor Camera", PropertyType::Flag, "TR Invert Horizontal", &cameraSettings.sc_InvertHorizontal);
-		m_EditorSettingsWindow.pushProperty("Editor Camera", PropertyType::Flag, "TR Invert Vertical", &cameraSettings.sc_InvertVertical);
-
-		m_EditorSettingsWindow.pushSeperator("Editor Camera");
-		m_EditorSettingsWindow.popID("Editor Camera");
-
-		// General Settings
-		m_EditorSettingsWindow.pushTag("Editor Camera", "General");
-		m_EditorSettingsWindow.pushID("Editor Camera", "General");
-		m_EditorSettingsWindow.pushSeperator("Editor Camera");
-
-		m_EditorSettingsWindow.pushProperty("Editor Camera", PropertyType::Float, "Max Camera Angle", &cameraSettings.maxCameraAngle);
-
-		m_EditorSettingsWindow.popID("Editor Camera");*/
-
+		EditorSettings::s_Instance = new EditorSettings();
 		m_FileExplorerPanel.init();
 		m_EditorCamera.init();
-
 		EditorSettings::s_Instance->deserializeSettings();
 
+		// Styling
+		ImGuiIO& io = ImGui::GetIO();
+		io.FontDefault = io.Fonts->AddFontFromFileTTF("assets/fonts/open_sans/OpenSans-Regular.ttf", 18.0f);
+		io.Fonts->AddFontFromFileTTF("assets/fonts/open_sans/OpenSans-Bold.ttf", 18.0f);
+		EditorUI::setEditorStyle(EditorUI::EditorUIStyle::VisualStudio);
+
+		// Create a new instance of the editor selection context
 		EditorSelectionContext::s_Instance = new EditorSelectionContext();
 	}
 

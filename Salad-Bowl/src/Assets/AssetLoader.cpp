@@ -1,5 +1,7 @@
 #include "AssetLoader.h"
 
+#include "ShaderAssetBuilder.h"
+
 #include "json.hpp"
 #include <iomanip>
 #include <fstream>
@@ -15,7 +17,7 @@ namespace Salad::Asset {
 		return filepath.append(SLD_ASSET_FILE_EXTENSION);
 	}
 
-	EditorTexture Salad::Asset::loadEditorTexture(std::string& filepath) {
+	TextureAsset Salad::Asset::loadTextureAsset(std::string& filepath) {
 		TextureFilterWrapSpecification fwSpec;
 		std::string assetFile = assetFileFromPath(filepath);
 
@@ -49,10 +51,10 @@ namespace Salad::Asset {
 		std::string filename = FileUtil::fileNameFromPath(filepath);
 		Ref<Texture2D> texture = Texture2D::create(filepath, fwSpec);
 
-		return EditorTexture(filepath, filename, texture, fwSpec);
+		return TextureAsset(filepath, filename, texture, fwSpec);
 	}
 
-	void Salad::Asset::saveEditorTexture(EditorTexture& texture) {
+	void Salad::Asset::saveTextureAsset(TextureAsset& texture) {
 		std::string assetFile = assetFileFromPath(texture.getFilePath());
 		json j;
 
@@ -68,4 +70,13 @@ namespace Salad::Asset {
 		file.close();
 	}
 
+	ShaderAsset Salad::Asset::loadShaderAsset(const std::string& filepath) {
+		ShaderAssetBuilder builder;
+		ShaderAsset& shader = builder.build(filepath);
+		return shader;
+	}
+	
+	void Salad::Asset::saveShaderAsset(ShaderAsset& shader) {
+
+	}
 }

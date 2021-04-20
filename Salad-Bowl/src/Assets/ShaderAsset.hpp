@@ -5,9 +5,11 @@
 #include <map>
 #include <vector>
 
-namespace Salad {
+#include <iostream>
 
-	enum class EditorShaderDataType {
+namespace Salad::Asset {
+
+	enum class ShaderAssetDataType {
 		None,
 		Mat2, Mat3, Mat4,
 		Vec2, Vec3, Vec4,
@@ -32,7 +34,7 @@ namespace Salad {
 	struct ShaderVariable {
 
 		std::string identifier;
-		EditorShaderDataType type;
+		ShaderAssetDataType type;
 
 		bool flat = false;
 		int layoutLocation = -1;
@@ -53,12 +55,12 @@ namespace Salad {
 	struct ShaderVertexBufferElement {
 
 		std::string name;
-		EditorShaderDataType type = EditorShaderDataType::None;
+		ShaderAssetDataType type = ShaderAssetDataType::None;
 		uint32_t size = 0;
 		uint32_t offset = 0;
 
 		ShaderVertexBufferElement() = default;
-		ShaderVertexBufferElement(std::string& pname, EditorShaderDataType ptype) : name(pname), type(ptype) {}
+		ShaderVertexBufferElement(std::string& pname, ShaderAssetDataType ptype) : name(pname), type(ptype) {}
 
 	};
 
@@ -80,15 +82,16 @@ namespace Salad {
 		std::vector<ShaderVertexBufferElement> m_BufferElements;
 		uint32_t m_Stride = 0;
 
-		friend class ShaderBuilder;
+		friend class ShaderAssetBuilder;
 	};
 
-	class EditorShader {
+	class ShaderAsset {
 
 	public:
-		EditorShader() = default;
-		EditorShader(const std::string& filepath) : m_FilePath(filepath) {}
-		~EditorShader() {}
+		ShaderAsset() = default;
+		ShaderAsset(const std::string& filepath) : m_FilePath(filepath) {}
+		ShaderAsset(const ShaderAsset&) { std::cout << "Shader Copied!" << std::endl; }
+		~ShaderAsset() {}
 
 		const std::string& getFilePath() { return m_FilePath; }
 
@@ -113,7 +116,7 @@ namespace Salad {
 
 		std::string m_FilePath;
 
-		friend class ShaderBuilder;
+		friend class ShaderAssetBuilder;
 
 	};
 }

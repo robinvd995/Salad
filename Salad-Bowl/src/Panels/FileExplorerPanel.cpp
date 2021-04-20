@@ -2,8 +2,6 @@
 
 #include "imgui/imgui.h"
 
-#include "ShaderBuilder.h"
-
 #include "Salad/Renderer/TextureManager.h"
 #include "EditorSelectionContext.h"
 
@@ -152,13 +150,12 @@ namespace Salad {
 	void FileExplorerPanel::onItemDoubleClicked(FileExplorerItem* item) {
 		switch(item->type) {
 			case FileExplorerItemType::GLSL: {
-				ShaderBuilder builder;
-				EditorShader shader = builder.build(item->path);
+				Asset::ShaderAsset& shader = Asset::loadShaderAsset(item->path);
 				EditorSelectionContext::setSelectionContext<ShaderSelectionContext>(shader);
 			} break;
 
 			case FileExplorerItemType::Texture: {
-				EditorTexture texture = Asset::loadEditorTexture(item->path);
+				Asset::TextureAsset texture = Asset::loadTextureAsset(item->path);
 				EditorSelectionContext::setSelectionContext<TextureSelectionContext>(texture);
 			} break;
 		}

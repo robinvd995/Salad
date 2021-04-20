@@ -7,7 +7,7 @@
 
 #include <ostream>
 
-#include "Assets/EditorShader.h"
+#include "Assets/ShaderAsset.hpp"
 
 // ----- Defines Start -----
 
@@ -20,29 +20,29 @@
 // ----- Helper Functions Start -----
 
 namespace Util {
-	static uint32_t getShaderDataTypeSize(Salad::EditorShaderDataType type) {
+	static uint32_t getShaderDataTypeSize(Salad::Asset::ShaderAssetDataType type) {
 		switch (type) {
 			default: return 0;
 
-			case Salad::EditorShaderDataType::Mat2: return 4 * 2 * 2;
-			case Salad::EditorShaderDataType::Mat3: return 4 * 3 * 3;
-			case Salad::EditorShaderDataType::Mat4: return 4 * 4 * 4;
+			case Salad::Asset::ShaderAssetDataType::Mat2: return 4 * 2 * 2;
+			case Salad::Asset::ShaderAssetDataType::Mat3: return 4 * 3 * 3;
+			case Salad::Asset::ShaderAssetDataType::Mat4: return 4 * 4 * 4;
 
-			case Salad::EditorShaderDataType::Vec2: return 4 * 2;
-			case Salad::EditorShaderDataType::Vec3: return 4 * 3;
-			case Salad::EditorShaderDataType::Vec4: return 4 * 4;
+			case Salad::Asset::ShaderAssetDataType::Vec2: return 4 * 2;
+			case Salad::Asset::ShaderAssetDataType::Vec3: return 4 * 3;
+			case Salad::Asset::ShaderAssetDataType::Vec4: return 4 * 4;
 
-			case Salad::EditorShaderDataType::Int: return 4;
-			case Salad::EditorShaderDataType::Float: return 4;
+			case Salad::Asset::ShaderAssetDataType::Int: return 4;
+			case Salad::Asset::ShaderAssetDataType::Float: return 4;
 
-			case Salad::EditorShaderDataType::Sampler2D: return 4;
+			case Salad::Asset::ShaderAssetDataType::Sampler2D: return 4;
 		}
 	}
 }
 
 // ----- Helper Functions End -----
 
-namespace Salad {
+namespace Salad::Asset {
 
 	// ----- Enums Start -----
 
@@ -108,16 +108,16 @@ namespace Salad {
 		BuilderDeclaration() = default;
 		~BuilderDeclaration() = default;
 
-		bool hasQualifier(ShaderDeclarationQualifier qualifier);
-		std::string getQualifierParameter(ShaderDeclarationQualifier qualifier, const std::string& parameter);
+		bool hasQualifier(Asset::ShaderDeclarationQualifier qualifier);
+		std::string getQualifierParameter(Asset::ShaderDeclarationQualifier qualifier, const std::string& parameter);
 
 	private:
 		std::string m_Identifier;
-		EditorShaderDataType m_DataType = EditorShaderDataType::None;
-		std::vector<ShaderDeclarationQualifier> m_Qualifiers;
-		std::map<ShaderDeclarationQualifier, std::map<std::string, std::string>> m_Parameters;
+		Asset::ShaderAssetDataType m_DataType = Asset::ShaderAssetDataType::None;
+		std::vector<Asset::ShaderDeclarationQualifier> m_Qualifiers;
+		std::map<Asset::ShaderDeclarationQualifier, std::map<std::string, std::string>> m_Parameters;
 
-		friend class ShaderBuilder;
+		friend class ShaderAssetBuilder;
 
 	};
 
@@ -137,19 +137,19 @@ namespace Salad {
 
 	// ----- Data Structures End -----
 
-	class ShaderBuilder {
+	class ShaderAssetBuilder {
 
-		typedef std::map<std::string, EditorShaderDataType> ShaderDataMap;
+		typedef std::map<std::string, Asset::ShaderAssetDataType> ShaderDataMap;
 
 	public:
 
-		EditorShader build(const std::string& filepath);
+		Asset::ShaderAsset build(const std::string& filepath);
 
 	private:
 
 		void parseFile(const std::string& filepath);
-		void parseStages(EditorShader& shader, uint32_t* error);
-		void setVertexBufferLayout(EditorShader& shader, uint32_t* error);
+		void parseStages(Asset::ShaderAsset& shader, uint32_t* error);
+		void setVertexBufferLayout(Asset::ShaderAsset& shader, uint32_t* error);
 
 		void pushWord();
 
@@ -169,8 +169,8 @@ namespace Salad {
 
 	private:
 
-		static std::map<std::string, ShaderDeclarationQualifier> s_DeclarationQualifiers;
-		static std::map<std::string, EditorShaderDataType> s_DeclarationTypes;
+		static std::map<std::string, Asset::ShaderDeclarationQualifier> s_DeclarationQualifiers;
+		static std::map<std::string, Asset::ShaderAssetDataType> s_DeclarationTypes;
 		static std::map<std::string, ShaderSection> s_ShaderSections;
 
 	private:

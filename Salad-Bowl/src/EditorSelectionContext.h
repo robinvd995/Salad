@@ -2,8 +2,8 @@
 
 #include "Salad/Scene/Entity.h"
 
-#include "Assets/EditorShader.h"
-#include "Assets/EditorTexture.h"
+#include "Assets/ShaderAsset.hpp"
+#include "Assets/TextureAsset.hpp"
 
 namespace Salad {
 
@@ -41,7 +41,7 @@ namespace Salad {
 	
 	public:
 		ShaderSelectionContext() = default;
-		ShaderSelectionContext(EditorShader& shader) : m_EditorShader(shader) {}
+		ShaderSelectionContext(Asset::ShaderAsset& shader) : m_EditorShader(shader) {}
 		~ShaderSelectionContext() = default;
 
 		// Selection Context Mandatory Functions
@@ -49,17 +49,17 @@ namespace Salad {
 		static void deallocate(void* ptr) { delete ((ShaderSelectionContext*)ptr); }
 
 		// ShaderSelectionContext specific functions
-		EditorShader& getEditorShader() { return m_EditorShader; }
+		Asset::ShaderAsset& getEditorShader() { return m_EditorShader; }
 
 	private:
-		EditorShader m_EditorShader;
+		Asset::ShaderAsset m_EditorShader;
 	};
 
 	class TextureSelectionContext {
 	
 	public:
 		TextureSelectionContext() = delete;
-		TextureSelectionContext(EditorTexture& texture) : m_Texture(texture) {};
+		TextureSelectionContext(Asset::TextureAsset& texture) : m_Texture(texture) {};
 		~TextureSelectionContext() = default;
 
 		// Selection Context Mandatory Functions
@@ -67,10 +67,10 @@ namespace Salad {
 		static void deallocate(void* ptr) { delete ((TextureSelectionContext*)ptr); }
 
 		// TextureSelectionContext specific functions
-		EditorTexture& getTexture() { return m_Texture; }
+		Asset::TextureAsset& getTexture() { return m_Texture; }
 
 	private:
-		EditorTexture m_Texture;
+		Asset::TextureAsset m_Texture;
 	};
 
 	class EditorSelectionContext {

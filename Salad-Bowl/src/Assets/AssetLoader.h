@@ -1,10 +1,13 @@
 #pragma once
 
-#include "EditorTexture.h"
+#include "TextureAsset.hpp"
+#include "ShaderAsset.hpp"
 
 namespace Salad::Asset {
 
-	EditorTexture loadEditorTexture(std::string& filepath);
-	void saveEditorTexture(EditorTexture& texture);
+	TextureAsset loadTextureAsset(std::string& filepath);
+	void saveTextureAsset(TextureAsset& texture);
 
+	ShaderAsset loadShaderAsset(const std::string& filepath);
+	void saveShaderAsset(ShaderAsset& shader);
 }

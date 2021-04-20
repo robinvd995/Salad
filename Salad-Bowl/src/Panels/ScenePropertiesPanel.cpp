@@ -79,24 +79,24 @@ namespace Salad {
 			}
 		}
 
-		const char* shaderTypeToString(EditorShaderDataType datatype) {
+		const char* shaderTypeToString(Asset::ShaderAssetDataType datatype) {
 			switch (datatype) {
-				case EditorShaderDataType::Float: return "Float";
-				case EditorShaderDataType::Int: return "Int";
-				case EditorShaderDataType::Mat2: return "Mat2";
-				case EditorShaderDataType::Mat3: return "Mat3";
-				case EditorShaderDataType::Mat4: return "Mat4";
-				case EditorShaderDataType::Vec2: return "Vec2";
-				case EditorShaderDataType::Vec3: return "Vec3";
-				case EditorShaderDataType::Vec4: return "Vec4";
-				case EditorShaderDataType::Sampler2D: return "Texture2D";
+				case Asset::ShaderAssetDataType::Float: return "Float";
+				case Asset::ShaderAssetDataType::Int: return "Int";
+				case Asset::ShaderAssetDataType::Mat2: return "Mat2";
+				case Asset::ShaderAssetDataType::Mat3: return "Mat3";
+				case Asset::ShaderAssetDataType::Mat4: return "Mat4";
+				case Asset::ShaderAssetDataType::Vec2: return "Vec2";
+				case Asset::ShaderAssetDataType::Vec3: return "Vec3";
+				case Asset::ShaderAssetDataType::Vec4: return "Vec4";
+				case Asset::ShaderAssetDataType::Sampler2D: return "Texture2D";
 
-				case EditorShaderDataType::None: return "UNKNOWN!";
+				case Asset::ShaderAssetDataType::None: return "UNKNOWN!";
 				default: return "UNKNOWN!";
 			}
 		}
 
-		void drawShaderVariables(const char* label, std::vector<ShaderVariable>& variables) {
+		void drawShaderVariables(const char* label, std::vector<Asset::ShaderVariable>& variables) {
 			ImGuiIO& io = ImGui::GetIO();
 			auto& boldFont = io.Fonts->Fonts[1];
 
@@ -106,7 +106,7 @@ namespace Salad {
 
 			ImGui::Columns(2);
 			ImGui::SetColumnWidth(0, 200.0f);
-			for (ShaderVariable inputVar : variables) {
+			for (Asset::ShaderVariable& inputVar : variables) {
 				ImGui::Text(inputVar.identifier.c_str());
 				ImGui::NextColumn();
 				ImGui::Text(shaderTypeToString(inputVar.type));
@@ -115,7 +115,7 @@ namespace Salad {
 			ImGui::Columns(1);
 		}
 
-		void drawShaderStage(const char* label, ShaderStage& stage) {
+		void drawShaderStage(const char* label, Asset::ShaderStage& stage) {
 			drawTreeNode(label, (void*)(static_cast<int>(stage.shaderType)), [&stage]() {
 
 				drawShaderVariables("Input", stage.inputs);
@@ -222,23 +222,23 @@ namespace Salad {
 
 	void ScenePropertiesPanel::renderEditorShaderProperties() {
 		ShaderSelectionContext* context = EditorSelectionContext::getSelectionContext<ShaderSelectionContext>();
-		EditorShader& shader = context->getEditorShader();
+		Asset::ShaderAsset& shader = context->getEditorShader();
 		ImGui::Text(shader.getFilePath().c_str());
 
-		if(shader.hasStage(ShaderStageType::Vertex)) {
-			ShaderStage& vertexStage = shader.getStage(ShaderStageType::Vertex);
+		if(shader.hasStage(Asset::ShaderStageType::Vertex)) {
+			Asset::ShaderStage& vertexStage = shader.getStage(Asset::ShaderStageType::Vertex);
 			Util::drawShaderStage("Vertex Shader", vertexStage);
 		}
 
-		if (shader.hasStage(ShaderStageType::Fragment)) {
-			ShaderStage& fragmentStage = shader.getStage(ShaderStageType::Fragment);
+		if (shader.hasStage(Asset::ShaderStageType::Fragment)) {
+			Asset::ShaderStage& fragmentStage = shader.getStage(Asset::ShaderStageType::Fragment);
 			Util::drawShaderStage("Fragment Shader", fragmentStage);
 		}
 	}
 
 	void ScenePropertiesPanel::renderEditorTextureProperties() {
 		TextureSelectionContext* context = EditorSelectionContext::getSelectionContext<TextureSelectionContext>();
-		EditorTexture& texture = context->getTexture();
+		Asset::TextureAsset& texture = context->getTexture();
 
 		ImGui::Columns(2);
 		ImGui::SetColumnWidth(0, 100.0f);
@@ -286,7 +286,7 @@ namespace Salad {
 				texture.setTextureWrapR(static_cast<TextureWrapSpecification>(wrapR));
 				texture.updateTextureFilterWrapSpec();
 
-				Asset::saveEditorTexture(texture);
+				Asset::saveTextureAsset(texture);
 			}
 		});
 		

@@ -3,17 +3,17 @@
 #include "Salad/Renderer/Texture.h"
 #include <iostream>
 
-namespace Salad {
+namespace Salad::Asset {
 
-	class EditorTexture {
+	class TextureAsset {
 	
 	public:
-		EditorTexture() = delete;
-		EditorTexture(std::string& path, std::string& name, Ref<Texture2D> texture, TextureFilterWrapSpecification filterWrapSpec) 
+		TextureAsset() = delete;
+		TextureAsset(std::string& path, std::string& name, Ref<Texture2D> texture, TextureFilterWrapSpecification filterWrapSpec)
 			: m_FilePath(path), m_FileName(name), m_Texture(texture), m_TextureFilterWrapSpec(filterWrapSpec)
 		{}
-		EditorTexture(const EditorTexture& other) = default;
-		~EditorTexture() = default;
+		TextureAsset(const TextureAsset& other) = default;
+		~TextureAsset() = default;
 
 		Ref<Texture2D> loadTexture() { m_Texture = Texture2D::create(m_FilePath, m_TextureFilterWrapSpec); return m_Texture; }
 
