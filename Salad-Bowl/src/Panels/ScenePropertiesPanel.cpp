@@ -9,7 +9,7 @@
 #include "Salad/ImGui/ImGuiWidgets.h"
 
 #include "EditorSelectionContext.h"
-#include "Assets/AssetLoader.h"
+#include "Assets/AssetIO.h"
 
 namespace Salad {
 
@@ -286,7 +286,7 @@ namespace Salad {
 				texture.setTextureWrapR(static_cast<TextureWrapSpecification>(wrapR));
 				texture.updateTextureFilterWrapSpec();
 
-				Asset::saveTextureAsset(texture);
+				Asset::IO::saveTextureAsset(texture);
 			}
 		});
 		

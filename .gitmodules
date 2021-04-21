@@ -25,3 +25,6 @@
 [submodule "Salad/vendor/ImGuizmo"]
 	path = Salad/vendor/ImGuizmo
 	url = https://github.com/robinvd995/ImGuizmo
+[submodule "Salad/vendor/libzip"]
+	path = Salad/vendor/libzip
+	url = https://github.com/robinvd995/libzip

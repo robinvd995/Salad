@@ -1,9 +1,8 @@
 #pragma once
 
-#include "TextureAsset.hpp"
-#include "ShaderAsset.hpp"
+#include "Asset.h"
 
-namespace Salad::Asset {
+namespace Salad::Asset::IO {
 
 	TextureAsset loadTextureAsset(std::string& filepath);
 	void saveTextureAsset(TextureAsset& texture);

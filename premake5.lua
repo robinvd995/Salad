@@ -25,6 +25,8 @@ IncludeDir["LuaBridge"] = "Salad/vendor/LuaBridge/Source"
 IncludeDir["freetype"] = "Salad/vendor/freetype/include"
 IncludeDir["ImGuizmo"] = "Salad/vendor/ImGuizmo"
 
+IncludeDir["libzip"] = "Salad/vendor/libzip"
+
 --Salad-Bowl Include
 IncludeDir["assimp"] = "Salad-Bowl/vendor/assimp/include"
 
@@ -34,6 +36,7 @@ group "Dependencies"
     include "Salad/vendor/imgui"
     include "Salad/vendor/lua53"
     include "Salad/vendor/freetype"
+    include "Salad/vendor/libzip"
     include "Salad-Bowl/vendor/assimp"
 group ""
 
@@ -78,7 +81,8 @@ project "Salad"
         "%{IncludeDir.ImGuizmo}",
         "%{IncludeDir.lua53}",
         "%{IncludeDir.LuaBridge}",
-        "%{IncludeDir.freetype}"
+        "%{IncludeDir.freetype}",
+        "%{IncludeDir.libzip}"
     }
 
     links{
@@ -87,6 +91,7 @@ project "Salad"
         "ImGui",
         "lua53",
         "freetype",
+        "libzip",
         "opengl32.lib"
     }
 
@@ -196,6 +201,7 @@ project "Salad-Bowl"
             "%{IncludeDir.entt}",
             "%{IncludeDir.ImGuizmo}",
             "%{IncludeDir.json}",
+            "%{IncludeDir.libzip}",
 
             IncludeDir["assimp"]
         }

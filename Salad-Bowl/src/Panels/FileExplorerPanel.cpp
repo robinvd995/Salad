@@ -10,7 +10,7 @@
 #include <map>
 #include <algorithm>
 
-#include "Assets/AssetLoader.h"
+#include "Assets/AssetIO.h"
 #include "Util/FileUtils.hpp";
 
 #include "EditorSettings.hpp"
@@ -150,12 +150,12 @@ namespace Salad {
 	void FileExplorerPanel::onItemDoubleClicked(FileExplorerItem* item) {
 		switch(item->type) {
 			case FileExplorerItemType::GLSL: {
-				Asset::ShaderAsset& shader = Asset::loadShaderAsset(item->path);
+				Asset::ShaderAsset& shader = Asset::IO::loadShaderAsset(item->path);
 				EditorSelectionContext::setSelectionContext<ShaderSelectionContext>(shader);
 			} break;
 
 			case FileExplorerItemType::Texture: {
-				Asset::TextureAsset texture = Asset::loadTextureAsset(item->path);
+				Asset::TextureAsset texture = Asset::IO::loadTextureAsset(item->path);
 				EditorSelectionContext::setSelectionContext<TextureSelectionContext>(texture);
 			} break;
 		}

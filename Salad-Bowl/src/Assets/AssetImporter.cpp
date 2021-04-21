@@ -1,4 +1,4 @@
-#include "AssetLoader.h"
+#include "AssetImporter.h"
 
 #include "ShaderAssetBuilder.h"
 
@@ -11,13 +11,13 @@
 
 using json = nlohmann::json;
 
-namespace Salad::Asset {
+namespace Salad::Asset::IO {
 
 	std::string assetFileFromPath(std::string filepath) {
 		return filepath.append(SLD_ASSET_FILE_EXTENSION);
 	}
 
-	TextureAsset Salad::Asset::loadTextureAsset(std::string& filepath) {
+	TextureAsset Salad::Asset::IO::loadTextureAsset(std::string& filepath) {
 		TextureFilterWrapSpecification fwSpec;
 		std::string assetFile = assetFileFromPath(filepath);
 
@@ -54,7 +54,7 @@ namespace Salad::Asset {
 		return TextureAsset(filepath, filename, texture, fwSpec);
 	}
 
-	void Salad::Asset::saveTextureAsset(TextureAsset& texture) {
+	void Salad::Asset::IO::saveTextureAsset(TextureAsset& texture) {
 		std::string assetFile = assetFileFromPath(texture.getFilePath());
 		json j;
 
@@ -70,13 +70,13 @@ namespace Salad::Asset {
 		file.close();
 	}
 
-	ShaderAsset Salad::Asset::loadShaderAsset(const std::string& filepath) {
+	ShaderAsset Salad::Asset::IO::loadShaderAsset(const std::string& filepath) {
 		ShaderAssetBuilder builder;
 		ShaderAsset& shader = builder.build(filepath);
 		return shader;
 	}
 	
-	void Salad::Asset::saveShaderAsset(ShaderAsset& shader) {
+	void Salad::Asset::IO::saveShaderAsset(ShaderAsset& shader) {
 
 	}
 }

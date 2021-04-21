@@ -47,7 +47,6 @@ namespace Salad {
 		};*/
 
 		m_Scene = createRef<Scene>();
-		//m_EditorSelectionContext = createRef<EditorSelectionContext>();
 
 		ColladaLoader loader;
 		auto cubeVao = VertexArray::create();
@@ -480,8 +479,8 @@ namespace Salad {
 			if (ImGui::BeginMenu("File")) {
 
 				if (ImGui::MenuItem("New Scene", "Ctrl+N")) { }
-				if (ImGui::MenuItem("Save Scene", "Ctrl+S")) { serialize(); }
 				if (ImGui::MenuItem("Open Scene", "Ctrl+O")) { deserialize(); }
+				if (ImGui::MenuItem("Save Scene", "Ctrl+S")) { serialize(); }
 				ImGui::Separator();
 				if (ImGui::MenuItem("Exit", "Alt+F4")) { Application::get().close(); }
 
@@ -641,6 +640,8 @@ namespace Salad {
 		
 		ImGui::End(); // Docking end
 
+		ImGui::ShowDemoWindow();
+
 		if(m_EditorSettingsWindow.showWindow()) {
 			ImGui::Begin("Editor Settings", &m_EditorSettingsWindow.showWindow());
 
@@ -648,6 +649,14 @@ namespace Salad {
 
 			ImGui::End();
 		}
+
+		ImGui::Begin("Console");
+		ImGui::Text("Console window is not yet implemented!");
+		ImGui::End();
+
+		ImGui::Begin("Log");
+		ImGui::Text("Log window is not yet implemented!");
+		ImGui::End();
 
 		if(m_EditorSettingsWindow.m_PreviousShowWindow && !m_EditorSettingsWindow.m_ShowWindow) {
 			EditorSettings::s_Instance->serializeSettings();
