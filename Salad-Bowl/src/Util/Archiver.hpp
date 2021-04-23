@@ -1,10 +1,14 @@
 // A simple wrapper around the libzip(zlib) library
 
+// TODO: use stack allocater for buffers that are to be released after use, and pool allocaters for buffers that persist
+
 #pragma once
 
 #include "Salad/Core/Log.h"
-#include "array"
 #include "zip.h"
+
+#define ARCHIVE_ASSERT_READ SLD_CORE_ASSERT((m_BufferMode == ArchiveIOBufferMode::Read), "Trying to call a read operation when not in read mode!")
+#define ARCHIVE_ASSERT_WRITE SLD_CORE_ASSERT((m_BufferMode == ArchiveIOBufferMode::Write), "Trying to call a write operation when not in write mode!")
 
 namespace Salad::Util {
 
@@ -67,77 +71,75 @@ namespace Salad::Util {
 		ArchiverErrors_WrongPassword					= ZIP_ER_WRONGPASSWD		// Wrong password provided
 	};
 
-	// TODO: can probably merge ArchiveFileReadBuffer and ArchiveFileWriteBuffer into ArchiveBuffer
+	enum class ArchiveIOBufferMode {
+		None = 0, Read = 1, Write = 2
+	};
 
-	/// <summary>
-	/// 
-	/// </summary>
-	class ArchiveFileReadBuffer {
-	
+	class ArchiveIOBuffer {
+
 	public:
-		ArchiveFileReadBuffer() = delete;
-		ArchiveFileReadBuffer(char* data, uint64_t size) : m_Data(data), m_Size(size) {}
+		ArchiveIOBuffer() = delete;
+		ArchiveIOBuffer(char* data, uint64_t size) : m_Data(data), m_Size(size) { m_BufferMode = ArchiveIOBufferMode::Read; }
+		ArchiveIOBuffer(uint64_t size) : m_Size(size) { m_Data = (char*)malloc(m_Size); m_BufferMode = ArchiveIOBufferMode::Write; }
 
 		uint64_t getBufferSize() { return m_Size; }
 		char* getBuffer() { return m_Data; }
 		void freeBuffer() { free(m_Data); }
 
-		bool canRead(uint64_t amount = 1) { return m_Iterator + amount <= m_Size; }
+		bool hasNext(uint64_t amount = 1) { return m_Iterator + amount <= m_Size; }
 
-		char readByte() { return m_Data[incrementIterator(1)]; }
-		//unsigned char readUByte() {}
-		//int16_t readShort() {}
-		//uint16_t readUShort() {}
-		int32_t readInt() { return *((int*)&m_Data[incrementIterator(4)]); }
-		//uint32_t readUInt() {}
-		//int64_t readLong() {}
-		//uint64_t readULong() {}
-		float readFloat() { return *((float*)&m_Data[incrementIterator(4)]); }
-		//std::string& readString() {}
+		// Primitive data read
 
-	private:
-		uint64_t incrementIterator(float amount) {
-			uint64_t pos = m_Iterator;
-			m_Iterator += amount;
-			return pos;
+		inline char readByte()							{ ARCHIVE_ASSERT_READ; return m_Data[iit(sizeof(char))]; }
+		inline unsigned char readUByte()				{ ARCHIVE_ASSERT_READ; return (unsigned char)m_Data[iit(sizeof(unsigned char))]; }
+		inline int16_t readShort()						{ ARCHIVE_ASSERT_READ; return *((int16_t*)&m_Data[iit(sizeof(int16_t))]); }
+		inline uint16_t readUShort()					{ ARCHIVE_ASSERT_READ; return *((uint16_t*)&m_Data[iit(sizeof(uint16_t))]); }
+		inline int32_t readInt()						{ ARCHIVE_ASSERT_READ; return *((int32_t*)&m_Data[iit(sizeof(int32_t))]); }
+		inline uint32_t readUInt()						{ ARCHIVE_ASSERT_READ; return *((uint32_t*)&m_Data[iit(sizeof(uint32_t))]); }
+		inline int64_t readLong()						{ ARCHIVE_ASSERT_READ; return *((int64_t*)&m_Data[iit(sizeof(int64_t))]); }
+		inline uint64_t readULong()						{ ARCHIVE_ASSERT_READ; return *((uint64_t*)&m_Data[iit(sizeof(uint64_t))]); }
+		inline float readFloat()					  	{ ARCHIVE_ASSERT_READ; return *((float*)&m_Data[iit(sizeof(float))]); }
+		inline double readDouble()						{ ARCHIVE_ASSERT_READ; return *((double*)&m_Data[iit(sizeof(double))]); }
+		inline bool readBool()							{ ARCHIVE_ASSERT_READ; return *((bool*)&m_Data[iit(sizeof(bool))]); }
+
+		// Primitive data write
+
+		inline void writeByte(char value)				{ ARCHIVE_ASSERT_WRITE; m_Data[iit(sizeof(char))] = value; }
+		inline void writeUByte(unsigned char value)		{ ARCHIVE_ASSERT_WRITE; m_Data[iit(sizeof(unsigned char))] = value; }
+		inline void writeShort(int16_t value)			{ ARCHIVE_ASSERT_WRITE; memcpy(&m_Data[iit(sizeof(int16_t))], &value, sizeof(int16_t)); }
+		inline void writeUShort(uint16_t value)			{ ARCHIVE_ASSERT_WRITE; memcpy(&m_Data[iit(sizeof(uint16_t))], &value, sizeof(uint16_t)); };
+		inline void writeInt(int32_t value)				{ ARCHIVE_ASSERT_WRITE; memcpy(&m_Data[iit(sizeof(int32_t))], &value, sizeof(int32_t)); }
+		inline void writeUInt(uint32_t value)			{ ARCHIVE_ASSERT_WRITE; memcpy(&m_Data[iit(sizeof(uint32_t))], &value, sizeof(uint32_t)); }
+		inline void writeLong(int64_t value)			{ ARCHIVE_ASSERT_WRITE; memcpy(&m_Data[iit(sizeof(int64_t))], &value, sizeof(int64_t)); }
+		inline void writeULong(uint64_t value)			{ ARCHIVE_ASSERT_WRITE; memcpy(&m_Data[iit(sizeof(uint64_t))], &value, sizeof(uint64_t)); }
+		inline void writeFloat(float value)				{ ARCHIVE_ASSERT_WRITE; memcpy(&m_Data[iit(sizeof(float))], &value, sizeof(float)); }
+		inline void writeDouble(double value)			{ ARCHIVE_ASSERT_WRITE; memcpy(&m_Data[iit(sizeof(double))], &value, sizeof(double)); }
+		inline void writeBool(bool value)				{ ARCHIVE_ASSERT_WRITE; memcpy(&m_Data[iit(sizeof(bool))], &value, sizeof(bool)); }
+		
+		
+		template<typename T>
+		void writeArray(T* start, uint64_t count) {
+			ARCHIVE_ASSERT_WRITE;
+			writeULong(count);
+			uint64_t size = count * sizeof(T);
+			memcpy(&m_Data[iit(size)], start, size);
+		}
+
+		template<typename T>
+		T* readArray(uint64_t* count) {
+			ARCHIVE_ASSERT_READ;
+			*count = readULong();
+			uint64_t size = (*count) * sizeof(T);
+			T* arr = (T*) &m_Data[iit(size)];
+			return arr;
 		}
 
 	private:
-		char* m_Data = nullptr;
-		uint64_t m_Size = 0;
-		uint64_t m_Iterator = 0;
-	};
-
-	/// <summary>
-	/// 
-	/// </summary>
-	class ArchiveFileWriteBuffer {
-	
-	public:
-		ArchiveFileWriteBuffer() = delete;
-		ArchiveFileWriteBuffer(const char* filename, uint64_t size) : m_Filename(filename), m_Size(size) { m_Data = (char*)malloc(m_Size); }
-
-		uint64_t getBufferSize() { return m_Size; }
-		char* getBuffer() { return m_Data; }
-		void freeBuffer() { free(m_Data); }
-
-		const char* getFileName() { return m_Filename; }
-
-		bool canWrite(uint64_t amount = 1) { return m_Iterator + amount <= m_Size; }
-
-		void writeByte(char value) { m_Data[m_Iterator] = value; m_Iterator++; }
-		//void writeUByte(unsigned char value) {}
-		//void writeShort(int16_t value) {}
-		//void writeUShort(uint16_t value) {}
-		void writeInt(int32_t value) { memcpy(&m_Data[m_Iterator], &value, sizeof(int)); m_Iterator += 4; }
-		//void writeUInt(uint32_t value) {}
-		//void writeLong(int64_t value) {}
-		//void writeULong(uint64_t value) {}
-		void writeFloat(float value) { memcpy(&m_Data[m_Iterator], &value, sizeof(float)); m_Iterator += sizeof(float); }
-		//void writeString(const std::string& value) {}
+		uint64_t iit(uint64_t amount) { uint64_t pos = m_Iterator; m_Iterator += amount; return pos; }
 
 	private:
-		const char* m_Filename;
+		ArchiveIOBufferMode m_BufferMode = ArchiveIOBufferMode::None;
+
 		uint64_t m_Size;
 		char* m_Data = nullptr;
 		uint64_t m_Iterator = 0;
@@ -174,11 +176,11 @@ namespace Salad::Util {
 	/// <summary>
 	/// 
 	/// </summary>
-	inline uint64_t archiveAddFile(Archive archive, ArchiveFileWriteBuffer buffer, int free) {
+	inline uint64_t archiveAddFile(Archive archive, const char* filename, ArchiveIOBuffer buffer, int free) {
 		ArchiveSource source = archiveSourceBuffer(archive, buffer.getBuffer(), buffer.getBufferSize(), free);
 		if (source == nullptr) return -1;
 
-		uint64_t index = zip_file_add(archive, buffer.getFileName(), source, ZIP_FL_OVERWRITE);
+		uint64_t index = zip_file_add(archive, filename, source, ZIP_FL_OVERWRITE);
 		if(index < 0) {
 			SLD_CORE_ERROR("failed to add file to archive.'{0}'", zip_strerror(archive));
 		}
@@ -188,20 +190,20 @@ namespace Salad::Util {
 	/// <summary>
 	/// 
 	/// </summary>
-	inline ArchiveFileReadBuffer archiveReadFile(Archive archive, const char* file) {
+	inline ArchiveIOBuffer archiveReadFile(Archive archive, const char* file) {
 		zip_file* zipfile = zip_fopen(archive, file, 0);
 		struct zip_stat st;
 		zip_stat(archive, file, ZIP_STAT_SIZE, &st);
 		char* buffer = (char*) malloc((size_t)st.size);
 
 		uint64_t readBytes = zip_fread(zipfile, buffer, st.size);
-		return ArchiveFileReadBuffer(buffer, readBytes);
+		return ArchiveIOBuffer(buffer, readBytes);
 	}
 
 	/// <summary>
 	/// 
 	/// </summary>
-	inline ArchiveFileWriteBuffer archiveWriteBuffer(Archive archive, const char* filename, uint64_t size) {
-		return ArchiveFileWriteBuffer(filename, size);
+	inline ArchiveIOBuffer archiveWriteBuffer(Archive archive, uint64_t size) {
+		return ArchiveIOBuffer(size);
 	}
 }
