@@ -9,7 +9,7 @@
 #include "Salad/ImGui/ImGuiWidgets.h"
 
 #include "EditorSelectionContext.h"
-#include "Assets/AssetIO.h"
+#include "Assets/Asset.h"
 
 namespace Salad {
 

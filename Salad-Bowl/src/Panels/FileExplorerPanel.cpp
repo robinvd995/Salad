@@ -10,7 +10,7 @@
 #include <map>
 #include <algorithm>
 
-#include "Assets/AssetIO.h"
+#include "Assets/Asset.h"
 #include "Util/FileUtils.hpp";
 
 #include "EditorSettings.hpp"

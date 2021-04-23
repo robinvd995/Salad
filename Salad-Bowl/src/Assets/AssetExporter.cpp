@@ -2,11 +2,21 @@
 
 #include <iostream>
 
+#include "Util/FileUtils.hpp"
+
 namespace Salad::Asset::IO {
+
+	std::string transformAssetIdToResourceId(std::string& assetid) {
+		std::string sub_path = FileUtil::subPath(assetid, 1);
+		std::string path_no_extension = FileUtil::popAllExtensions(sub_path);
+		FileUtil::replaceFileSeperators(path_no_extension, '.');
+		return path_no_extension;
+	}
 
 	void Salad::Asset::IO::exportTextureAsset(TextureAsset& asset) {
 		std::cout << "export asset" << asset.getFilePath() << std::endl;
 	}
+
 	/*void Salad::Asset::IO::ziplibExportTest() {
 		std::string archivestr = "test.resources";
 		std::string file = "message";

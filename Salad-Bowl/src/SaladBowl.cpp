@@ -2,6 +2,7 @@
 #include <Salad/Core/EntryPoint.h>
 
 #include "EditorLayer.h"
+#include "TestLayer.hpp"
 
 namespace Salad {
 
@@ -11,6 +12,7 @@ namespace Salad {
 			Application("SaladBowl - Salad Editor")
 		{
 			pushLayer(new EditorLayer());
+			//pushLayer(new TestLayer());
 		}
 		~SaladBowl() {}
 	};
