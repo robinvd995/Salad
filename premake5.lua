@@ -29,6 +29,7 @@ IncludeDir["libzip"] = "Salad/vendor/libzip"
 
 --Salad-Bowl Include
 IncludeDir["assimp"] = "Salad-Bowl/vendor/assimp/include"
+IncludeDir["rapidxml"] = "Salad-Bowl/vendor/rapidxml"
 
 group "Dependencies"
     include "Salad/vendor/GLFW"
@@ -203,7 +204,9 @@ project "Salad-Bowl"
             "%{IncludeDir.json}",
             "%{IncludeDir.libzip}",
 
+            "%{IncludeDir.rapidxml}",
             IncludeDir["assimp"]
+
         }
     
         links {
