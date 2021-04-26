@@ -14,9 +14,9 @@ namespace Salad::Xml {
 		m_Xml(data) 
 	{}
 
-	XmlDocumentData* XmlDocument::getDocData() {
+	/*XmlDocumentData* XmlDocument::getDocData() {
 		return m_Xml;
-	}
+	}*/
 
 	XmlNode XmlDocument::allocateNode(const char* name) {
 		return XmlNode(this, m_Xml->xml_doc.allocate_node(rapidxml::node_type::node_element, name)); 

@@ -28,7 +28,7 @@ namespace Salad::Xml {
 		XmlDocument(XmlDocumentData* data);
 		~XmlDocument() = default;
 
-		XmlDocumentData* getDocData(); // TODO: change this so only the document itself and the namespace functions can use it
+		//XmlDocumentData* getDocData();
 		XmlNode allocateNode(const char* name);
 		void appendNodeToRoot(XmlNode& node);
 
