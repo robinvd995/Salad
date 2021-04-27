@@ -9,7 +9,7 @@
 #include "Salad/ImGui/ImGuiWidgets.h"
 
 #include "EditorSelectionContext.h"
-#include "Assets/Asset.h"
+#include "Assets/AssetSerializer.h"
 
 namespace Salad {
 
@@ -286,9 +286,14 @@ namespace Salad {
 				texture.setTextureWrapR(static_cast<TextureWrapSpecification>(wrapR));
 				texture.updateTextureFilterWrapSpec();
 
-				Asset::IO::saveTextureAsset(texture);
+				Asset::AssetSerializer serializer;
+				serializer.serializeTexture(texture);
 			}
 		});
+
+		if(ImGui::Button("Export", {100, 24})) {
+			//Asset::exportTextureAsset(texture);
+		}
 		
 	}
 

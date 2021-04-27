@@ -26,6 +26,10 @@ namespace Salad::Xml {
 		m_Xml->xml_root_node->append_node(node.m_Node);
 	}
 
+	const XmlNode XmlDocument::getRootNode() {
+		return XmlNode(this, m_Xml->xml_root_node);
+	}
+
 	template<typename T>
 	void XmlDocument::print(std::basic_ostream<T>& stream) const {
 		stream << m_Xml->xml_doc;
@@ -56,10 +60,17 @@ namespace Salad::Xml {
 		m_Document(doc), m_Node(node) 
 	{}
 
-	void XmlNode::iterate(const char* nodeId, bool (*lambda_func)(const XmlNode&)) {
+	void XmlNode::iterateb(const char* nodeId, std::function<bool(const XmlNode&)> func) const {
 		for (rapidxml::xml_node<>* node = m_Node->first_node(nodeId); node; node = node->next_sibling()) {
 			if (std::strcmp(nodeId, node->name())) continue;
-			if (lambda_func(XmlNode(m_Document, node))) break;
+			if (func(XmlNode(m_Document, node))) break;
+		}
+	}
+
+	void XmlNode::iterate(const char* nodeId, std::function<void(const XmlNode&)> func) const {
+		for (rapidxml::xml_node<>* node = m_Node->first_node(nodeId); node; node = node->next_sibling()) {
+			if (std::strcmp(nodeId, node->name())) continue;
+			func(XmlNode(m_Document, node));
 		}
 	}
 
@@ -92,31 +103,49 @@ namespace Salad::Xml {
 	}
 
 	bool XmlNode::getAttributeAsBool(const char* key) const { 
-		return atoi(m_Node->value()) != 0;
+		return atoi(m_Node->first_attribute(key)->value()) != 0;
+	}
+
+	uint64_t XmlNode::getAttributeAsUint64(const char* key) const {
+		return atoll(m_Node->first_attribute(key)->value());
+	}
+
+	const XmlNode XmlNode::getFirstChild(const char* name) const {
+		return XmlNode(m_Document, m_Node->first_node(name));
 	}
 
 	void XmlNode::appendNode(XmlNode& node) {
 		m_Node->append_node(node.m_Node);
 	}
 
-	void XmlNode::appendAttribute(const char* key, const char* value) {
-		m_Node->append_attribute(m_Document->m_Xml->xml_doc.allocate_attribute(key, value));
+	XmlNode& XmlNode::appendAttribute(const char* key, const char* value) {
+		m_Node->append_attribute(m_Document->m_Xml->xml_doc.allocate_attribute(key, value)); 
+		return *this;
 	};
 
-	void XmlNode::appendAttribute(const char* key, int value) {
-		m_Node->append_attribute(m_Document->m_Xml->xml_doc.allocate_attribute(key, addSource<int>(value)));
+	XmlNode& XmlNode::appendAttribute(const char* key, int value) {
+		m_Node->append_attribute(m_Document->m_Xml->xml_doc.allocate_attribute(key, addSource<int>(value))); 
+		return *this;
 	}
 
-	void XmlNode::appendAttribute(const char* key, float value) {
-		m_Node->append_attribute(m_Document->m_Xml->xml_doc.allocate_attribute(key, addSource<float>(value)));
+	XmlNode& XmlNode::appendAttribute(const char* key, float value) {
+		m_Node->append_attribute(m_Document->m_Xml->xml_doc.allocate_attribute(key, addSource<float>(value))); 
+		return *this;
 	}
 
-	void XmlNode::appendAttribute(const char* key, bool value) {
-		m_Node->append_attribute(m_Document->m_Xml->xml_doc.allocate_attribute(key, addSource<int>(value ? 1 : 0)));
+	XmlNode& XmlNode::appendAttribute(const char* key, bool value) {
+		m_Node->append_attribute(m_Document->m_Xml->xml_doc.allocate_attribute(key, addSource<int>(value ? 1 : 0))); 
+		return *this;
 	}
 
-	void XmlNode::setValue(const char* value) {
+	XmlNode& XmlNode::appendAttribute(const char* key, uint64_t value) {
+		m_Node->append_attribute(m_Document->m_Xml->xml_doc.allocate_attribute(key, addSource<uint64_t>(value))); 
+		return *this;
+	}
+
+	XmlNode& XmlNode::setValue(const char* value) {
 		m_Node->value(value); 
+		return *this;
 	}
 
 	template<typename T>

@@ -108,14 +108,14 @@ namespace Salad::Asset {
 		BuilderDeclaration() = default;
 		~BuilderDeclaration() = default;
 
-		bool hasQualifier(Asset::ShaderDeclarationQualifier qualifier);
-		std::string getQualifierParameter(Asset::ShaderDeclarationQualifier qualifier, const std::string& parameter);
+		bool hasQualifier(ShaderDeclarationQualifier qualifier);
+		std::string getQualifierParameter(ShaderDeclarationQualifier qualifier, const std::string& parameter);
 
 	private:
 		std::string m_Identifier;
-		Asset::ShaderAssetDataType m_DataType = Asset::ShaderAssetDataType::None;
-		std::vector<Asset::ShaderDeclarationQualifier> m_Qualifiers;
-		std::map<Asset::ShaderDeclarationQualifier, std::map<std::string, std::string>> m_Parameters;
+		ShaderAssetDataType m_DataType = ShaderAssetDataType::None;
+		std::vector<ShaderDeclarationQualifier> m_Qualifiers;
+		std::map<ShaderDeclarationQualifier, std::map<std::string, std::string>> m_Parameters;
 
 		friend class ShaderAssetBuilder;
 
@@ -139,17 +139,17 @@ namespace Salad::Asset {
 
 	class ShaderAssetBuilder {
 
-		typedef std::map<std::string, Asset::ShaderAssetDataType> ShaderDataMap;
+		typedef std::map<std::string, ShaderAssetDataType> ShaderDataMap;
 
 	public:
 
-		Asset::ShaderAsset build(const std::string& filepath);
+		ShaderAsset build(const std::string& filepath);
 
 	private:
 
 		void parseFile(const std::string& filepath);
-		void parseStages(Asset::ShaderAsset& shader, uint32_t* error);
-		void setVertexBufferLayout(Asset::ShaderAsset& shader, uint32_t* error);
+		void parseStages(ShaderAsset& shader, uint32_t* error);
+		void setVertexBufferLayout(ShaderAsset& shader, uint32_t* error);
 
 		void pushWord();
 
@@ -169,8 +169,8 @@ namespace Salad::Asset {
 
 	private:
 
-		static std::map<std::string, Asset::ShaderDeclarationQualifier> s_DeclarationQualifiers;
-		static std::map<std::string, Asset::ShaderAssetDataType> s_DeclarationTypes;
+		static std::map<std::string, ShaderDeclarationQualifier> s_DeclarationQualifiers;
+		static std::map<std::string, ShaderAssetDataType> s_DeclarationTypes;
 		static std::map<std::string, ShaderSection> s_ShaderSections;
 
 	private:

@@ -1,15 +1,17 @@
 #pragma once
 
+#include "AssetBase.h"
+
 #include "Salad/Renderer/Texture.h"
 #include <iostream>
 
 namespace Salad::Asset {
 
-	class TextureAsset {
+	class TextureAsset : public AssetBase {
 	
 	public:
 		TextureAsset() = delete;
-		TextureAsset(std::string& path, std::string& name, Ref<Texture2D> texture, TextureFilterWrapSpecification filterWrapSpec)
+		TextureAsset(const std::string& path, std::string& name, Ref<Texture2D> texture, TextureFilterWrapSpecification filterWrapSpec)
 			: m_FilePath(path), m_FileName(name), m_Texture(texture), m_TextureFilterWrapSpec(filterWrapSpec)
 		{}
 		TextureAsset(const TextureAsset& other) = default;
@@ -21,9 +23,9 @@ namespace Salad::Asset {
 		std::string& getFilePath() { return m_FilePath; }
 		
 		// Exposing Texture2D
-		uint32_t getTextureRenderId() { return m_Texture->getRendererId(); }
-		uint32_t getTextureWidth() { return m_Texture->getWidth(); }
-		uint32_t getTextureHeight() { return m_Texture->getHeight(); }
+		uint32_t getTextureRenderId() const { return m_Texture->getRendererId(); }
+		uint32_t getTextureWidth() const { return m_Texture->getWidth(); }
+		uint32_t getTextureHeight() const { return m_Texture->getHeight(); }
 
 		// Texture filter/wrapping settings
 		TextureMinFilterSpecification getTextureMinFilter() { return m_TextureFilterWrapSpec.minFilter; }
@@ -43,6 +45,9 @@ namespace Salad::Asset {
 		TextureFilterWrapSpecification& getTextureFilterWrapSpecification() { return m_TextureFilterWrapSpec; }
 
 		void updateTextureFilterWrapSpec() { m_Texture->updateFilterWrapSpecification(m_TextureFilterWrapSpec); }
+
+		virtual AssetType getAssetType() override { return AssetType::Texture; }
+		virtual uint64_t calculateAssetSize() override { return (uint64_t)(getTextureWidth() * getTextureHeight()) * (uint64_t)4 + 10; }
 
 	private:
 		std::string m_FilePath;

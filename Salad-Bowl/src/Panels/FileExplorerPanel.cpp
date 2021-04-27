@@ -10,10 +10,10 @@
 #include <map>
 #include <algorithm>
 
-#include "Assets/Asset.h"
 #include "Util/FileUtils.hpp";
 
 #include "EditorSettings.hpp"
+#include "Assets/AssetSerializer.h"
 
 namespace Salad {
 
@@ -81,6 +81,7 @@ namespace Salad {
 
 		EditorSettings::pushGroup("File Explorer");
 		EditorSettings::pushString("Ignored Extensions", &m_IgnoredExtensions);
+		EditorSettings::pushBool("Ignore Unknown Files", &m_IgnoreUnknownFiles);
 		EditorSettings::popGroup();
 	}
 
@@ -150,12 +151,14 @@ namespace Salad {
 	void FileExplorerPanel::onItemDoubleClicked(FileExplorerItem* item) {
 		switch(item->type) {
 			case FileExplorerItemType::GLSL: {
-				Asset::ShaderAsset& shader = Asset::IO::loadShaderAsset(item->path);
+				Asset::AssetSerializer serializer;
+				Asset::ShaderAsset& shader = serializer.deserializeShader(item->path);
 				EditorSelectionContext::setSelectionContext<ShaderSelectionContext>(shader);
 			} break;
 
 			case FileExplorerItemType::Texture: {
-				Asset::TextureAsset texture = Asset::IO::loadTextureAsset(item->path);
+				Asset::AssetSerializer serializer;
+				Asset::TextureAsset texture = serializer.deserializeTexture(item->path);
 				EditorSelectionContext::setSelectionContext<TextureSelectionContext>(texture);
 			} break;
 		}

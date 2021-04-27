@@ -7,17 +7,17 @@
 #include <fstream>
 #include "Util/FileUtils.hpp";
 
-#define SLD_ASSET_FILE_EXTENSION ".asset"
-
 using json = nlohmann::json;
 
-namespace Salad::Asset::IO {
+namespace Salad::Asset {
+
+/*#define SLD_ASSET_FILE_EXTENSION ".asset"
 
 	std::string assetFileFromPath(std::string filepath) {
 		return filepath.append(SLD_ASSET_FILE_EXTENSION);
 	}
 
-	TextureAsset Salad::Asset::IO::loadTextureAsset(std::string& filepath) {
+	TextureAsset Salad::Asset::loadTextureAsset(std::string& filepath) {
 		TextureFilterWrapSpecification fwSpec;
 		std::string assetFile = assetFileFromPath(filepath);
 
@@ -54,7 +54,7 @@ namespace Salad::Asset::IO {
 		return TextureAsset(filepath, filename, texture, fwSpec);
 	}
 
-	void Salad::Asset::IO::saveTextureAsset(TextureAsset& texture) {
+	void Salad::Asset::saveTextureAsset(TextureAsset& texture) {
 		std::string assetFile = assetFileFromPath(texture.getFilePath());
 		json j;
 
@@ -70,13 +70,13 @@ namespace Salad::Asset::IO {
 		file.close();
 	}
 
-	ShaderAsset Salad::Asset::IO::loadShaderAsset(const std::string& filepath) {
+	ShaderAsset Salad::Asset::loadShaderAsset(const std::string& filepath) {
 		ShaderAssetBuilder builder;
 		ShaderAsset& shader = builder.build(filepath);
 		return shader;
 	}
 	
-	void Salad::Asset::IO::saveShaderAsset(ShaderAsset& shader) {
+	void Salad::Asset::saveShaderAsset(ShaderAsset& shader) {
 
-	}
+	}*/
 }

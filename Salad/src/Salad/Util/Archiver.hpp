@@ -120,9 +120,28 @@ namespace Salad::Util {
 		template<typename T>
 		void writeArray(T* start, uint64_t count) {
 			ARCHIVE_ASSERT_WRITE;
+
+			static int segmentSize = 65536 * 16;
 			writeULong(count);
 			uint64_t size = count * sizeof(T);
-			memcpy(&m_Data[iit(size)], start, size);
+
+			if(size > segmentSize) {
+				// Size to big, start fragmenting
+				uint64_t it = 0;
+				uint64_t remainingSize = size;
+				while(remainingSize > 0) {
+					if (remainingSize > segmentSize) remainingSize = segmentSize;
+
+					memcpy(&m_Data[iit(remainingSize)], &start[it], remainingSize);
+					it += remainingSize;
+
+					remainingSize -= segmentSize;
+				}
+
+			}
+			else {
+				memcpy(&m_Data[iit(size)], start, size);
+			}
 		}
 
 		template<typename T>
@@ -205,5 +224,13 @@ namespace Salad::Util {
 	/// </summary>
 	inline ArchiveIOBuffer archiveWriteBuffer(Archive archive, uint64_t size) {
 		return ArchiveIOBuffer(size);
+	}
+
+	/// <summary>
+	/// 
+	/// </summary>
+	inline std::string archiveErrorToString(ArchiverErrors_ error) {
+		std::string s = "Archiver error: ";
+		return s.append(std::to_string(error));
 	}
 }

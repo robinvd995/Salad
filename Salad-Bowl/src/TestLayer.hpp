@@ -3,6 +3,8 @@
 
 #include "Salad/Util/Archiver.hpp"
 #include "Util/Xml.h"
+#include "Assets/AssetManager.h"
+#include "Assets/AssetManagerSerializer.hpp"
 
 #include <iostream>
 
@@ -145,7 +147,7 @@ namespace Salad {
 		void testXml() {
 			using namespace Salad::Xml;
 
-			XmlDocument writeXmlDoc = createDocument();
+			XmlDocument writeXmlDoc = createDocument("root");
 
 			XmlNode nodeInt = writeXmlDoc.allocateNode("int");
 			nodeInt.appendAttribute("string", "hello world!");
@@ -207,9 +209,55 @@ namespace Salad {
 			});*/
 		}
 
+		void testAssetManager() {
+			using namespace Salad::Asset;
+
+			const char* filepath = "assetmanagertest.xml";
+			{ // Write
+				AssetManager manager;
+
+				manager.includeAsset("assets/textures/texture.png");
+				manager.includeAsset("assets/shaders/shader.glsl");
+				manager.includeAsset("assets/models/model.png");
+				manager.includeAsset("assets/material/material.png");
+
+				AssetManagerSerializer serializer;
+				serializer.serialize(manager, filepath);
+			} // Write
+
+			{ // Read
+				AssetManager manager;
+				AssetManagerSerializer serializer;
+				serializer.deserialize(manager, filepath);
+			} // Read
+		}
+
+		void testInheritance() {
+			Asset::ShaderAsset shader("somepath");
+			Asset::AssetBase* assets = &shader;
+			std::string s0 = "pth";
+			std::string s1 = "nm";
+			Asset::TextureAsset texture(s0, s1, nullptr, {});
+			Asset::AssetBase* assett = &texture;
+
+			//std::cout << shader.getNumber() << std::endl;
+			//std::cout << assets->getNumber() << std::endl;
+
+			//std::cout << texture.getNumber() << std::endl;
+			//std::cout << assett->getNumber() << std::endl;
+
+			std::cout << static_cast<int>(shader.getAssetType()) << std::endl;
+			std::cout << static_cast<int>(assets->getAssetType()) << std::endl;
+
+			std::cout << static_cast<int>(texture.getAssetType()) << std::endl;
+			std::cout << static_cast<int>(assett->getAssetType()) << std::endl;
+		}
+
 		virtual void onAttach() override {
 			//testArchive();
-			testXml();
+			//testXml();
+			//testAssetManager();
+			testInheritance();
 		}
 
 		virtual void onDetach() override {}

@@ -1,11 +1,14 @@
 #pragma once
 
+#include "AssetBase.h"
+
 #include <set>
 #include <string>
 #include <map>
 #include <vector>
 
 #include <iostream>
+
 
 namespace Salad::Asset {
 
@@ -85,7 +88,7 @@ namespace Salad::Asset {
 		friend class ShaderAssetBuilder;
 	};
 
-	class ShaderAsset {
+	class ShaderAsset : public AssetBase {
 
 	public:
 		ShaderAsset() = default;
@@ -109,6 +112,9 @@ namespace Salad::Asset {
 		// get a instance of a useable shader by the renderer
 		// 
 		// probably more
+
+		virtual AssetType getAssetType() override { return AssetType::Shader; }
+		virtual uint64_t calculateAssetSize() override { return 0; } // TODO:
 
 	private:
 		std::map<ShaderStageType, ShaderStage> m_ShaderStages;

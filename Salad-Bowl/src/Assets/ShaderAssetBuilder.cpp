@@ -33,13 +33,13 @@ namespace Salad::Asset {
 		return s;
 	}
 
-	bool BuilderDeclaration::hasQualifier(Asset::ShaderDeclarationQualifier qualifier) {
-		for (Asset::ShaderDeclarationQualifier q : m_Qualifiers)
+	bool BuilderDeclaration::hasQualifier(ShaderDeclarationQualifier qualifier) {
+		for (ShaderDeclarationQualifier q : m_Qualifiers)
 			if (q == qualifier) return true;
 		return false;
 	}
 
-	std::string BuilderDeclaration::getQualifierParameter(Asset::ShaderDeclarationQualifier qualifier, const std::string& parameter) {
+	std::string BuilderDeclaration::getQualifierParameter(ShaderDeclarationQualifier qualifier, const std::string& parameter) {
 		auto pmap = m_Parameters.find(qualifier);
 		if (pmap == m_Parameters.end()) return "";
 
@@ -51,16 +51,16 @@ namespace Salad::Asset {
 
 	const char SectionBuilder::s_IllegalCharacters[SECTION_ILLEGAL_CHARACTER_SIZE] = { '\r', '\n', '\t' };
 
-	std::map<std::string, Asset::ShaderDeclarationQualifier> ShaderAssetBuilder::s_DeclarationQualifiers = {
-		{"in", Asset::ShaderDeclarationQualifier::In}, {"out", Asset::ShaderDeclarationQualifier::Out}, {"uniform", Asset::ShaderDeclarationQualifier::Uniform},
-		{"layout", Asset::ShaderDeclarationQualifier::Layout}, {"flat", Asset::ShaderDeclarationQualifier::Flat}
+	std::map<std::string, ShaderDeclarationQualifier> ShaderAssetBuilder::s_DeclarationQualifiers = {
+		{"in", ShaderDeclarationQualifier::In}, {"out", ShaderDeclarationQualifier::Out}, {"uniform", ShaderDeclarationQualifier::Uniform},
+		{"layout", ShaderDeclarationQualifier::Layout}, {"flat", ShaderDeclarationQualifier::Flat}
 	};
 
-	std::map<std::string, Asset::ShaderAssetDataType> ShaderAssetBuilder::s_DeclarationTypes = {
-		{"mat2", Asset::ShaderAssetDataType::Mat2}, {"mat3", Asset::ShaderAssetDataType::Mat3}, {"mat4", Asset::ShaderAssetDataType::Mat4},
-		{"vec2", Asset::ShaderAssetDataType::Vec2}, {"vec3", Asset::ShaderAssetDataType::Vec3}, {"vec4", Asset::ShaderAssetDataType::Vec4},
-		{"int", Asset::ShaderAssetDataType::Int}, {"float", Asset::ShaderAssetDataType::Float},
-		{"sampler2D", Asset::ShaderAssetDataType::Sampler2D}
+	std::map<std::string, ShaderAssetDataType> ShaderAssetBuilder::s_DeclarationTypes = {
+		{"mat2", ShaderAssetDataType::Mat2}, {"mat3", ShaderAssetDataType::Mat3}, {"mat4", ShaderAssetDataType::Mat4},
+		{"vec2", ShaderAssetDataType::Vec2}, {"vec3", ShaderAssetDataType::Vec3}, {"vec4", ShaderAssetDataType::Vec4},
+		{"int", ShaderAssetDataType::Int}, {"float", ShaderAssetDataType::Float},
+		{"sampler2D", ShaderAssetDataType::Sampler2D}
 	};
 
 	std::map<std::string, ShaderSection> ShaderAssetBuilder::s_ShaderSections = {
@@ -255,22 +255,22 @@ namespace Salad::Asset {
 
 	}
 
-	void ShaderAssetBuilder::parseStages(Asset::ShaderAsset& shader, uint32_t* error) {
+	void ShaderAssetBuilder::parseStages(ShaderAsset& shader, uint32_t* error) {
 
 		static const size_t shaderStageSize = 2;
-		static const Asset::ShaderStageType shaderStages[] = { Asset::ShaderStageType::Vertex, Asset::ShaderStageType::Fragment };
+		static const ShaderStageType shaderStages[] = { ShaderStageType::Vertex, ShaderStageType::Fragment };
 		static const ShaderSection shaderSections[] = { ShaderSection::Vertex, ShaderSection::Fragment };
 
 		for (int i = 0; i < shaderStageSize; i++) {
 
-			Asset::ShaderStageType stagetype = shaderStages[i];
+			ShaderStageType stagetype = shaderStages[i];
 			ShaderSection sectiontype = shaderSections[i];
 
 			auto it_source = m_SectionSource.find(sectiontype);
 
 			if (it_source != m_SectionSource.end()) {
 
-				Asset::ShaderStage stage;
+				ShaderStage stage;
 				stage.shaderSource = it_source->second;
 
 				auto it_declarations = m_SectionDeclarations.find(sectiontype);
@@ -278,17 +278,17 @@ namespace Salad::Asset {
 
 					for (BuilderDeclaration declaration : it_declarations->second) {
 
-						Asset::ShaderVariable variable;
+						ShaderVariable variable;
 						variable.identifier = declaration.m_Identifier;
 						variable.type = declaration.m_DataType;
-						variable.flat = declaration.hasQualifier(Asset::ShaderDeclarationQualifier::Flat);
+						variable.flat = declaration.hasQualifier(ShaderDeclarationQualifier::Flat);
 
-						std::string locationStr = declaration.getQualifierParameter(Asset::ShaderDeclarationQualifier::Layout, "location");
+						std::string locationStr = declaration.getQualifierParameter(ShaderDeclarationQualifier::Layout, "location");
 						if (!locationStr.empty()) { variable.layoutLocation = std::atoi(locationStr.c_str()); }
 
-						if (declaration.hasQualifier(Asset::ShaderDeclarationQualifier::In))              stage.inputs.push_back(variable);
-						else if (declaration.hasQualifier(Asset::ShaderDeclarationQualifier::Out))        stage.outputs.push_back(variable);
-						else if (declaration.hasQualifier(Asset::ShaderDeclarationQualifier::Uniform))    stage.uniforms.push_back(variable);
+						if (declaration.hasQualifier(ShaderDeclarationQualifier::In))              stage.inputs.push_back(variable);
+						else if (declaration.hasQualifier(ShaderDeclarationQualifier::Out))        stage.outputs.push_back(variable);
+						else if (declaration.hasQualifier(ShaderDeclarationQualifier::Uniform))    stage.uniforms.push_back(variable);
 					}
 				}
 
@@ -299,23 +299,23 @@ namespace Salad::Asset {
 		}
 
 		// Shader stage validation
-		if (!shader.hasStage(Asset::ShaderStageType::Vertex)) { *error = 1; return; }
-		if (shader.getStage(Asset::ShaderStageType::Vertex).inputs.empty()) { *error = 2; return; }
+		if (!shader.hasStage(ShaderStageType::Vertex)) { *error = 1; return; }
+		if (shader.getStage(ShaderStageType::Vertex).inputs.empty()) { *error = 2; return; }
 
-		if (!shader.hasStage(Asset::ShaderStageType::Fragment)) { *error = 3; return; }
-		if (shader.getStage(Asset::ShaderStageType::Fragment).outputs.empty()) { *error = 4; return; }
+		if (!shader.hasStage(ShaderStageType::Fragment)) { *error = 3; return; }
+		if (shader.getStage(ShaderStageType::Fragment).outputs.empty()) { *error = 4; return; }
 
 		// No errors
 		*error = 0;
 	}
 
-	void ShaderAssetBuilder::setVertexBufferLayout(Asset::ShaderAsset& shader, uint32_t* error) {
+	void ShaderAssetBuilder::setVertexBufferLayout(ShaderAsset& shader, uint32_t* error) {
 
 		// TODO: Every input needs to set its layout location, if not an error
 
-		Asset::ShaderStage& stage = shader.getStage(Asset::ShaderStageType::Vertex);
+		ShaderStage& stage = shader.getStage(ShaderStageType::Vertex);
 
-		std::sort(stage.inputs.begin(), stage.inputs.end(), [](const Asset::ShaderVariable& var0, const Asset::ShaderVariable& var1) -> bool {
+		std::sort(stage.inputs.begin(), stage.inputs.end(), [](const ShaderVariable& var0, const ShaderVariable& var1) -> bool {
 			if (var0.layoutLocation == -1) return 0;
 			if (var1.layoutLocation == -1) return 1;
 			return var0.layoutLocation < var1.layoutLocation;
@@ -327,7 +327,7 @@ namespace Salad::Asset {
 
 		int i = 0;
 		for (auto& input : stage.inputs) {
-			Asset::ShaderVertexBufferElement element;
+			ShaderVertexBufferElement element;
 			element.name = input.identifier;
 			element.offset = offset;
 			element.size = Util::getShaderDataTypeSize(input.type);
@@ -342,10 +342,10 @@ namespace Salad::Asset {
 		*error = 0;
 	}
 
-	Asset::ShaderAsset ShaderAssetBuilder::build(const std::string& filepath) {
+	ShaderAsset ShaderAssetBuilder::build(const std::string& filepath) {
 
 		// Create an new instance of a shader
-		Asset::ShaderAsset shader(filepath);
+		ShaderAsset shader(filepath);
 		uint32_t errorCode = 0;
 
 		// Parse file to get the variables and the sources
@@ -355,14 +355,14 @@ namespace Salad::Asset {
 		parseStages(shader, &errorCode);
 		if (errorCode > 0) {
 			std::cout << "Error with code '" << errorCode << "' occured while parsing stages!" << std::endl;
-			return Asset::ShaderAsset();
+			return ShaderAsset();
 		}
 
 		// Determine the vertex buffer layout
 		setVertexBufferLayout(shader, &errorCode);
 		if (errorCode > 0) {
 			std::cout << "Error with code '" << errorCode << "' occured while setting the vertex buffer layout!" << std::endl;
-			return Asset::ShaderAsset();
+			return ShaderAsset();
 		}
 
 		return shader;

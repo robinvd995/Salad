@@ -20,6 +20,12 @@ namespace Salad::FileUtil {
 		return path.substr(index + 1);
 	}
 
+	inline std::string fileNameFromPath(const std::string& path) {
+		size_t index = path.find_last_of('/');
+		if (index == std::string::npos) return path;
+		return path.substr(index + 1);
+	}
+
 	inline bool fileExtensionFromName(std::string& filename, std::string* extension) {
 		size_t index = filename.find_last_of('.');
 		if (index == std::string::npos) return false;

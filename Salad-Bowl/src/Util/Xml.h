@@ -5,6 +5,7 @@
 #include <vector>
 #include <fstream>
 #include <iterator>
+#include <functional>
 
 #include "rapidxml.hpp"
 
@@ -32,6 +33,8 @@ namespace Salad::Xml {
 		XmlNode allocateNode(const char* name);
 		void appendNodeToRoot(XmlNode& node);
 
+		const XmlNode getRootNode();
+
 		template<typename T>
 		void print(std::basic_ostream<T>& stream) const;
 
@@ -53,7 +56,8 @@ namespace Salad::Xml {
 		XmlNode(XmlDocument* doc, rapidxml::xml_node<>* node);
 		~XmlNode() = default;
 
-		void iterate(const char* nodeId, bool (*lambda_func)(const XmlNode&));
+		void iterateb(const char* nodeId, std::function<bool(const XmlNode&)> func) const;
+		void iterate(const char* nodeId, std::function<void(const XmlNode&)> func) const;
 
 		std::string getValue() const;
 		int getValueAsInt() const;
@@ -64,13 +68,17 @@ namespace Salad::Xml {
 		int getAttributeAsInt(const char* key) const;
 		float getAttributeAsFloat(const char* key) const;
 		bool getAttributeAsBool(const char* key) const;
+		uint64_t getAttributeAsUint64(const char* key) const;
+
+		const XmlNode getFirstChild(const char* name) const;
 
 		void appendNode(XmlNode& node);
-		void appendAttribute(const char* key, const char* value);
-		void appendAttribute(const char* key, int value);
-		void appendAttribute(const char* key, float value);
-		void appendAttribute(const char* key, bool value);
-		void setValue(const char* value);
+		XmlNode& appendAttribute(const char* key, const char* value);
+		XmlNode& appendAttribute(const char* key, int value);
+		XmlNode& appendAttribute(const char* key, float value);
+		XmlNode& appendAttribute(const char* key, bool value);
+		XmlNode& appendAttribute(const char* key, uint64_t value);
+		XmlNode& setValue(const char* value);
 
 	private:
 		template<typename T>
@@ -85,7 +93,7 @@ namespace Salad::Xml {
 
 	// ----- Namespace Functions -----
 
-	inline XmlDocument parseXmlFile(const std::string& filepath) {
+	inline XmlDocument parseXmlFile(const std::string& filepath, const char* root) {
 		std::ifstream file(filepath);
 
 		XmlDocumentData* docdata = new XmlDocumentData();
@@ -93,14 +101,14 @@ namespace Salad::Xml {
 		docdata->source_buffer.push_back('\0');
 
 		docdata->xml_doc.parse<0>(&docdata->source_buffer[0]);
-		docdata->xml_root_node = docdata->xml_doc.first_node();
+		docdata->xml_root_node = docdata->xml_doc.first_node(root);
 
 		return XmlDocument(docdata);
 	}
 
-	inline XmlDocument createDocument() {
+	inline XmlDocument createDocument(const char* root) {
 		XmlDocumentData* data = new XmlDocumentData();
-		data->xml_root_node = data->xml_doc.allocate_node(rapidxml::node_type::node_element, "root");
+		data->xml_root_node = data->xml_doc.allocate_node(rapidxml::node_type::node_element, root);
 		data->xml_doc.append_node(data->xml_root_node);
 		data->source_buffer.reserve(XML_SOURCE_BUFFER_SIZE);
 		return XmlDocument(data);
