@@ -1,0 +1,6 @@
+<asset_manager>
+	<included_assets size="1">
+		<asset dirty="0">assets/shaders/test/ShaderBuilderTest.glsl</asset>
+	</included_assets>
+</asset_manager>
+

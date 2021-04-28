@@ -1,7 +1,5 @@
-{
-    "MagFilter": 0,
-    "MinFilter": 0,
-    "WrapR": 0,
-    "WrapS": 0,
-    "WrapT": 0
-}
+<texture_data>
+	<filter minFilter="0" magFilter="0"/>
+	<wrap wrapS="0" wrapT="0" wrapR="0"/>
+</texture_data>
+

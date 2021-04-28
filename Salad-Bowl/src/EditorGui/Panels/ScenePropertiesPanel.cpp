@@ -11,7 +11,7 @@
 #include "EditorSelectionContext.h"
 #include "Assets/AssetSerializer.h"
 
-namespace Salad {
+namespace Salad::EditorGui {
 
 	static char s_TagBuffer[256];
 	static const char* s_CameraProjectionStrings[2] = { "Perspective", "Orthographic" };

@@ -81,10 +81,12 @@ namespace Salad::Util {
 		ArchiveIOBuffer() = delete;
 		ArchiveIOBuffer(char* data, uint64_t size) : m_Data(data), m_Size(size) { m_BufferMode = ArchiveIOBufferMode::Read; }
 		ArchiveIOBuffer(uint64_t size) : m_Size(size) { m_Data = (char*)malloc(m_Size); m_BufferMode = ArchiveIOBufferMode::Write; }
+		//ArchiveIOBuffer(char* data, uint64_t size) : m_Size(size) { m_Data.resize(size); memcpy(&m_Data[0], data, size); m_BufferMode = ArchiveIOBufferMode::Read; }
+		//ArchiveIOBuffer(uint64_t size) : m_Size(size) { m_Data.resize(size); m_BufferMode = ArchiveIOBufferMode::Write; }
 
 		uint64_t getBufferSize() { return m_Size; }
 		char* getBuffer() { return m_Data; }
-		void freeBuffer() { free(m_Data); }
+		void freeBuffer() { free(m_Data); /*m_Data.clear();*/ }
 
 		bool hasNext(uint64_t amount = 1) { return m_Iterator + amount <= m_Size; }
 
@@ -121,7 +123,7 @@ namespace Salad::Util {
 		void writeArray(T* start, uint64_t count) {
 			ARCHIVE_ASSERT_WRITE;
 
-			static int segmentSize = 65536 * 16;
+			static const int segmentSize = 65536 * 16;
 			writeULong(count);
 			uint64_t size = count * sizeof(T);
 
@@ -161,6 +163,7 @@ namespace Salad::Util {
 
 		uint64_t m_Size;
 		char* m_Data = nullptr;
+		//std::vector<char> m_Data;
 		uint64_t m_Iterator = 0;
 	};
 

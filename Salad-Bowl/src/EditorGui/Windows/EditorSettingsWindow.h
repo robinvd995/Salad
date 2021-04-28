@@ -6,7 +6,7 @@
 
 #include "EditorSettings.hpp"
 
-namespace Salad {
+namespace Salad::EditorGui {
 
 	class EditorSettingsWindow {
 

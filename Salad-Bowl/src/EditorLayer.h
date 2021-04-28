@@ -73,10 +73,10 @@ namespace Salad {
 		EditorState m_EditorState = EditorState::Editor;
 
 		// Editor Panels
-		SceneHierarchyPanel m_SceneHierarchyPanel;
-		ScenePropertiesPanel m_ScenePropertiesPanel;
-		MaterialExplorerPanel m_MaterialExplorerPanel;
-		FileExplorerPanel m_FileExplorerPanel;
+		EditorGui::SceneHierarchyPanel m_SceneHierarchyPanel;
+		EditorGui::ScenePropertiesPanel m_ScenePropertiesPanel;
+		EditorGui::MaterialExplorerPanel m_MaterialExplorerPanel;
+		EditorGui::FileExplorerPanel m_FileExplorerPanel;
 
 		bool m_ShowSceneHierarchyPanel = true;
 		bool m_ShowScenePropertiesPanel = true;
@@ -84,12 +84,9 @@ namespace Salad {
 		bool m_ShowFileExplorerPanel = true;
 
 		// Windows
-		EditorSettingsWindow m_EditorSettingsWindow;
+		EditorGui::EditorSettingsWindow m_EditorSettingsWindow;
 
 		float m_EditorCameraSensitivity = 0.5f;
-
-		// Editor Button Textures
-		Ref<Texture2D> m_EditorIcons;
 
 		int m_GizmoType = -1;
 		//glm::mat4 m_GizmoTransform{ 1.0f };

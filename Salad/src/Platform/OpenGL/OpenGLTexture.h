@@ -13,7 +13,9 @@ namespace Salad {
 
 		OpenGLTexture2D(const std::string& filepath, TextureFilterWrapSpecification);
 		OpenGLTexture2D(uint32_t width, uint32_t height);
+		OpenGLTexture2D(uint32_t width, uint32_t height, unsigned char* data);
 		OpenGLTexture2D(uint32_t textureId, uint32_t width, uint32_t height, GLenum internalFormat, GLenum dataFormat);
+		OpenGLTexture2D(TextureSpecification& specs, unsigned char* data);
 
 		virtual void setData(void* data, uint32_t size) override;
 		virtual void updateFilterWrapSpecification(TextureFilterWrapSpecification& spec) override;
@@ -56,7 +58,7 @@ namespace Salad {
 		uint32_t m_Width, m_Height;
 		uint32_t m_TextureId;
 
-		GLenum m_InternalFormat, m_DataFormat;
+		GLenum m_InternalFormat = 0, m_DataFormat = 0;
 	
 		static std::string texture_faces[];
 	};

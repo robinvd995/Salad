@@ -1,6 +1,7 @@
 #include "FileExplorerPanel.h"
 
 #include "imgui/imgui.h"
+#include "imgui/imgui_internal.h"
 
 #include "Salad/Renderer/TextureManager.h"
 #include "EditorSelectionContext.h"
@@ -14,8 +15,12 @@
 
 #include "EditorSettings.hpp"
 #include "Assets/AssetSerializer.h"
+#include "EditorAssetManager.h"
 
-namespace Salad {
+#include "EditorGui/EditorStyle.h"
+#include "EditorGui/EditorGuiTemplates.h"
+
+namespace Salad::EditorGui {
 
 	namespace Helper {
 
@@ -38,6 +43,13 @@ namespace Salad {
 			{ FileExplorerItemType::TrueTypeFont, { 0.625f, 0.0f } },
 			{ FileExplorerItemType::SharpScript, {0.75f, 0.0f} },
 			{ FileExplorerItemType::LuaScript, {0.875f, 0.0f} }
+		};
+
+		static const std::map<Asset::AssetState, std::pair<float, float>> s_AssetIconCoordinateMap{
+			{ Asset::AssetState::Unknown, { 0.0625f, 0.1875f } },
+			{ Asset::AssetState::UpToDate, { 0.0f, 0.125f } },
+			{ Asset::AssetState::Dirty, { 0.0625f, 0.125f } },
+			{ Asset::AssetState::NotIncluded, { 0.0f, 0.1875f } }
 		};
 
 		FileExplorerItemType itemTypeFromExtension(std::string& extension) {
@@ -63,6 +75,12 @@ namespace Salad {
 			return it->second;
 		}
 
+		std::pair<float, float> textureCoordsForAssetState(Asset::AssetState state) {
+			auto it = s_AssetIconCoordinateMap.find(state);
+			if (it == s_AssetIconCoordinateMap.end()) return { 0.0f, 0.0f };
+			return it->second;
+		}
+
 		bool shouldIgnoreExtension(std::vector<std::string>& ignoreList, std::string& extension) {
 			for (std::string& ignore : ignoreList) {
 				if (extension == ignore) return true;
@@ -73,9 +91,8 @@ namespace Salad {
 	}
 
 	void FileExplorerPanel::init() {
-		m_FileIconTextureMap = Salad::TextureManager::get().loadTexture2D("assets/textures/file_explorer_icons_32.png");
 
-		std::string path = "assets/";
+		std::string path = "assets/"; // TODO Make constexpr or #define
 		scopeToFolder(path);
 
 		updateIgnoredExtensions();
@@ -83,16 +100,24 @@ namespace Salad {
 		EditorSettings::pushGroup("File Explorer");
 		EditorSettings::pushString("Ignored Extensions", &m_IgnoredExtensions);
 		EditorSettings::pushBool("Ignore Unknown Files", &m_IgnoreUnknownFiles);
+
+		EditorSettings::pushSubGroup("Asset State Icons");
+		EditorSettings::pushBool("Show 'Unknown'", &m_AssetStateIconShouldDraw[static_cast<int>(Asset::AssetState::Unknown)]);
+		EditorSettings::pushBool("Show 'UpToDate'", &m_AssetStateIconShouldDraw[static_cast<int>(Asset::AssetState::UpToDate)]);
+		EditorSettings::pushBool("Show 'Dirty'", &m_AssetStateIconShouldDraw[static_cast<int>(Asset::AssetState::Dirty)]);
+		EditorSettings::pushBool("Show 'Not Included'", &m_AssetStateIconShouldDraw[static_cast<int>(Asset::AssetState::NotIncluded)]);
+		EditorSettings::popSubGroup();
+
 		EditorSettings::popGroup();
 	}
 
 	void FileExplorerPanel::scopeToFolder(std::string& path, bool pushPrev) {
-		if(!m_CurrentDirectory.empty() && pushPrev) m_PreviousDirectories.push(m_CurrentDirectory);
+		if (!m_CurrentDirectory.empty() && pushPrev) m_PreviousDirectories.push(m_CurrentDirectory);
 
 		updateIgnoredExtensions();
 
 		m_CurrentDirectory = path;
-		for(auto item : m_Items) {
+		for (auto item : m_Items) {
 			delete item;
 		}
 		m_Items.clear();
@@ -143,21 +168,23 @@ namespace Salad {
 
 	void FileExplorerPanel::scopeToParent() {
 		std::string parentDir = FileUtil::popDirectory(m_CurrentDirectory);
-		if(parentDir != m_CurrentDirectory) {
+		if (parentDir != m_CurrentDirectory) {
 			std::string s = parentDir.append("/");
 			scopeToFolder(s);
 		}
 	}
 
 	void FileExplorerPanel::onItemDoubleClicked(FileExplorerItem* item) {
-		switch(item->type) {
-			case FileExplorerItemType::GLSL: {
+		switch (item->type) {
+			case FileExplorerItemType::GLSL:
+			{
 				Asset::AssetSerializer serializer;
 				Asset::ShaderAsset& shader = serializer.deserializeShader(item->path);
 				EditorSelectionContext::setSelectionContext<ShaderSelectionContext>(shader);
 			} break;
 
-			case FileExplorerItemType::Texture: {
+			case FileExplorerItemType::Texture:
+			{
 				Asset::AssetSerializer serializer;
 				Asset::TextureAsset texture = serializer.deserializeTexture(item->path);
 				EditorSelectionContext::setSelectionContext<TextureSelectionContext>(texture);
@@ -176,9 +203,9 @@ namespace Salad {
 		m_ExtensionIgnoreList.clear();
 
 		std::string extension = "";
-		for(int i = 0; i < m_IgnoredExtensions.size(); i++) {
+		for (int i = 0; i < m_IgnoredExtensions.size(); i++) {
 			char c = m_IgnoredExtensions[i];
-			if(c == ' ') {
+			if (c == ' ') {
 				if (extension.size() == 0) continue;
 				m_ExtensionIgnoreList.push_back(extension);
 				extension = "";
@@ -193,26 +220,28 @@ namespace Salad {
 		m_PreviousIgnoredExtensions = m_IgnoredExtensions;
 	}
 
-	void FileExplorerPanel::onImGuiRender(uint32_t textureid) {
+	void FileExplorerPanel::onImGuiRender() {
+
+		uint32_t iconsTextureId = EditorGui::EditorStyle::getEditorIcons()->getRendererId();
 
 		ImGui::Begin("File Explorer");
 
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 2.0f, 4.0f });
 		//if(ImGui::Button("<", ImVec2(24.0f, 24.0f))) {
 		ImGui::PushID(0);
-		if (ImGui::ImageButton((void*)textureid, ImVec2{ 16.0f, 16.0f }, ImVec2(0.0f, 0.125f), ImVec2(0.0625f, 0.1875f), 4)) {
+		if (ImGui::ImageButton((void*)iconsTextureId, ImVec2{ 16.0f, 16.0f }, ImVec2(0.0f, 0.125f), ImVec2(0.0625f, 0.1875f), 4)) {
 			scopeToPrevious();
 		}
 		ImGui::PopID();
 		ImGui::SameLine();
 		ImGui::PushID(1);
-		if (ImGui::ImageButton((void*)textureid, ImVec2{ 16.0f, 16.0f }, ImVec2(0.0625f, 0.125f), ImVec2(0.125f, 0.1875f), 4)) {
+		if (ImGui::ImageButton((void*)iconsTextureId, ImVec2{ 16.0f, 16.0f }, ImVec2(0.0625f, 0.125f), ImVec2(0.125f, 0.1875f), 4)) {
 			scopeToParent();
 		}
 		ImGui::PopID();
 		ImGui::SameLine();
 		ImGui::PushID(2);
-		if (ImGui::ImageButton((void*)textureid, ImVec2{ 16.0f, 16.0f }, ImVec2(0.0f, 0.1875f), ImVec2(0.0625f, 0.25f), 4)) {
+		if (ImGui::ImageButton((void*)iconsTextureId, ImVec2{ 16.0f, 16.0f }, ImVec2(0.0f, 0.1875f), ImVec2(0.0625f, 0.25f), 4)) {
 			refresh();
 		}
 		ImGui::PopID();
@@ -231,6 +260,7 @@ namespace Salad {
 
 			ImGui::PushID(i);
 			FileExplorerItem* item = m_Items[i];
+			const bool isAsset = Asset::AssetManager::isAsset(item->path);
 
 			ImVec2 p = ImGui::GetCursorScreenPos();
 			bool selected = m_Selected == item->fileExplorerViewId;
@@ -249,12 +279,53 @@ namespace Salad {
 				}
 			}
 
+			Asset::AssetManager& assetManager = EditorAssetManager::assetManager();
+			if (ImGui::BeginPopupContextItem(item->path.c_str(), ImGuiMouseButton_Right)) {
+				
+				templateContextItem("context_open", "Open", ContextItemData().setPrefix(0.0625f, 0.1875f, 0.125f, 0.25f, 16, 16).setAffix("CTRL+O"), [item](){
+					std::cout << "Open: " << item->filename << std::endl;
+				});
+				templateContextItem("context_delete", "Delete", ContextItemData().setPrefix(0.125f, 0.125f, 0.1875f, 0.1875f, 16, 16).setAffix("DEL"), [item]() {
+					std::cout << "Delete: " << item->filename << std::endl;
+				});
+
+				if (isAsset) {
+					ImGui::Separator();
+
+					if(!assetManager.isAssetIncluded(item->path)) {
+						templateContextItem("context_include", "Include", ContextItemData().setPrefix(0.1875f, 0.125f, 0.25f, 0.1875f, 16, 16), [&assetManager, item]() {
+							assetManager.includeAsset(item->path);
+						});
+					}
+					else {
+						templateContextItem("context_exclude", "Exclude", ContextItemData().setPrefix(0.125f, 0.1875f, 0.1875f, 0.25f, 16, 16), [&assetManager, item]() {
+							assetManager.excludeAsset(item->path);
+						});
+					}
+
+					templateContextItem("context_build", "Build Asset", ContextItemData().setPrefix(0.1875f, 0.1875f, 0.25f, 0.25f, 16, 16), [&assetManager, item]() {
+						assetManager.buildAsset(item->path, true);
+					});
+				}
+				ImGui::EndPopup();
+			}
+
 			ImVec2 afterScreenPos = ImGui::GetCursorScreenPos();
 
 			ImVec2 iconSize = ImVec2{ 32.0f, 32.0f };
 			std::pair<float, float> texCoords = Helper::textureCoordsForType(item->type);
-			ImGui::GetWindowDrawList()->AddImage((void*)m_FileIconTextureMap->getRendererId(), ImVec2(p.x + 4, p.y + 4), ImVec2(p.x + 36, p.y + 36), 
+			uint32_t textureId = EditorGui::EditorStyle::getFileIcons()->getRendererId();
+			ImGui::GetWindowDrawList()->AddImage((void*)textureId, ImVec2(p.x + 4, p.y + 4), ImVec2(p.x + 36, p.y + 36),
 				ImVec2(texCoords.first, texCoords.second), ImVec2(texCoords.first + 0.125f, texCoords.second + 0.125f));
+
+			if (isAsset) {
+				Asset::AssetState assetState = assetManager.getAssetState(item->path);
+				if (m_AssetStateIconShouldDraw[static_cast<int>(assetState)]) {
+					auto stateIconCoords = Helper::textureCoordsForAssetState(assetState);
+					ImGui::GetWindowDrawList()->AddImage((void*)textureId, ImVec2(p.x + 20, p.y + 20), ImVec2(p.x + 36, p.y + 36),
+						ImVec2(stateIconCoords.first, stateIconCoords.second), ImVec2(stateIconCoords.first + 0.0625f, stateIconCoords.second + 0.0625f));
+				}
+			}
 
 			ImGui::SetCursorScreenPos(ImVec2(p.x + 40, p.y + 10));
 			ImGui::TextUnformatted(item->filename.c_str());

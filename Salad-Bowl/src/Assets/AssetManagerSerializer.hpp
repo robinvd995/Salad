@@ -3,6 +3,8 @@
 #include "AssetManager.h"
 #include "Util/Xml.h"
 
+#include "Util/FileUtils.hpp"
+
 #include <fstream>
 
 namespace Salad::Asset {
@@ -10,7 +12,7 @@ namespace Salad::Asset {
 	class AssetManagerSerializer {
 	
 	public:
-		void serialize(AssetManager& manager, const char* filepath) {
+		void serialize(AssetManager& manager) {
 			using namespace Salad::Xml;
 
 			XmlDocument doc = createDocument("asset_manager");
@@ -26,17 +28,19 @@ namespace Salad::Asset {
 				includeNode.appendNode(assetNode);
 			}
 
-			std::ofstream file(filepath);
+			std::ofstream file(manager.m_AssetManagerFile);
 			file << doc;
 			file.close();
 
 			doc.close();
 		}
 
-		void deserialize(AssetManager& manager, const char* filepath) {
+		void deserialize(AssetManager& manager) {
+			if (!FileUtil::fileExists(manager.m_AssetManagerFile)) return;
+
 			using namespace Salad::Xml;
 
-			XmlDocument doc = parseXmlFile(filepath, "asset_manager");
+			XmlDocument doc = parseXmlFile(manager.m_AssetManagerFile, "asset_manager");
 			const XmlNode root = doc.getRootNode();
 			const XmlNode includeNode = root.getFirstChild("included_assets");
 			includeNode.iterate("asset", [&manager](const XmlNode& node) -> bool {
@@ -46,7 +50,6 @@ namespace Salad::Asset {
 				return false;
 			});
 		}
-
 	};
 
 }

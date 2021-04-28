@@ -7,7 +7,7 @@
 
 #include "EditorSelectionContext.h"
 
-namespace Salad {
+namespace Salad::EditorGui {
 
 	class SceneHierarchyPanel {
 

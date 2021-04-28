@@ -20,6 +20,14 @@ namespace Salad {
 		GL_MIRRORED_REPEAT, GL_MIRROR_CLAMP_TO_EDGE
 	};
 
+	static GLenum s_GLDataFormatMapper[] = {
+		GL_RGBA, GL_RGB
+	};
+
+	static GLenum s_GLInternalFormatMapper[] = {
+		GL_RGBA8, GL_RGB8
+	};
+
 	// ----- Texture2D -----
 
 	OpenGLTexture2D::OpenGLTexture2D(uint32_t width, uint32_t height) :
@@ -34,6 +42,21 @@ namespace Salad {
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	}
+
+	OpenGLTexture2D::OpenGLTexture2D(uint32_t width, uint32_t height, unsigned char* data) :
+		m_Width(width), m_Height(height), m_TextureFilterWrapSpec(TextureFilterWrapSpecification())
+	{
+		m_InternalFormat = GL_RGBA8;
+		m_DataFormat = GL_RGBA;
+
+		glGenTextures(1, &m_TextureId);
+		glBindTexture(GL_TEXTURE_2D, m_TextureId);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, s_GLMinFilterSpecMapper[static_cast<int>(m_TextureFilterWrapSpec.minFilter)]);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, s_GLMinFilterSpecMapper[static_cast<int>(m_TextureFilterWrapSpec.magFilter)]);
+
+		glTexImage2D(GL_TEXTURE_2D, 0, m_InternalFormat, width, height, 0, m_DataFormat, GL_UNSIGNED_BYTE, data);
 	}
 
 	OpenGLTexture2D::OpenGLTexture2D(const std::string& filepath, TextureFilterWrapSpecification filterWrapSpec) :
@@ -79,6 +102,25 @@ namespace Salad {
 		m_InternalFormat(internalFormat),
 		m_DataFormat(dataFormat)
 	{}
+
+	OpenGLTexture2D::OpenGLTexture2D(TextureSpecification& specs, unsigned char* data) :
+		m_Width(specs.width), m_Height(specs.height)
+	{
+		m_DataFormat = s_GLDataFormatMapper[static_cast<int>(specs.format)];
+		m_InternalFormat = s_GLInternalFormatMapper[static_cast<int>(specs.format)];
+
+		glGenTextures(1, &m_TextureId);
+		glBindTexture(GL_TEXTURE_2D, m_TextureId);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, s_GLMinFilterSpecMapper[static_cast<int>(specs.filterWrapSpec.minFilter)]);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, s_GLMinFilterSpecMapper[static_cast<int>(specs.filterWrapSpec.magFilter)]);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, s_GLWrapSpecMapper[static_cast<int>(specs.filterWrapSpec.wrapS)]);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, s_GLWrapSpecMapper[static_cast<int>(specs.filterWrapSpec.wrapT)]);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, s_GLWrapSpecMapper[static_cast<int>(specs.filterWrapSpec.wrapR)]);
+
+		glTexImage2D(GL_TEXTURE_2D, 0, m_InternalFormat, m_Width, m_Height, 0, m_DataFormat, GL_UNSIGNED_BYTE, data);
+	}
 
 	void OpenGLTexture2D::setData(void* data, uint32_t size) {
 		glTextureSubImage2D(m_TextureId, 0, 0, 0, m_Width, m_Height, m_DataFormat, GL_UNSIGNED_BYTE, data);

@@ -4,7 +4,7 @@
 
 #include <imgui/imgui.h>
 
-namespace Salad {
+namespace Salad::EditorGui {
 
 	SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& scene, const Ref<EditorSelectionContext>& selection) {
 		setContext(scene);

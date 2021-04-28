@@ -28,6 +28,11 @@ namespace Salad {
 		MirroredClampToEdge = 4
 	};
 
+	enum class TextureFormat {
+		RGBA = 0,
+		RGB = 1
+	};
+
 	struct TextureFilterWrapSpecification {
 		TextureMinFilterSpecification minFilter = TextureMinFilterSpecification::Linear;
 		TextureMagFilterSpecification magFilter = TextureMagFilterSpecification::Linear;
@@ -35,6 +40,13 @@ namespace Salad {
 		TextureWrapSpecification wrapS = TextureWrapSpecification::Repeat;
 		TextureWrapSpecification wrapT = TextureWrapSpecification::Repeat;
 		TextureWrapSpecification wrapR = TextureWrapSpecification::Repeat;
+	};
+
+	struct TextureSpecification {
+		TextureFormat format;
+		uint32_t width, height;
+
+		TextureFilterWrapSpecification filterWrapSpec;
 	};
 
 	class Texture {
@@ -62,6 +74,8 @@ namespace Salad {
 
 		static Ref<Texture2D> create(const std::string& filepath, TextureFilterWrapSpecification filterWrapSpec);
 		static Ref<Texture2D> create(uint32_t width, uint32_t height);
+		static Ref<Texture2D> create(uint32_t width, uint32_t height, unsigned char* data);
+		static Ref<Texture2D> create(TextureSpecification& specs, unsigned char* data);
 	};
 
 	class TextureCubeMap : public Texture {

@@ -47,7 +47,7 @@ namespace Salad {
 			archiveAddFile(archive, "data.int", iWriteBuffer, 0);
 
 			// Mixed primitive writing
-			ArchiveIOBuffer pWriteBuffer = archiveWriteBuffer(archive, 58);
+			ArchiveIOBuffer pWriteBuffer = archiveWriteBuffer(archive, 1 + 1 + 2 + 2 + 4 + 4 + 8 + 8 + 4 + 8 + 1);
 			pWriteBuffer.writeByte('b');
 			pWriteBuffer.writeUByte('h');
 			pWriteBuffer.writeShort(-25565);
@@ -119,7 +119,7 @@ namespace Salad {
 			ArchiveIOBuffer aBuffer = archiveReadFile(archiveRead, "arrays.dat");
 			uint64_t count = 0;
 			char* cReadArray = aBuffer.readArray<char>(&count);
-			SLD_CORE_ASSERT((count == 8), "Expected count 7!");
+			SLD_CORE_ASSERT((count == 7), "Expected count 7!");
 			std::cout << count << std::endl;
 			for (int i = 0; i < count; i++) {
 				std::cout << cReadArray[i];
@@ -212,23 +212,30 @@ namespace Salad {
 		void testAssetManager() {
 			using namespace Salad::Asset;
 
-			const char* filepath = "assetmanagertest.xml";
+			const std::string resourcePath = "resources.zip";
+			const std::string assetManagerPath = "assetmanagertest";
 			{ // Write
-				AssetManager manager;
+				AssetManager manager(resourcePath, assetManagerPath);
+				manager.clean();
 
-				manager.includeAsset("assets/textures/texture.png");
-				manager.includeAsset("assets/shaders/shader.glsl");
-				manager.includeAsset("assets/models/model.png");
-				manager.includeAsset("assets/material/material.png");
+				manager.includeAsset("assets/textures/checkerboard.png");
+				manager.includeAsset("assets/textures/crate_diffuse.png");
+				manager.includeAsset("assets/textures/crate_specular.png");
+				manager.includeAsset("assets/shaders/test/ShaderBuilderTest.glsl");
 
 				AssetManagerSerializer serializer;
-				serializer.serialize(manager, filepath);
+				serializer.serialize(manager);
 			} // Write
 
 			{ // Read
-				AssetManager manager;
+				AssetManager manager(resourcePath, assetManagerPath);
 				AssetManagerSerializer serializer;
-				serializer.deserialize(manager, filepath);
+				serializer.deserialize(manager);
+
+				manager.buildAll(false);
+
+				serializer.serialize(manager);
+
 			} // Read
 		}
 
@@ -256,8 +263,8 @@ namespace Salad {
 		virtual void onAttach() override {
 			//testArchive();
 			//testXml();
-			//testAssetManager();
-			testInheritance();
+			testAssetManager();
+			//testInheritance();
 		}
 
 		virtual void onDetach() override {}

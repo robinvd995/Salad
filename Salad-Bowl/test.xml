@@ -1,0 +1,12 @@
+<root>
+	<resource lastBuildTime="5">sometestresource0</resource>
+	<resource lastBuildTime="8">sometestresource1</resource>
+	<resource lastBuildTime="3">sometestresource2</resource>
+	<resource lastBuildTime="1">sometestresource3</resource>
+	<integer>875</integer>
+	<integer>236</integer>
+	<integer>167</integer>
+	<integer>23655</integer>
+	<float>167.054</float>
+	<float>54.625</float>
+</root>

@@ -161,6 +161,9 @@
     <ClInclude Include="src\Salad\Core\LayerStack.h" />
     <ClInclude Include="src\Salad\Core\Log.h" />
     <ClInclude Include="src\Salad\Core\MouseButtonCodes.h" />
+    <ClInclude Include="src\Salad\Core\Resource.hpp" />
+    <ClInclude Include="src\Salad\Core\ResourceCache.hpp" />
+    <ClInclude Include="src\Salad\Core\ResourceManager.h" />
     <ClInclude Include="src\Salad\Core\Timestep.h" />
     <ClInclude Include="src\Salad\Core\Transform.h" />
     <ClInclude Include="src\Salad\Core\Window.h" />
@@ -195,6 +198,7 @@
     <ClInclude Include="src\Salad\Renderer\Sprite.h" />
     <ClInclude Include="src\Salad\Renderer\Tessellator.h" />
     <ClInclude Include="src\Salad\Renderer\Texture.h" />
+    <ClInclude Include="src\Salad\Renderer\TextureLoader.hpp" />
     <ClInclude Include="src\Salad\Renderer\TextureManager.h" />
     <ClInclude Include="src\Salad\Renderer\TileMap.h" />
     <ClInclude Include="src\Salad\Renderer\VertexArray.h" />
@@ -204,6 +208,7 @@
     <ClInclude Include="src\Salad\Scene\Scene.h" />
     <ClInclude Include="src\Salad\Scene\SceneSerializer.h" />
     <ClInclude Include="src\Salad\Scene\ScriptableEntity.h" />
+    <ClInclude Include="src\Salad\Util\Archiver.hpp" />
     <ClInclude Include="src\sldpch.h" />
     <ClInclude Include="vendor\ImGuizmo\ImGuizmo.h" />
     <ClInclude Include="vendor\stb_image\stb_image.h" />
@@ -224,6 +229,7 @@
     <ClCompile Include="src\Salad\Core\Layer.cpp" />
     <ClCompile Include="src\Salad\Core\LayerStack.cpp" />
     <ClCompile Include="src\Salad\Core\Log.cpp" />
+    <ClCompile Include="src\Salad\Core\ResourceManager.cpp" />
     <ClCompile Include="src\Salad\Core\Transform.cpp" />
     <ClCompile Include="src\Salad\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="src\Salad\ImGui\ImGuiLayer.cpp" />

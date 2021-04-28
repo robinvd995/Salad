@@ -6,7 +6,7 @@
 #include "imgui/imgui.h"
 #include "imgui/imgui_internal.h"
 
-namespace Salad {
+namespace Salad::EditorGui {
 
     static char s_FilterBuffer[256];
 

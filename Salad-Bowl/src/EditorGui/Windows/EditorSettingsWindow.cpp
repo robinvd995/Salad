@@ -5,7 +5,7 @@
 
 #include "Salad/ImGui/ImGuiWidgets.h"
 
-namespace Salad {
+namespace Salad::EditorGui {
 
 	void drawPropertyList(EditorSettingsPropertyList& proplist) {
 		for(auto& prop : proplist.properties) {

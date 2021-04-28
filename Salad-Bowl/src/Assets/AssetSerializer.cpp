@@ -66,15 +66,11 @@ namespace Salad::Asset {
 
 	ShaderAsset AssetSerializer::deserializeShader(const std::string& filepath) {
 		ShaderAssetBuilder builder;
-		ShaderAsset& shader = builder.build(filepath);
+		ShaderAsset shader = builder.build(filepath);
 		return shader;
 	}
 
 	void AssetSerializer::serializeShader(ShaderAsset& shader) {
-	}
 
-	std::string AssetSerializer::assetFileFromPath(const std::string& filepath) {
-		std::string s = filepath;
-		return s.append(SLD_ASSET_FILE_EXTENSION);
 	}
 }

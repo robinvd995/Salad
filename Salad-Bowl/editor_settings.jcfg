@@ -6,9 +6,35 @@
                 {
                     "data": "asset psd",
                     "name": "Ignored Extensions"
+                },
+                {
+                    "data": true,
+                    "name": "Ignore Unknown Files"
                 }
             ],
-            "subgroups": []
+            "subgroups": [
+                {
+                    "name": "Asset State Icons",
+                    "properties": [
+                        {
+                            "data": true,
+                            "name": "Show 'Unknown'"
+                        },
+                        {
+                            "data": true,
+                            "name": "Show 'UpToDate'"
+                        },
+                        {
+                            "data": true,
+                            "name": "Show 'Dirty'"
+                        },
+                        {
+                            "data": true,
+                            "name": "Show 'Not Included'"
+                        }
+                    ]
+                }
+            ]
         },
         {
             "groupid": "Editor Camera",

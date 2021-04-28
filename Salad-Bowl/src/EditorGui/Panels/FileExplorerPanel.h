@@ -7,7 +7,7 @@
 #include <vector>
 #include <stack>
 
-namespace Salad {
+namespace Salad::EditorGui {
 
 	enum class FileExplorerItemType {
 		Unknown = 255,
@@ -40,7 +40,7 @@ namespace Salad {
 		virtual ~FileExplorerPanel() {}
 
 		void init();
-		void onImGuiRender(uint32_t to_be_replaced_button_texture_id);
+		void onImGuiRender();
 
 	private:
 
@@ -58,8 +58,6 @@ namespace Salad {
 	private:
 		std::string m_CurrentDirectory;
 		std::vector<FileExplorerItem*> m_Items;
-		
-		Ref<Texture2D> m_FileIconTextureMap;
 		int m_Selected = -1;
 		
 		std::stack<std::string> m_PreviousDirectories;
@@ -70,6 +68,7 @@ namespace Salad {
 		std::string m_PreviousIgnoredExtensions;
 
 		bool m_IgnoreUnknownFiles = false;
+		bool m_AssetStateIconShouldDraw[4];
 	};
 
 }

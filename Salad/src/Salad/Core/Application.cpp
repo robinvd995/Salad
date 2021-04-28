@@ -88,6 +88,11 @@ namespace Salad {
 
 			m_Window->onUpdate();
 		}
+
+		for (Layer* layer : m_LayerStack) {
+			layer->onDetach();
+		}
+
 	}
 
 	bool Application::onWindowClose(WindowCloseEvent& e) {

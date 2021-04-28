@@ -47,7 +47,7 @@ namespace Salad::Asset {
 		void updateTextureFilterWrapSpec() { m_Texture->updateFilterWrapSpecification(m_TextureFilterWrapSpec); }
 
 		virtual AssetType getAssetType() override { return AssetType::Texture; }
-		virtual uint64_t calculateAssetSize() override { return (uint64_t)(getTextureWidth() * getTextureHeight()) * (uint64_t)4 + 10; }
+		virtual uint64_t calculateAssetSize() override { return (uint64_t)(getTextureWidth() * getTextureHeight()) * (uint64_t)4 + (10 + 8); }
 
 	private:
 		std::string m_FilePath;

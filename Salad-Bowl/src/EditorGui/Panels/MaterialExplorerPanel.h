@@ -4,7 +4,7 @@
 #include <cstdint>
 #include <string>
 
-namespace Salad {
+namespace Salad::EditorGui {
 
 	struct MaterialExplorerItem {
 

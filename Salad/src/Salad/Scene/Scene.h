@@ -9,10 +9,14 @@
 
 #include <glm/glm.hpp>
 
+// -- TEMP -- TODO: remove this and the friend class for scene hierarchy panel into EditorScene
+namespace Salad::EditorGui {
+	class SceneHierarchyPanel;     // Prototyping SceneHierarchyPanel class used in Salad-Bowl (Editor)
+}
+
 namespace Salad {
 
 	class Entity;                  // Prototyping Entity class to prevent circle includes
-	class SceneHierarchyPanel;     // Prototyping SceneHierarchyPanel class used in Salad-Bowl (Editor)
 
 	class Scene {
 	
@@ -54,7 +58,7 @@ namespace Salad {
 		EntityTransform m_RootTransform;
 
 		friend class Entity;
-		friend class SceneHierarchyPanel;
+		friend class EditorGui::SceneHierarchyPanel;
 		friend class SceneSerializer;
 	};
 

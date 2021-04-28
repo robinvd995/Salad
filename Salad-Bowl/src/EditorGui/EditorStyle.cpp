@@ -1,17 +1,15 @@
-#pragma once
+#include "EditorStyle.h"
 
-#include "ImGui/imgui.h"
+#include "imgui/imgui.h"
+#include "imgui/imgui_internal.h"
+
 #include <cstdint>
 
-namespace Salad::EditorUI {
+namespace Salad::EditorGui {
 
-	enum class EditorUIStyle {
-		Default = 0,
-		VisualStudio = 1,
-		DarkCharcoal = 2
-	};
+	//EditorStyle* EditorStyle::s_Instance = new EditorStyle();
 
-	void setEditorStyle(EditorUIStyle styletype) {
+	void EditorStyle::setEditorStyleImpl(EditorUIStyle styletype) {
 
 		auto& style = ImGui::GetStyle();
 		ImVec4* colors = style.Colors;
@@ -160,9 +158,14 @@ namespace Salad::EditorUI {
 				style.TabRounding = 0.0f;
 
 			} break;
-
 		}
-
 	}
 
+	void EditorStyle::loadEditorIconsImpl(const std::string& filepath) {
+		m_EditorIcons = Texture2D::create(filepath, TextureFilterWrapSpecification());
+	}
+
+	void EditorStyle::loadFileIconsImpl(const std::string& filepath) {
+		m_FileIcons = Texture2D::create(filepath, TextureFilterWrapSpecification());
+	}
 }

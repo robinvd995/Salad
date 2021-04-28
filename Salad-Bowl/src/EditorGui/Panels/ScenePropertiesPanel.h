@@ -2,7 +2,7 @@
 
 #include "Salad/Scene/Entity.h"
 
-namespace Salad {
+namespace Salad::EditorGui {
 
 	class ScenePropertiesPanel {
 

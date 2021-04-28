@@ -19,6 +19,10 @@ using json = nlohmann::json;
 
 namespace Salad {
 
+	namespace EditorGui {
+		class EditorSettingsWindow;
+	}
+
 	enum class  EditorSettingsPropertyType {
 	 	Unknown = 0, Float = 1, Int = 5, Flag = 14, String = 15
 	};
@@ -288,6 +292,6 @@ namespace Salad {
 		std::string lastSubGroupId;
 		bool isSubGroupPushed = false;
 
-		friend class EditorSettingsWindow;
+		friend class EditorGui::EditorSettingsWindow;
 	};
 }

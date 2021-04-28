@@ -93,7 +93,7 @@ namespace Salad::Asset {
 	public:
 		ShaderAsset() = default;
 		ShaderAsset(const std::string& filepath) : m_FilePath(filepath) {}
-		ShaderAsset(const ShaderAsset&) { std::cout << "Shader Copied!" << std::endl; }
+		ShaderAsset(const ShaderAsset&) = default;
 		~ShaderAsset() {}
 
 		const std::string& getFilePath() { return m_FilePath; }
@@ -114,7 +114,21 @@ namespace Salad::Asset {
 		// probably more
 
 		virtual AssetType getAssetType() override { return AssetType::Shader; }
-		virtual uint64_t calculateAssetSize() override { return 0; } // TODO:
+
+		virtual uint64_t calculateAssetSize() override { 
+			uint64_t assetSize = (uint64_t)(8 + 8 + 4 + 4);
+
+			if (hasStage(ShaderStageType::Vertex)) {
+				ShaderStage& stage = getStage(ShaderStageType::Vertex);
+				assetSize += stage.shaderSource.size();
+				
+			}
+			if (hasStage(ShaderStageType::Fragment)) {
+				ShaderStage& stage = getStage(ShaderStageType::Fragment);
+				assetSize += stage.shaderSource.size();
+			}
+			return assetSize;
+		}
 
 	private:
 		std::map<ShaderStageType, ShaderStage> m_ShaderStages;

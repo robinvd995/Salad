@@ -5,8 +5,6 @@
 
 namespace Salad::Asset {
 
-#define SLD_ASSET_FILE_EXTENSION ".asset"
-
 	class AssetSerializer {
 	
 	public:
@@ -24,8 +22,6 @@ namespace Salad::Asset {
 		void deserializeTextureData(const std::string& assetFilepath, TextureFilterWrapSpecification& fwSpec);
 		void serializeTextureData(const std::string& assetFilepath, TextureFilterWrapSpecification& fwSpec);
 
-		std::string assetFileFromPath(const std::string& filepath);
-
+		//std::string assetFileFromPath(const std::string& filepath);
 	};
-
 }

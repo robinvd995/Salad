@@ -10,11 +10,13 @@
 
 #include "ImGui/imgui.h"
 #include "ImGuizmo.h"
-#include <glm/glm/gtc/type_ptr.hpp>
 
+#include <glm/glm/gtc/type_ptr.hpp>
 #include <glm/gtx/matrix_decompose.hpp>
 
-#include "EditorGui/EditorStyles.hpp"
+#include "EditorGui/EditorStyle.h"
+
+#include "EditorAssetManager.h"
 
 #include "Salad/Math/Math.h"
 
@@ -123,7 +125,7 @@ namespace Salad {
 		//m_TextureButtonPause = Salad::TextureManager::get().loadTexture2D("assets/textures/buttons/button_pause.png");
 		//m_TextureButtonStop = Salad::TextureManager::get().loadTexture2D("assets/textures/buttons/button_stop.png");
 
-		m_EditorIcons = Salad::TextureManager::get().loadTexture2D("assets/textures/editor_icons.png");
+		//m_EditorIcons = Salad::TextureManager::get().loadTexture2D("assets/textures/editor_icons.png");
 
 		auto diffuseShader = Shader::create("assets/shaders/Diffuse.glsl");
 		Ref<Texture2D> cubeTexture = loadTexture2D("textures.crate_diffuse");
@@ -306,22 +308,36 @@ namespace Salad {
 		m_EditorCamera.init();
 		EditorSettings::s_Instance->deserializeSettings();
 
-		// Styling
+		// Asset Manager Initialization
+		EditorAssetManager::instantiate("temp_resource_output.zip", "temp_asset_registry.xml");
+
+		// ImGui Fonts
 		ImGuiIO& io = ImGui::GetIO();
 		io.FontDefault = io.Fonts->AddFontFromFileTTF("assets/fonts/open_sans/OpenSans-Regular.ttf", 18.0f);
 		io.Fonts->AddFontFromFileTTF("assets/fonts/open_sans/OpenSans-Bold.ttf", 18.0f);
-		EditorUI::setEditorStyle(EditorUI::EditorUIStyle::VisualStudio);
+
+		// Editor Gui Initlialization
+		EditorGui::EditorStyle::s_Instance = new EditorGui::EditorStyle();
+		EditorGui::EditorStyle::setEditorStyle(EditorGui::EditorUIStyle::VisualStudio);
+		EditorGui::EditorStyle::loadEditorIcons("assets/textures/editor_icons.png");
+		EditorGui::EditorStyle::loadFileIcons("assets/textures/file_explorer_icons_32.png");
 
 		// Create a new instance of the editor selection context
 		EditorSelectionContext::s_Instance = new EditorSelectionContext();
 	}
 
 	void EditorLayer::onDetach() {
+
+		std::cout << "Detaching editor layer..." << std::endl;
+
 		delete EditorSelectionContext::s_Instance;
 		EditorSelectionContext::s_Instance = nullptr;
 
 		delete EditorSettings::s_Instance;
 		EditorSettings::s_Instance = nullptr;
+
+		delete EditorAssetManager::s_Instance;
+		EditorAssetManager::s_Instance = nullptr;
 	}
 
 	void EditorLayer::onUpdate(Timestep ts) {
@@ -518,15 +534,17 @@ namespace Salad {
 		if(m_ShowSceneHierarchyPanel) m_SceneHierarchyPanel.onImGuiRender();
 		if(m_ShowScenePropertiesPanel) m_ScenePropertiesPanel.onImGuiRender();
 		if(m_ShowMaterialExplorerPanel) m_MaterialExplorerPanel.onImGuiRender(m_MaterialTexture->getRendererId());
-		if (m_ShowFileExplorerPanel) m_FileExplorerPanel.onImGuiRender(m_EditorIcons->getRendererId());
+		if (m_ShowFileExplorerPanel) m_FileExplorerPanel.onImGuiRender();
+
+		uint32_t iconsTextureId = EditorGui::EditorStyle::getEditorIcons()->getRendererId();
 
 		ImGui::Begin("Runtime");
 		ImVec2 runtimeButtonSize = {64.0f, 64.0f};
-		ImGui::ImageButton((void*)m_EditorIcons->getRendererId(), ImVec2{ 32.0f, 32.0f }, ImVec2(0.125f, 0.0f), ImVec2(0.25f, 0.125f), 8);
+		ImGui::ImageButton((void*)iconsTextureId, ImVec2{ 32.0f, 32.0f }, ImVec2(0.125f, 0.0f), ImVec2(0.25f, 0.125f), 8);
 		ImGui::SameLine();
-		ImGui::ImageButton((void*)m_EditorIcons->getRendererId(), ImVec2{ 32.0f, 32.0f }, ImVec2(0.25f, 0.0f), ImVec2(0.375f, 0.125f), 8);
+		ImGui::ImageButton((void*)iconsTextureId, ImVec2{ 32.0f, 32.0f }, ImVec2(0.25f, 0.0f), ImVec2(0.375f, 0.125f), 8);
 		ImGui::SameLine();
-		ImGui::ImageButton((void*)m_EditorIcons->getRendererId(), ImVec2{ 32.0f, 32.0f }, ImVec2(0.0f, 0.0f), ImVec2(0.125f, 0.125f), 8);
+		ImGui::ImageButton((void*)iconsTextureId, ImVec2{ 32.0f, 32.0f }, ImVec2(0.0f, 0.0f), ImVec2(0.125f, 0.125f), 8);
 		ImGui::End();
 
 		ImGui::Begin("Info");

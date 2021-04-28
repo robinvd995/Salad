@@ -11,8 +11,8 @@ namespace Salad {
 		SaladBowl() :
 			Application("SaladBowl - Salad Editor")
 		{
-			//pushLayer(new EditorLayer());
-			pushLayer(new TestLayer());
+			pushLayer(new EditorLayer());
+			//pushLayer(new TestLayer());
 		}
 		~SaladBowl() {}
 	};
@@ -20,7 +20,4 @@ namespace Salad {
 	Application* createApplication() {
 		return new SaladBowl();
 	}
-
 }
-
-
