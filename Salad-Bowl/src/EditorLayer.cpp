@@ -14,9 +14,12 @@
 
 #include <glm/gtx/matrix_decompose.hpp>
 
-#include "ImGui/EditorStyles.hpp"
+#include "EditorGui/EditorStyles.hpp"
 
 #include "Salad/Math/Math.h"
+
+//TEMP 
+#include "Salad/Renderer/TextureLoader.hpp"
 
 namespace Salad {
 
@@ -93,7 +96,7 @@ namespace Salad {
 				{ "a_Position", Salad::ShaderDataType::Float3 },
 				{ "a_TexCoord", Salad::ShaderDataType::Float2 },
 				{ "a_Normal",   Salad::ShaderDataType::Float3 }
-				});
+			});
 
 			treeLeavesVao->addVertexBuffer(cubeVbo);
 			Ref<IndexBuffer> indexBuffer = IndexBuffer::create(&leavesMesh->getIndexBuffer().front(), leavesMesh->getIndexBuffer().size());
@@ -123,8 +126,9 @@ namespace Salad {
 		m_EditorIcons = Salad::TextureManager::get().loadTexture2D("assets/textures/editor_icons.png");
 
 		auto diffuseShader = Shader::create("assets/shaders/Diffuse.glsl");
+		Ref<Texture2D> cubeTexture = loadTexture2D("textures.crate_diffuse");
 
-		auto cubeTexture = Salad::TextureManager::get().loadTexture2D("assets/textures/crate_diffuse.png");
+		//auto cubeTexture = Salad::TextureManager::get().loadTexture2D("assets/textures/crate_diffuse.png");
 		auto grassTexture = Salad::TextureManager::get().loadTexture2D("assets/textures/grass_painted_large.png");
 		auto leavesTexture = Salad::TextureManager::get().loadTexture2D("assets/textures/leaves_cartoon.png");
 		auto treeBarkTexture = Salad::TextureManager::get().loadTexture2D("assets/textures/tree_bark_cartoon.png");
@@ -165,6 +169,11 @@ namespace Salad {
 		m_CubeEntity.addComponent<MeshComponent>(cubeVao, diffuseShader, cubeTexture);
 		m_CubeEntity.addComponent<NativeScriptComponent>().bind<CubeController>();
 		m_CubeEntity.getComponent<TransformComponent>().Transform.setPosition(0.0f, 1.0f, 0.0f);
+
+		m_CubeEntity = m_Scene->createEntity("Crate2");
+		m_CubeEntity.addComponent<MeshComponent>(cubeVao, diffuseShader, cubeTexture);
+		m_CubeEntity.addComponent<NativeScriptComponent>().bind<CubeController>();
+		m_CubeEntity.getComponent<TransformComponent>().Transform.setPosition(-3.0f, 1.0f, 1.5f);
 
 		m_TreeEntity = m_Scene->createEntity("Tree");
 		m_TreeEntity.addComponent<MeshComponent>(treeVao, diffuseShader, treeBarkTexture);

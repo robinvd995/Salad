@@ -3,12 +3,12 @@
 #include <Salad.h>
 #include <Salad/PerspectiveCameraController.h>
 
-#include "Panels/SceneHierarchyPanel.h"
-#include "Panels/ScenePropertiesPanel.h"
-#include "Panels/MaterialExplorerPanel.h"
-#include "Panels/FileExplorerPanel.h"
+#include "EditorGui/Panels/SceneHierarchyPanel.h"
+#include "EditorGui/Panels/ScenePropertiesPanel.h"
+#include "EditorGui/Panels/MaterialExplorerPanel.h"
+#include "EditorGui/Panels/FileExplorerPanel.h"
 
-#include "Windows/EditorSettingsWindow.h"
+#include "EditorGui/Windows/EditorSettingsWindow.h"
 
 #include "Io/ColladaLoader.h"
 

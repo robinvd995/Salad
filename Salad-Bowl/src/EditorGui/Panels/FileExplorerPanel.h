@@ -68,8 +68,8 @@ namespace Salad {
 
 		std::string m_IgnoredExtensions = "asset";
 		std::string m_PreviousIgnoredExtensions;
+
+		bool m_IgnoreUnknownFiles = false;
 	};
-
-
 
 }

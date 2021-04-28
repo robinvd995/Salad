@@ -19,6 +19,7 @@ namespace Salad {
 
 	namespace Helper {
 
+		// TODO: use the asset type here
 		static const std::map<std::string, FileExplorerItemType> s_FileTypeMap{
 			{"png", FileExplorerItemType::Texture},
 			{"dae", FileExplorerItemType::Model},
