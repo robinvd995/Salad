@@ -29,84 +29,89 @@ namespace Salad::Asset {
 		return path_no_extension;
 	}
 
-	void AssetManager::includeAsset(const std::string& filepath, AssetData data) {
-		auto it = m_IncludedAssets.find(filepath);
-		if (it != m_IncludedAssets.end()) return;
-		m_IncludedAssets.insert({ filepath, data });
+	bool AssetManager::includeAsset(const std::string& filepath, bool notifySubscribers) {
+		bool result = includeAssetInternal(filepath, AssetData());
+		if (result && notifySubscribers) informSubscribersInclude(filepath);
+		return result;
 	}
 
-	void AssetManager::includeAsset(const std::string& filepath) {
-		includeAsset(filepath, AssetData());
+	bool AssetManager::includeAsset(const std::string& filepath, AssetData& data, bool notifySubscribers) {
+		bool result = includeAssetInternal(filepath, data);
+		if (result && notifySubscribers) informSubscribersInclude(filepath);
+		return result;
 	}
 
-	void AssetManager::excludeAsset(const std::string& filepath) {
-		auto it = m_IncludedAssets.find(filepath);
-		if (it == m_IncludedAssets.end()) return;
-		m_IncludedAssets.erase(it);
+	bool AssetManager::excludeAsset(const std::string& filepath, bool notifySubscribers) {
+		bool result = excludeAssetInternal(filepath);
+		if (result && notifySubscribers) informSubscribersExclude(filepath);
+		return result;
 	}
 
-	void AssetManager::buildAsset(const std::string& filepath, bool forceBuild) {
+	bool AssetManager::buildAsset(const std::string& filepath, bool forceBuild) {
 
 		// Check if asset is included
 		auto it = m_IncludedAssets.find(filepath);
 		if (it == m_IncludedAssets.end()) {
 			SLD_BOWL_LOG_ERROR("Failed building asset '{0}', file is not included!", filepath);
-			return;
+			return false;
 		}
 
-		buildAssetInternal(filepath, it->second, forceBuild);
+		return buildAssetInternal(filepath, it->second, forceBuild);
 	}
 
-	void AssetManager::buildAll(bool forceBuild) {
+	bool AssetManager::buildAll(bool forceBuild) {
 		SLD_BOWL_LOG_INFO("Started building assets, forced='{0}'.", forceBuild);
 		for (auto it = m_IncludedAssets.begin(); it != m_IncludedAssets.end(); it++) {
 			buildAssetInternal(it->first, it->second, forceBuild);
 		}
+		return true;
 	}
 
-	void AssetManager::clean() {
+	bool AssetManager::clean() {
 		int error = remove(m_AssetManagerFile.c_str());
 		if(error != 0) {
 			SLD_BOWL_LOG_ERROR("An error occured while trying to clean the asset output!");
+			return false;
 		}
-		else{
-			for(auto it = m_IncludedAssets.begin(); it != m_IncludedAssets.end(); it++) {
-				it->second.dirty = true;
-			}
+
+		for(auto it = m_IncludedAssets.begin(); it != m_IncludedAssets.end(); it++) {
+			it->second.dirty = true;
 		}
+		return true;
 	}
 
-	void AssetManager::buildAssetInternal(const std::string& filepath, AssetData& data, bool forceBuild) {
+	bool AssetManager::buildAssetInternal(const std::string& filepath, AssetData& data, bool forceBuild) {
 		using namespace Util;
 
 		if (!forceBuild && !data.dirty) {
 			SLD_BOWL_LOG_INFO("Asset is up to date '{0}', skipping build", filepath);
-			return;
+			return false;
 		}
 
 		// Check if the source file exists
 		if (!FileUtil::fileExists(filepath)) {
 			SLD_BOWL_LOG_ERROR("Failed building asset '{0}', source file does not exist!", filepath);
-			return;
+			return false;
 		}
 
 		// Check if the asset file exists
 		if (!FileUtil::fileExists(assetFileFromPath(filepath))) {
 			SLD_BOWL_LOG_ERROR("Failed building asset '{0}', asset file does not exist!", filepath);
-			return;
+			return false;
 		}
 
 		// Check if the file type is supported
 		AssetType assetType = assetTypeFromFilepath(filepath);
 		if (assetType == AssetType::Unknown) {
 			SLD_BOWL_LOG_ERROR("Failed building asset '{0}', filetype is not supported!", filepath);
+			return false;
 		}
 
 		int archiveError = 0;
 		Archive archive = archiveOpen(m_ResourceOutput.c_str(), ArchiverOpenFlags_Create, &archiveError);
 		if (archive == NULL) {
 			SLD_BOWL_LOG_ERROR(archiveErrorToString(static_cast<ArchiverErrors_>(archiveError)));
-			return;
+			return false;
 		}
 
 		AssetSerializer serializer;
@@ -134,10 +139,26 @@ namespace Salad::Asset {
 			buffer->freeBuffer();
 			data.dirty = false;
 			SLD_BOWL_LOG_INFO("Succesfully build asset '{0}'!", assetId);
+			return true;
 		}
 		else{
 			SLD_BOWL_LOG_ERROR("An error has occured when writing the asset to the buffer!");
+			return false;
 		}
+	}
+
+	bool AssetManager::includeAssetInternal(const std::string& filepath, AssetData data) {
+		auto it = m_IncludedAssets.find(filepath);
+		if (it != m_IncludedAssets.end()) return false;
+		m_IncludedAssets.insert({ filepath, data });
+		return true;
+	}
+
+	bool AssetManager::excludeAssetInternal(const std::string& filepath) {
+		auto it = m_IncludedAssets.find(filepath);
+		if (it == m_IncludedAssets.end()) return false;
+		m_IncludedAssets.erase(it);
+		return true;
 	}
 
 	bool AssetManager::isAssetIncluded(const std::string& filepath) {
@@ -147,6 +168,12 @@ namespace Salad::Asset {
 
 	bool AssetManager::isAssetDirty(const std::string& filepath) {
 		return getAssetState(filepath) == AssetState::Dirty;
+	}
+
+	void AssetManager::markAssetDirty(const std::string& filepath) {
+		auto it = m_IncludedAssets.find(filepath);
+		if (it == m_IncludedAssets.end()) return;
+		it->second.dirty = true;
 	}
 
 	AssetState AssetManager::getAssetState(const std::string& filepath) {
@@ -159,5 +186,25 @@ namespace Salad::Asset {
 	bool AssetManager::isAsset(const std::string& filepath) {
 		AssetType type = assetTypeFromFilepath(filepath);
 		return type != AssetType::Unknown;
+	}
+
+	void AssetManager::subscribeToInclude(AssetEventSubscribeFunc function) {
+		m_IncludeSubscriptions.push_back(function);
+	}
+
+	void AssetManager::subscribeToExclude(AssetEventSubscribeFunc function) {
+		m_ExcludeSubscriptions.push_back(function);
+	}
+
+	void AssetManager::informSubscribersInclude(const std::string& filepath) {
+		for(AssetEventSubscribeFunc func : m_IncludeSubscriptions) {
+			func(filepath);
+		}
+	}
+
+	void AssetManager::informSubscribersExclude(const std::string& filepath) {
+		for (AssetEventSubscribeFunc func : m_ExcludeSubscriptions) {
+			func(filepath);
+		}
 	}
 }

@@ -37,5 +37,7 @@ namespace Salad::Asset {
 
 	std::string assetFileFromPath(const std::string& filepath);
 	AssetType assetTypeFromFilepath(const std::string& filepath);
+	bool isAssetFile(const std::string& filepath);
+	std::string assetSourceFromAssetFile(const std::string& filepath);
 
 }

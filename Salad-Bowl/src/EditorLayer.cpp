@@ -327,9 +327,6 @@ namespace Salad {
 	}
 
 	void EditorLayer::onDetach() {
-
-		std::cout << "Detaching editor layer..." << std::endl;
-
 		delete EditorSelectionContext::s_Instance;
 		EditorSelectionContext::s_Instance = nullptr;
 

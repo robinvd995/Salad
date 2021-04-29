@@ -28,31 +28,44 @@ namespace Salad::Asset {
 	
 	public:
 		//typedef void (*AssetExportFunc)(Util::ArchiveIOBuffer&, AssetBase*);
+		typedef void (*AssetEventSubscribeFunc)(const std::string& filepath);
 
 		AssetManager(const std::string& resourceOutput, const std::string assetManagerFile);
 		AssetManager(const AssetManager&) = delete;
 		~AssetManager() = default;
 
-		void includeAsset(const std::string& filepath);
-		void excludeAsset(const std::string& filepath);
-		void buildAsset(const std::string& filepath, bool forceBuild);
-		void buildAll(bool forceBuild);
-		void clean();
+		bool includeAsset(const std::string& filepath, bool notifySubscribers = true);
+		bool includeAsset(const std::string& filepath, AssetData& data, bool notifySubscribers = true);
+		bool excludeAsset(const std::string& filepath, bool notifySubscribers = true);
+		bool buildAsset(const std::string& filepath, bool forceBuild);
+		bool buildAll(bool forceBuild);
+		bool clean();
 
 		bool isAssetIncluded(const std::string& filepath);
 		bool isAssetDirty(const std::string& filepath);
+		void markAssetDirty(const std::string& filepath);
 
 		AssetState getAssetState(const std::string& filepath);
-
 		static bool isAsset(const std::string& filepath);
 
+		void subscribeToInclude(AssetEventSubscribeFunc function);
+		void subscribeToExclude(AssetEventSubscribeFunc function);
+
 	private:
-		void buildAssetInternal(const std::string& filepath, AssetData& data, bool forceBuild);
-		void includeAsset(const std::string& filepath, AssetData data);
+		bool buildAssetInternal(const std::string& filepath, AssetData& data, bool forceBuild);
+		bool includeAssetInternal(const std::string& filepath, AssetData data);
+		bool excludeAssetInternal(const std::string& filepath);
+
+		void informSubscribersInclude(const std::string& filepath);
+		void informSubscribersExclude(const std::string& filepath);
+
 		std::string transformAssetIdToResourceId(const std::string& assetid);
 	private:
 		std::map<std::string, AssetData> m_IncludedAssets;
 		//AssetExportFunc m_ExportFunctions[3];
+
+		std::vector<AssetEventSubscribeFunc> m_IncludeSubscriptions;
+		std::vector<AssetEventSubscribeFunc> m_ExcludeSubscriptions;
 
 		const std::string m_ResourceOutput;
 		const std::string m_AssetManagerFile;

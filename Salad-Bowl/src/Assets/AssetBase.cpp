@@ -1,5 +1,8 @@
 #include "AssetBase.h"
 
+#include "Salad/Core/Core.h"
+#include "Salad/Core/Log.h"
+
 #include "Util/FileUtils.hpp"
 
 namespace Salad::Asset {
@@ -32,5 +35,16 @@ namespace Salad::Asset {
 		else {
 			return AssetType::Unknown;
 		}
+	}
+
+	bool isAssetFile(const std::string& filepath) {
+		std::string extension;
+		bool hasExtension = FileUtil::fileExtensionFromName(filepath, &extension);
+		return (hasExtension && (extension == "asset" || extension == ".asset"));
+	}
+
+	std::string assetSourceFromAssetFile(const std::string& filepath) {
+		SLD_CORE_ASSERT(isAssetFile(filepath), "Asset is not a filepath");
+		return FileUtil::popExtension(filepath);
 	}
 }

@@ -95,6 +95,12 @@ namespace Salad::FileUtil {
 		return path.substr(0, index);
 	}
 
+	inline std::string popExtension(const std::string& path) {
+		size_t index = path.find_last_of('.');
+		if (index == std::string::npos) return path;
+		return path.substr(0, index);
+	}
+
 	inline std::string popAllExtensions(std::string& path) {
 		size_t index = path.find_first_of('.');
 		if (index == std::string::npos) return path;
