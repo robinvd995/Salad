@@ -20,6 +20,8 @@
 
 #include "Salad/Math/Math.h"
 
+#include <functional>
+
 //TEMP 
 #include "Salad/Renderer/TextureLoader.hpp"
 
@@ -134,8 +136,6 @@ namespace Salad {
 		auto grassTexture = Salad::TextureManager::get().loadTexture2D("assets/textures/grass_painted_large.png");
 		auto leavesTexture = Salad::TextureManager::get().loadTexture2D("assets/textures/leaves_cartoon.png");
 		auto treeBarkTexture = Salad::TextureManager::get().loadTexture2D("assets/textures/tree_bark_cartoon.png");
-
-		m_MaterialTexture = Salad::TextureManager::get().loadTexture2D("assets/textures/checkerboard.png");
 
 		class CubeController : public ScriptableEntity {
 		
@@ -258,7 +258,7 @@ namespace Salad {
 
 		m_Framebuffer = Framebuffer::create(fbspec);
 
-		m_SceneHierarchyPanel.setContext(m_Scene);
+		//m_SceneHierarchyPanel.setContext(m_Scene);
 
 		// Post processing setup
 
@@ -302,25 +302,33 @@ namespace Salad {
 	void EditorLayer::onAttach() {
 		Salad::RenderCommand::setClearColor(glm::vec4(0.05f, 0.05f, 0.85f, 1.0f));
 
+		m_EditorUI.init();
+		m_EditorUI.setSceneContext(m_Scene);
+
 		// Settings
 		EditorSettings::s_Instance = new EditorSettings();
-		m_FileExplorerPanel.init();
+		m_EditorUI.loadPanelSettings();
 		m_EditorCamera.init();
 		EditorSettings::s_Instance->deserializeSettings();
 
 		// Asset Manager Initialization
 		EditorAssetManager::instantiate("temp_resource_output.zip", "temp_asset_registry.xml");
 
-		// ImGui Fonts
-		ImGuiIO& io = ImGui::GetIO();
-		io.FontDefault = io.Fonts->AddFontFromFileTTF("assets/fonts/open_sans/OpenSans-Regular.ttf", 18.0f);
-		io.Fonts->AddFontFromFileTTF("assets/fonts/open_sans/OpenSans-Bold.ttf", 18.0f);
+		m_EditorUI.setViewportRenderId(m_PostProcessingComposer.getFramebuffer()->getColorAttachment(0));
+		std::function<void()> func = std::bind(&EditorLayer::onViewportResized, this);
+		m_EditorUI.setViewportResizeHandler(func);
+		m_EditorUI.setEditorCamera(&m_EditorCamera);
 
+		// ImGui Fonts
+		//ImGuiIO& io = ImGui::GetIO();
+		//io.FontDefault = io.Fonts->AddFontFromFileTTF("assets/fonts/open_sans/OpenSans-Regular.ttf", 18.0f);
+		//io.Fonts->AddFontFromFileTTF("assets/fonts/open_sans/OpenSans-Bold.ttf", 18.0f);
+		//
 		// Editor Gui Initlialization
-		EditorGui::EditorStyle::s_Instance = new EditorGui::EditorStyle();
-		EditorGui::EditorStyle::setEditorStyle(EditorGui::EditorUIStyle::VisualStudio);
-		EditorGui::EditorStyle::loadEditorIcons("assets/textures/editor_icons.png");
-		EditorGui::EditorStyle::loadFileIcons("assets/textures/file_explorer_icons_32.png");
+		//EditorGui::EditorStyle::s_Instance = new EditorGui::EditorStyle();
+		//EditorGui::EditorStyle::setEditorStyle(EditorGui::EditorUIStyle::VisualStudio);
+		//EditorGui::EditorStyle::loadEditorIcons("assets/textures/editor_icons.png");
+		//EditorGui::EditorStyle::loadFileIcons("assets/textures/file_explorer_icons_32.png");
 
 		// Create a new instance of the editor selection context
 		EditorSelectionContext::s_Instance = new EditorSelectionContext();
@@ -378,7 +386,7 @@ namespace Salad {
 
 		switch(m_EditorState){
 			case EditorState::Editor: {
-				if (m_IsViewportFocused) m_EditorCamera.updateCamera(ts);
+				if (m_EditorUI.isViewportFocused()) m_EditorCamera.updateCamera(ts);
 
 				Entity entity;
 				if(EditorSelectionContext::isSelectionContextType(EditorSelectionContextType::Entity)) {
@@ -390,8 +398,8 @@ namespace Salad {
 			case EditorState::Runtime: m_Scene->onUpdate(ts);
 		}
 
-		if(m_ViewportMouseX >= 0.0f && m_ViewportMouseY >= 0.0f && m_ViewportMouseX < m_ViewportWidth && m_ViewportMouseY < m_ViewportHeight) {
-			int pixeldata = m_Framebuffer->readPixel(1, m_ViewportMouseX, m_ViewportMouseY);
+		if(m_EditorUI.isMouseInViewport()) {
+			int pixeldata = m_Framebuffer->readPixel(1, m_EditorUI.getViewportMouseX(), m_EditorUI.getViewportMouseY());
 			if(pixeldata != clearData) {
 				m_HoveredEntity = { (uint32_t)pixeldata, m_Scene.get() };
 			}
@@ -426,7 +434,7 @@ namespace Salad {
 	}
 
 	bool EditorLayer::onMouseScrolledEvent(MouseScrolledEvent& e) {
-		return !m_IsViewportHovered;
+		return !m_EditorUI.isViewportHovered();
 	}
 
 	bool EditorLayer::onKeyPressedEvent(KeyPressedEvent& e) {
@@ -438,17 +446,17 @@ namespace Salad {
 
 		switch(e.getKeyCode()) {
 		
-			case SLD_KEY_Q: m_GizmoType = -1; break;
-			case SLD_KEY_W: m_GizmoType = ImGuizmo::OPERATION::TRANSLATE; break;
-			case SLD_KEY_E: m_GizmoType = ImGuizmo::OPERATION::ROTATE; break;
-			case SLD_KEY_R: m_GizmoType = ImGuizmo::OPERATION::SCALE; break;
+			case SLD_KEY_Q: m_EditorUI.setGizmoType(-1); break;
+			case SLD_KEY_W: m_EditorUI.setGizmoType(ImGuizmo::OPERATION::TRANSLATE); break;
+			case SLD_KEY_E: m_EditorUI.setGizmoType(ImGuizmo::OPERATION::ROTATE); break;
+			case SLD_KEY_R:m_EditorUI.setGizmoType(ImGuizmo::OPERATION::SCALE); break;
 			case SLD_KEY_ESCAPE: EditorSelectionContext::setSelectionContextNone(); break;
 			//case SLD_KEY_ESCAPE: m_EditorSelectionContext->setSelectionContext({}); break; -------------------------------------------------------------
 		}
 	}
 
 	bool EditorLayer::canMousePick() {
-		return m_HoveredEntity.isValid() && !m_ImGuizmoIsHovering;
+		return m_HoveredEntity.isValid() && !m_EditorUI.isGizmoHovered();
 	}
 
 	bool EditorLayer::onMousePressedEvent(MouseButtonPressedEvent& e) {
@@ -462,8 +470,30 @@ namespace Salad {
 		return false;
 	}
 
+	void EditorLayer::onViewportResized() {
+		uint32_t width = m_EditorUI.getViewportWidth();
+		uint32_t height = m_EditorUI.getViewportHeight();
+
+		m_Framebuffer->resize(width, height);
+		m_PostProcessingFramebufferResize = true;
+		m_PostProcessingFramebufferWidth = width;
+		m_PostProcessingFramebufferHeight = height;
+
+		// TODO: Let camera handle viewport resizing based on projection type
+		PerspectiveCameraProperties camProps;
+		camProps.AspectRatio = (float)width / (float)height;
+		m_EditorCamera.setPerspectiveProjection(camProps);
+		m_EditorCamera.recalculateViewMatrix();
+
+		Renderer::onWindowResized((uint32_t)width, (uint32_t)height);
+	}
+
 	void EditorLayer::onImGuiRender() { 
-		static bool p_open = true;
+
+		m_EditorUI.onImGuiRender();
+		m_EditorUI.setHoveredEntity(m_HoveredEntity);
+
+		/*static bool p_open = true;
 		static bool opt_fullscreen_persistant = true;
 		bool opt_fullscreen = opt_fullscreen_persistant;
 		static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
@@ -544,6 +574,14 @@ namespace Salad {
 		ImGui::ImageButton((void*)iconsTextureId, ImVec2{ 32.0f, 32.0f }, ImVec2(0.0f, 0.0f), ImVec2(0.125f, 0.125f), 8);
 		ImGui::End();
 
+		bool status_bar = true;
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, EditorGui::EditorStyle::s_Instance->m_StatusBarBgColor);
+		ImGuiWindowFlags statusBarFlags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoInputs;
+		ImGui::Begin("Status Bar", &status_bar, statusBarFlags);
+
+		ImGui::End();
+		ImGui::PopStyleColor();
+
 		ImGui::Begin("Info");
 
 		ImGui::Text("Hovered Entity: ");
@@ -566,12 +604,12 @@ namespace Salad {
 
 		ImGui::End(); // Settings end
 
-		/*ImGui::Begin("Postprocessing test");
-		ImGui::Text("Postprocessing: ");
-		//uint32_t ppRenderId = m_PostProcessingOutline.getFramebuffer()->getColorAttachment(0);
-		uint32_t ppRenderId = m_PostProcessingComposer.getFramebuffer()->getColorAttachment(0);
-		ImGui::Image((void*)ppRenderId, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0,1 }, ImVec2{ 1, 0 });
-		ImGui::End();*/
+		// ImGui::Begin("Postprocessing test");
+		// ImGui::Text("Postprocessing: ");
+		// //uint32_t ppRenderId = m_PostProcessingOutline.getFramebuffer()->getColorAttachment(0);
+		// uint32_t ppRenderId = m_PostProcessingComposer.getFramebuffer()->getColorAttachment(0);
+		// ImGui::Image((void*)ppRenderId, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0,1 }, ImVec2{ 1, 0 });
+		// ImGui::End();
 		bool sameline = true;
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
@@ -667,7 +705,8 @@ namespace Salad {
 		ImGui::ShowDemoWindow();
 
 		if(m_EditorSettingsWindow.showWindow()) {
-			ImGui::Begin("Editor Settings", &m_EditorSettingsWindow.showWindow());
+			ImGuiWindowFlags eswFlags = ImGuiWindowFlags_NoDocking;
+			ImGui::Begin("Editor Settings", &m_EditorSettingsWindow.showWindow(), eswFlags);
 
 			m_EditorSettingsWindow.onImGuiRender();
 
@@ -686,7 +725,7 @@ namespace Salad {
 			EditorSettings::s_Instance->serializeSettings();
 		}
 
-		m_EditorSettingsWindow.m_PreviousShowWindow = m_EditorSettingsWindow.m_ShowWindow;
+		m_EditorSettingsWindow.m_PreviousShowWindow = m_EditorSettingsWindow.m_ShowWindow;*/
 	}
 
 	void EditorLayer::serialize() {

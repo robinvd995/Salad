@@ -17,6 +17,8 @@
 
 #include "Salad/Renderer/PostProcessing.h"
 
+#include "EditorGui/EditorGui.h"
+
 namespace Salad {
 
 	enum class EditorState {
@@ -43,11 +45,15 @@ namespace Salad {
 		bool onKeyPressedEvent(KeyPressedEvent& e);
 		bool onMousePressedEvent(MouseButtonPressedEvent& e);
 
+		//void onViewportResized(uint32_t width, uint32_t height);
+		void onViewportResized();
+
 	private:
 		void serialize();
 		void deserialize();
 
 	private:
+		EditorGui::EditorUI m_EditorUI;
 
 		Entity m_CubeEntity;
 		Entity m_TreeEntity;
@@ -64,37 +70,37 @@ namespace Salad {
 		Ref<Scene> m_Scene;
 
 		Ref<Framebuffer> m_Framebuffer;
-		glm::vec2 m_ViewportSize;
+		//glm::vec2 m_ViewportSize;
 
-		bool m_IsViewportFocused = false;
-		bool m_IsViewportHovered = false;
+		//bool m_IsViewportFocused = false;
+		//bool m_IsViewportHovered = false;
 
 		EditorCamera m_EditorCamera;
 		EditorState m_EditorState = EditorState::Editor;
 
 		// Editor Panels
-		EditorGui::SceneHierarchyPanel m_SceneHierarchyPanel;
-		EditorGui::ScenePropertiesPanel m_ScenePropertiesPanel;
-		EditorGui::MaterialExplorerPanel m_MaterialExplorerPanel;
-		EditorGui::FileExplorerPanel m_FileExplorerPanel;
-
-		bool m_ShowSceneHierarchyPanel = true;
-		bool m_ShowScenePropertiesPanel = true;
-		bool m_ShowMaterialExplorerPanel = true;
-		bool m_ShowFileExplorerPanel = true;
+		// EditorGui::SceneHierarchyPanel m_SceneHierarchyPanel;
+		// EditorGui::ScenePropertiesPanel m_ScenePropertiesPanel;
+		// EditorGui::MaterialExplorerPanel m_MaterialExplorerPanel;
+		// EditorGui::FileExplorerPanel m_FileExplorerPanel;
+		// 
+		// bool m_ShowSceneHierarchyPanel = true;
+		// bool m_ShowScenePropertiesPanel = true;
+		// bool m_ShowMaterialExplorerPanel = true;
+		// bool m_ShowFileExplorerPanel = true;
 
 		// Windows
 		EditorGui::EditorSettingsWindow m_EditorSettingsWindow;
 
 		float m_EditorCameraSensitivity = 0.5f;
 
-		int m_GizmoType = -1;
+		//int m_GizmoType = -1;
 		//glm::mat4 m_GizmoTransform{ 1.0f };
 
-		int m_ViewportMouseX = 0, m_ViewportMouseY = 0;
-		int m_ViewportWidth = 0, m_ViewportHeight = 0;
+		//int m_ViewportMouseX = 0, m_ViewportMouseY = 0;
+		//int m_ViewportWidth = 0, m_ViewportHeight = 0;
+		//bool m_ImGuizmoIsHovering = false;
 		Entity m_HoveredEntity;
-		bool m_ImGuizmoIsHovering = false;
 
 		// Move to Editor Scene
 		//Ref<EditorSelectionContext> m_EditorSelectionContext;
@@ -112,6 +118,8 @@ namespace Salad {
 		PostProcessingComposer m_PostProcessingComposer;
 		bool m_PostProcessingFramebufferResize = false;
 		uint32_t m_PostProcessingFramebufferWidth = 1280, m_PostProcessingFramebufferHeight = 720;
+
+		friend class EditorGui::EditorUI;
 	};
 
 }

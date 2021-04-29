@@ -1,6 +1,5 @@
 #include "EditorStyle.h"
 
-#include "imgui/imgui.h"
 #include "imgui/imgui_internal.h"
 
 #include <cstdint>
@@ -81,6 +80,8 @@ namespace Salad::EditorGui {
 				style.TabRounding = 0.0f;
 				style.WindowRounding = 4.0f;
 
+				m_StatusBarBgColor = { 0.180f, 0.180f, 0.180f, 1.000f };
+
 			} break;
 
 			case EditorUIStyle::VisualStudio: {
@@ -156,6 +157,8 @@ namespace Salad::EditorGui {
 				style.PopupRounding = 0.0f;
 				style.ScrollbarRounding = 0.0f;
 				style.TabRounding = 0.0f;
+
+				m_StatusBarBgColor = panelColor;
 
 			} break;
 		}

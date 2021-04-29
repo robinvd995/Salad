@@ -32,7 +32,7 @@ namespace Salad::EditorGui {
 		bool m_PreviousShowWindow = false;
 		std::string m_SelectedGroup = "";
 
-		friend class EditorLayer;
+		friend class EditorUI;
 	};
 
 }

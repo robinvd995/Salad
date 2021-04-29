@@ -23,8 +23,7 @@ namespace Salad {
 		s_Instance->m_AssetManager.subscribeToExclude(onAssetExcluded);
 
 		// Deserialize the asset registry
-		Asset::AssetManagerSerializer serializer;
-		serializer.deserialize(s_Instance->m_AssetManager);
+		s_Instance->deserialize();
 	}
 
 	EditorAssetManager::EditorAssetManager(const std::string& assetOutput, const std::string& assetRegistry) :
@@ -34,8 +33,7 @@ namespace Salad {
 
 	EditorAssetManager::~EditorAssetManager() {
 		//Serialize the asset registry
-		Asset::AssetManagerSerializer serializer;
-		serializer.serialize(m_AssetManager);
+		serialize();
 
 		// Destroy fileobserver thread
 		m_FileObserverThreadRunning = false;
@@ -73,11 +71,22 @@ namespace Salad {
 		std::string& assetFilepath = Asset::assetFileFromPath(filepath);
 		s_Instance->m_FileObserver.addFile(filepath);
 		s_Instance->m_FileObserver.addFile(assetFilepath);
+		s_Instance->serialize();
 	}
 
 	void EditorAssetManager::onAssetExcluded(const std::string& filepath) {
 		std::string& assetFilepath = Asset::assetFileFromPath(filepath);
 		s_Instance->m_FileObserver.removeFile(filepath);
 		s_Instance->m_FileObserver.removeFile(assetFilepath);
+	}
+
+	void EditorAssetManager::serialize() {
+		Asset::AssetManagerSerializer serializer;
+		serializer.serialize(m_AssetManager);
+	}
+
+	void EditorAssetManager::deserialize() {
+		Asset::AssetManagerSerializer serializer;
+		serializer.deserialize(s_Instance->m_AssetManager);
 	}
 }

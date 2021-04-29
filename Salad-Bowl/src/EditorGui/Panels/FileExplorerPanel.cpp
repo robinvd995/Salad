@@ -245,8 +245,39 @@ namespace Salad::EditorGui {
 			refresh();
 		}
 		ImGui::PopID();
-		ImGui::PopStyleVar();
 		ImGui::SameLine();
+
+		float filterInputWidth = ImGui::GetContentRegionAvail().x - 24.0f;
+		ImGui::PushItemWidth(filterInputWidth);
+		if (ImGui::InputText("##Filter", m_StringBuffer, sizeof(m_StringBuffer))) {
+			m_Filter = std::string(m_StringBuffer);
+		}
+		ImGui::PopItemWidth();
+
+		ImGui::SameLine();
+		ImGui::PushID(3);
+		if (ImGui::Button("...", ImVec2{ 24.0f, 24.0f })) {}
+
+		if (ImGui::BeginPopupContextItem("FileExplorerContextPopup", ImGuiMouseButton_Left)) {
+
+			templateContextItem("context_build_all", "Build", ContextItemData().setPrefix(0.1875f, 0.1875f, 0.25f, 0.25f, 16, 16), []() {
+				EditorAssetManager::assetManager().buildAll(false);
+			});
+
+			templateContextItem("context_rebuild_all", "Rebuild", ContextItemData(), []() {
+				EditorAssetManager::assetManager().buildAll(true);
+			});
+
+			templateContextItem("context_clean", "Clean", ContextItemData(), []() {
+				EditorAssetManager::assetManager().clean();
+			});
+
+			ImGui::EndPopup();
+		}
+
+		ImGui::PopID();
+
+		ImGui::PopStyleVar();
 		ImGui::Text(m_CurrentDirectory.c_str());
 
 		ImGui::Separator();

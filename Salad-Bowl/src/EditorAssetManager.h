@@ -38,6 +38,10 @@ namespace Salad {
 		friend class EditorLayer;
 
 	private:
+		void serialize();
+		void deserialize();
+
+	private:
 		Asset::AssetManager m_AssetManager;
 		Util::FileObserver m_FileObserver;
 

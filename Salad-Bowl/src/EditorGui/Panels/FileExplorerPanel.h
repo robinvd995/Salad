@@ -68,7 +68,9 @@ namespace Salad::EditorGui {
 		std::string m_PreviousIgnoredExtensions;
 
 		bool m_IgnoreUnknownFiles = false;
-		bool m_AssetStateIconShouldDraw[4];
+		bool m_AssetStateIconShouldDraw[4]{};
+		char m_StringBuffer[256]{};
+		std::string m_Filter;
 	};
 
 }

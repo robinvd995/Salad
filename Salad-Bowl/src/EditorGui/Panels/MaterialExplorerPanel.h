@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Salad/Renderer/TextureManager.h"
+
 #include <vector>
 #include <cstdint>
 #include <string>
@@ -19,6 +21,8 @@ namespace Salad::EditorGui {
 	
 	public:
 		MaterialExplorerPanel() {
+			m_MaterialTexture = Salad::TextureManager::get().loadTexture2D("assets/textures/checkerboard.png");
+
 			for(uint32_t i = 0; i < 10; i++) {
 				std::string name = "Material ";
 				name.append(std::to_string(i));
@@ -30,7 +34,7 @@ namespace Salad::EditorGui {
 
 		virtual ~MaterialExplorerPanel() {}
 
-		void onImGuiRender(uint32_t textureid);
+		void onImGuiRender();
 
 	private:
 		void updateFilter();
@@ -38,6 +42,8 @@ namespace Salad::EditorGui {
 	private:
 		std::vector<MaterialExplorerItem> m_MaterialItems;
 		std::vector<MaterialExplorerItem*> m_FilteredItems;
+
+		Ref<Texture2D> m_MaterialTexture;
 
 		std::string m_Filter;
 		uint32_t m_Selected;

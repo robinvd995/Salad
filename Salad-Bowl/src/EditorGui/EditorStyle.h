@@ -2,6 +2,8 @@
 
 #include "Salad/Renderer/Texture.h"
 
+#include "imgui/imgui.h"
+
 #include <string>
 
 namespace Salad::EditorGui {
@@ -31,10 +33,11 @@ namespace Salad::EditorGui {
 
 	private:
 		inline static EditorStyle* s_Instance;
-		friend class EditorLayer;
+		friend class EditorUI;
 
 	private:
 		Ref<Texture2D> m_EditorIcons;
 		Ref<Texture2D> m_FileIcons;
+		ImVec4 m_StatusBarBgColor;
 	};
 }

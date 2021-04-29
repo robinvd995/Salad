@@ -10,7 +10,7 @@ namespace Salad::EditorGui {
 
     static char s_FilterBuffer[256];
 
-	void MaterialExplorerPanel::onImGuiRender(uint32_t textureid) {
+	void MaterialExplorerPanel::onImGuiRender() {
 
         //ImGui::ShowDemoWindow();
 
@@ -90,7 +90,7 @@ namespace Salad::EditorGui {
             }
             ImGui::PopStyleVar();
 
-            ImGui::GetWindowDrawList()->AddImage((void*)textureid, ImVec2(p.x + 4, p.y + 4), ImVec2(p.x + 96, p.y + 96), ImVec2(0, 0), ImVec2(1, 1));
+            ImGui::GetWindowDrawList()->AddImage((void*)m_MaterialTexture->getRendererId(), ImVec2(p.x + 4, p.y + 4), ImVec2(p.x + 96, p.y + 96), ImVec2(0, 0), ImVec2(1, 1));
 
             ImGui::SetCursorScreenPos(ImVec2(p.x + 4, p.y + 100));
             ImGui::PushItemWidth(120.0f);

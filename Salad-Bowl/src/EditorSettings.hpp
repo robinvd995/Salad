@@ -21,6 +21,7 @@ namespace Salad {
 
 	namespace EditorGui {
 		class EditorSettingsWindow;
+		class EditorUI;
 	}
 
 	enum class  EditorSettingsPropertyType {
