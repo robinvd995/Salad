@@ -12,5 +12,11 @@ bin-int/
 *.vpp.working
 *.vpp.working-journal
 *.lck
+
+# asset generated files
+*.asset
+*.zip
+
 Salad/vendor/freetype/
 Salad-Bowl/test.zip
+Salad/vendor/libzip
