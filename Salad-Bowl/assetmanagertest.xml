@@ -1,9 +1,0 @@
-<asset_manager>
-	<included_assets size="4">
-		<asset dirty="0">assets/shaders/test/ShaderBuilderTest.glsl</asset>
-		<asset dirty="0">assets/textures/checkerboard.png</asset>
-		<asset dirty="0">assets/textures/crate_diffuse.png</asset>
-		<asset dirty="0">assets/textures/crate_specular.png</asset>
-	</included_assets>
-</asset_manager>
-

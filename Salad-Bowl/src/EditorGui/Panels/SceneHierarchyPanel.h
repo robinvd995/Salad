@@ -6,18 +6,23 @@
 #include "Salad/Scene/Scene.h"
 
 #include "EditorSelectionContext.h"
+#include "EditorPanelBase.hpp"
 
 namespace Salad::EditorGui {
 
-	class SceneHierarchyPanel {
+	class SceneHierarchyPanel : public EditorPanelBase {
 
 	public:
-		SceneHierarchyPanel() = default;
-		SceneHierarchyPanel(const Ref<Scene>& scene, const Ref<EditorSelectionContext>& selection);
+		SceneHierarchyPanel() :
+			EditorPanelBase("Scene Hierarchy", true) 
+		{}
 
-		void setContext(const Ref<Scene>& scene);
+		virtual void init() override;
+		virtual void loadSettings() override;
+		virtual void setContext(const Ref<Scene>& scene) override;
 
-		void onImGuiRender();
+	protected:
+		virtual void onImGuiRender() override;
 
 	private:
 
@@ -29,5 +34,4 @@ namespace Salad::EditorGui {
 
 		friend class Scene;
 	};
-
 }

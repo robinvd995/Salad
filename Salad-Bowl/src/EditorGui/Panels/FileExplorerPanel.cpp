@@ -94,10 +94,11 @@ namespace Salad::EditorGui {
 
 		std::string path = "assets/"; // TODO Make constexpr or #define
 		scopeToFolder(path);
+	}
 
-		updateIgnoredExtensions();
-
+	void FileExplorerPanel::loadSettings() {
 		EditorSettings::pushGroup("File Explorer");
+
 		EditorSettings::pushString("Ignored Extensions", &m_IgnoredExtensions);
 		EditorSettings::pushBool("Ignore Unknown Files", &m_IgnoreUnknownFiles);
 
@@ -109,6 +110,8 @@ namespace Salad::EditorGui {
 		EditorSettings::popSubGroup();
 
 		EditorSettings::popGroup();
+
+		updateIgnoredExtensions();
 	}
 
 	void FileExplorerPanel::scopeToFolder(std::string& path, bool pushPrev) {

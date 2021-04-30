@@ -1,23 +1,27 @@
 #pragma once
 
 #include "Salad/Scene/Entity.h"
+#include "EditorPanelBase.hpp"
 
 namespace Salad::EditorGui {
 
-	class ScenePropertiesPanel {
+	class ScenePropertiesPanel : public EditorPanelBase {
 
 	public:
-		ScenePropertiesPanel() = default;
+		ScenePropertiesPanel() :
+			EditorPanelBase("Properties", true)
+		{};
 
-		void init();
-		void onImGuiRender();
+		virtual void init() override;
+		virtual void loadSettings() override;
+		virtual void setContext(const Ref<Scene>& scene) override {}
+
+	protected:
+		virtual void onImGuiRender() override;
 
 	private:
 		void renderEntityProperties();
 		void renderEditorShaderProperties();
 		void renderEditorTextureProperties();
-
-		/*template<typename T>
-		void drawComponent(const char* label, Entity entity, std::function<void(Entity)> lambda);*/
 	};
 }

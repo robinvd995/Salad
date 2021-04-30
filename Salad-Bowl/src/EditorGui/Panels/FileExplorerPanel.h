@@ -2,6 +2,7 @@
 
 #include "Salad/Core/Core.h"
 #include "Salad/Renderer/Texture.h"
+#include "EditorPanelBase.hpp"
 
 #include <string>
 #include <vector>
@@ -32,15 +33,21 @@ namespace Salad::EditorGui {
 		friend class FileExplorerPanel;
 	};
 
-	class FileExplorerPanel {
+	class FileExplorerPanel : public EditorPanelBase {
 	
 	public:
 
-		FileExplorerPanel() {}
+		FileExplorerPanel() :
+			EditorPanelBase("File Explorer", true)
+		{}
 		virtual ~FileExplorerPanel() {}
 
-		void init();
-		void onImGuiRender();
+		virtual void init() override;
+		virtual void loadSettings() override;
+		virtual void setContext(const Ref<Scene>& scene) override {}
+
+	protected:
+		virtual void onImGuiRender() override;
 
 	private:
 

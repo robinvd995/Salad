@@ -9,7 +9,7 @@ namespace Salad {
 		using namespace Salad::Util;
 
 		int error = 0;
-		Archive archive = archiveOpen("resources.zip", ArchiverOpenFlags_None, &error);
+		Archive archive = archiveOpen("temp_resource_output.zip", ArchiverOpenFlags_None, &error);
 
 		// error handling here
 

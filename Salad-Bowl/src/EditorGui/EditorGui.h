@@ -1,12 +1,10 @@
 #pragma once
 
-#include "Panels/FileExplorerPanel.h"
-#include "Panels/MaterialExplorerPanel.h"
-#include "Panels/SceneHierarchyPanel.h"
-#include "Panels/ScenePropertiesPanel.h"
-
 #include "Windows/EditorSettingsWindow.h"
 #include "EditorCamera.h"
+#include "Salad/Scene/Scene.h"
+#include "Salad/Scene/Entity.h"
+#include "Panels/EditorPanelBase.hpp"
 
 namespace Salad::EditorGui {
 
@@ -48,15 +46,20 @@ namespace Salad::EditorGui {
 		bool isGizmoHovered() { return m_ImGuizmoIsHovering; }
 
 	private:
-		EditorGui::SceneHierarchyPanel m_SceneHierarchyPanel;
-		EditorGui::ScenePropertiesPanel m_ScenePropertiesPanel;
-		EditorGui::MaterialExplorerPanel m_MaterialExplorerPanel;
-		EditorGui::FileExplorerPanel m_FileExplorerPanel;
+
+		// Panels new
+		std::vector<EditorPanelBase*> m_Panels;
+
+		// Panels old
+		//EditorGui::SceneHierarchyPanel m_SceneHierarchyPanel;
+		//EditorGui::ScenePropertiesPanel m_ScenePropertiesPanel;
+		//EditorGui::MaterialExplorerPanel m_MaterialExplorerPanel;
+		//EditorGui::FileExplorerPanel m_FileExplorerPanel;
 		
-		bool m_ShowSceneHierarchyPanel = true;
-		bool m_ShowScenePropertiesPanel = true;
-		bool m_ShowMaterialExplorerPanel = true;
-		bool m_ShowFileExplorerPanel = true;
+		//bool m_ShowSceneHierarchyPanel = true;
+		//bool m_ShowScenePropertiesPanel = true;
+		//bool m_ShowMaterialExplorerPanel = true;
+		//bool m_ShowFileExplorerPanel = true;
 
 		EditorGui::EditorSettingsWindow m_EditorSettingsWindow;
 

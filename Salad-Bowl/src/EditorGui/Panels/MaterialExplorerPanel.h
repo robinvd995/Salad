@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Salad/Renderer/TextureManager.h"
+#include "EditorPanelBase.hpp"
 
 #include <vector>
 #include <cstdint>
@@ -17,10 +18,12 @@ namespace Salad::EditorGui {
 	
 	};
 
-	class MaterialExplorerPanel {
+	class MaterialExplorerPanel : public EditorPanelBase {
 	
 	public:
-		MaterialExplorerPanel() {
+		MaterialExplorerPanel() :
+			EditorPanelBase("Materials", true)
+		{
 			m_MaterialTexture = Salad::TextureManager::get().loadTexture2D("assets/textures/checkerboard.png");
 
 			for(uint32_t i = 0; i < 10; i++) {
@@ -34,7 +37,12 @@ namespace Salad::EditorGui {
 
 		virtual ~MaterialExplorerPanel() {}
 
-		void onImGuiRender();
+		virtual void init() override {}
+		virtual void loadSettings() override {}
+		virtual void setContext(const Ref<Scene>& scene) override {}
+
+	protected:
+		virtual void onImGuiRender() override;
 
 	private:
 		void updateFilter();

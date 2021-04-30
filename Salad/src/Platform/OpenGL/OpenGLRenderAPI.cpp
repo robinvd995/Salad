@@ -13,7 +13,6 @@ namespace Salad {
 	}
 
 	void OpenGLRenderAPI::setViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
-		SLD_CORE_INFO("Viewport set: {0}, {1}, {2}, {3}", x, y, width, height);
 		glViewport(x, y, width, height);
 	}
 

@@ -32,4 +32,5 @@ namespace Salad::EditorGui {
 	};
 
 	void templateContextItem(const std::string& label, const char* name, ContextItemData& data, std::function<void()> selectedFunc);
+	//void templateMenuItem(const std::string& label, const char* name, bool* selected); TODO
 }

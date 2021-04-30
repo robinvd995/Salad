@@ -9,11 +9,32 @@
 #include "Salad/Scene/Components.h"
 #include "Salad/Renderer/Renderer.h"
 
+#include "Salad/Scene/Components.h"
+
+#include "Panels/FileExplorerPanel.h"
+#include "Panels/MaterialExplorerPanel.h"
+#include "Panels/SceneHierarchyPanel.h"
+#include "Panels/ScenePropertiesPanel.h"
+#include "Panels/LogPanel.h"
+#include "Panels/ConsolePanel.h"
+
 namespace Salad::EditorGui {
 
-	EditorUI::EditorUI() {}
+	EditorUI::EditorUI() {
+		m_Panels.push_back(new SceneHierarchyPanel());
+		m_Panels.push_back(new MaterialExplorerPanel());
+		m_Panels.push_back(new FileExplorerPanel());
+		m_Panels.push_back(new ScenePropertiesPanel());
+		m_Panels.push_back(new LogPanel());
+		m_Panels.push_back(new ConsolePanel());
+	}
 
-	EditorUI::~EditorUI() {}
+	EditorUI::~EditorUI() {
+		for(auto panel : m_Panels) {
+			delete panel;
+		}
+		m_Panels.clear();
+	}
 
 	void EditorUI::init() {
 		// ImGui Fonts
@@ -26,14 +47,16 @@ namespace Salad::EditorGui {
 		EditorGui::EditorStyle::setEditorStyle(EditorGui::EditorUIStyle::VisualStudio);
 		EditorGui::EditorStyle::loadEditorIcons("assets/textures/editor_icons.png");
 		EditorGui::EditorStyle::loadFileIcons("assets/textures/file_explorer_icons_32.png");
+
+		for (auto panel : m_Panels) panel->init();
 	}
 
 	void EditorUI::loadPanelSettings() {
-		m_FileExplorerPanel.init();
+		for (auto panel : m_Panels) panel->loadSettings();
 	}
 
 	void EditorUI::setSceneContext(Ref<Scene> scene) {
-		m_SceneHierarchyPanel.setContext(scene);
+		for (auto panel : m_Panels) panel->setContext(scene);
 	}
 
 	void EditorUI::onImGuiRender() {
@@ -91,10 +114,12 @@ namespace Salad::EditorGui {
 
 			if (ImGui::BeginMenu("View")) {
 
-				ImGui::MenuItem("Scene Hierarchy", NULL, &m_ShowSceneHierarchyPanel);
-				ImGui::MenuItem("Properties", NULL, &m_ShowScenePropertiesPanel);
-				ImGui::MenuItem("Material Explorer", NULL, &m_ShowMaterialExplorerPanel);
-				ImGui::MenuItem("File Explorer", NULL, &m_ShowFileExplorerPanel);
+				for (auto panel : m_Panels) ImGui::MenuItem(panel->getPanelName().c_str(), NULL, panel->getPanelStatus());
+
+				//ImGui::MenuItem("Scene Hierarchy", NULL, &m_ShowSceneHierarchyPanel);
+				//ImGui::MenuItem("Properties", NULL, &m_ShowScenePropertiesPanel);
+				//ImGui::MenuItem("Material Explorer", NULL, &m_ShowMaterialExplorerPanel);
+				//ImGui::MenuItem("File Explorer", NULL, &m_ShowFileExplorerPanel);
 
 				ImGui::EndMenu();
 			}
@@ -102,10 +127,11 @@ namespace Salad::EditorGui {
 			ImGui::EndMenuBar();
 		}
 
-		if (m_ShowSceneHierarchyPanel) m_SceneHierarchyPanel.onImGuiRender();
-		if (m_ShowScenePropertiesPanel) m_ScenePropertiesPanel.onImGuiRender();
-		if (m_ShowMaterialExplorerPanel) m_MaterialExplorerPanel.onImGuiRender();
-		if (m_ShowFileExplorerPanel) m_FileExplorerPanel.onImGuiRender();
+		for (auto panel : m_Panels) panel->renderPanel();
+		//if (m_ShowSceneHierarchyPanel) m_SceneHierarchyPanel.onImGuiRender();
+		//if (m_ShowScenePropertiesPanel) m_ScenePropertiesPanel.onImGuiRender();
+		//if (m_ShowMaterialExplorerPanel) m_MaterialExplorerPanel.onImGuiRender();
+		//if (m_ShowFileExplorerPanel) m_FileExplorerPanel.onImGuiRender();
 
 		uint32_t iconsTextureId = EditorGui::EditorStyle::getEditorIcons()->getRendererId();
 
@@ -183,23 +209,6 @@ namespace Salad::EditorGui {
 
 		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
 		if (m_ViewportSize != *((glm::vec2*)&viewportPanelSize) && viewportPanelSize.x > 0 && viewportPanelSize.y > 0) {
-			SLD_CORE_INFO("Viewport size: {0}, {1}", viewportPanelSize.x, viewportPanelSize.y);
-			//uint32_t viewportSizeX = (uint32_t)viewportPanelSize.x;
-			//uint32_t viewportSizeY = (uint32_t)viewportPanelSize.y;
-
-			/*m_Framebuffer->resize(viewportSizeX, viewportSizeY);
-			m_PostProcessingFramebufferResize = true;
-			m_PostProcessingFramebufferWidth = viewportSizeX;
-			m_PostProcessingFramebufferHeight = viewportSizeY;
-
-			// TODO: Let camera handle viewport resizing based on projection type
-			PerspectiveCameraProperties camProps;
-			camProps.AspectRatio = viewportPanelSize.x / viewportPanelSize.y;
-			m_EditorCamera.setPerspectiveProjection(camProps);
-			m_EditorCamera.recalculateViewMatrix();
-
-			Renderer::onWindowResized((uint32_t)viewportPanelSize.x, (uint32_t)viewportPanelSize.y);*/
-
 			m_ResizeHandler();
 			m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 
@@ -258,14 +267,6 @@ namespace Salad::EditorGui {
 
 			ImGui::End();
 		}
-
-		ImGui::Begin("Console");
-		ImGui::Text("Console window is not yet implemented!");
-		ImGui::End();
-
-		ImGui::Begin("Log");
-		ImGui::Text("Log window is not yet implemented!");
-		ImGui::End();
 
 		if (m_EditorSettingsWindow.m_PreviousShowWindow && !m_EditorSettingsWindow.m_ShowWindow) {
 			//EditorSettings::s_Instance->serializeSettings();

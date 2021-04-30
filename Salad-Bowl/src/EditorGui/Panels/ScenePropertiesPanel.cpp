@@ -131,6 +131,10 @@ namespace Salad::EditorGui {
 
 	}
 
+	void ScenePropertiesPanel::loadSettings() {
+
+	}
+
 	void ScenePropertiesPanel::renderEntityProperties() {
 		EntitySelectionContext* context = EditorSelectionContext::getSelectionContext<EntitySelectionContext>();
 		Entity entity = context->getSelectedEntity();

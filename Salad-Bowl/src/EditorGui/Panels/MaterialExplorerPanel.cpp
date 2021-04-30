@@ -16,7 +16,7 @@ namespace Salad::EditorGui {
 
         const float minColWidth = 128.0f;
 
-		ImGui::Begin("Materials");
+		//ImGui::Begin("Materials");
 
         ImGui::Columns(2);
         ImGui::SetColumnWidth(0, 80.0f);
@@ -105,7 +105,7 @@ namespace Salad::EditorGui {
 
         ImGui::EndChild();
 
-		ImGui::End();
+		//ImGui::End();
 
 	}
 
