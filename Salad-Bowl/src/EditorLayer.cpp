@@ -130,9 +130,9 @@ namespace Salad {
 		//m_EditorIcons = Salad::TextureManager::get().loadTexture2D("assets/textures/editor_icons.png");
 
 		auto diffuseShader = Shader::create("assets/shaders/Diffuse.glsl");
-		Ref<Texture2D> cubeTexture = loadTexture2D("textures.crate_diffuse");
 
-		//auto cubeTexture = Salad::TextureManager::get().loadTexture2D("assets/textures/crate_diffuse.png");
+		//Ref<Texture2D> cubeTexture = loadTexture2D("textures.crate_diffuse");
+		auto cubeTexture = Salad::TextureManager::get().loadTexture2D("assets/textures/crate_diffuse.png");
 		auto grassTexture = Salad::TextureManager::get().loadTexture2D("assets/textures/grass_painted_large.png");
 		auto leavesTexture = Salad::TextureManager::get().loadTexture2D("assets/textures/leaves_cartoon.png");
 		auto treeBarkTexture = Salad::TextureManager::get().loadTexture2D("assets/textures/tree_bark_cartoon.png");

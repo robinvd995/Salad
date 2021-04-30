@@ -5,7 +5,30 @@
 
 namespace Salad {
 
-	Ref<Texture2D> loadTexture2D(const char* filepath) {
+	namespace Defaults {
+		inline Texture2D* loadDefaultTexture2D() {
+			unsigned char defaultTextureData[16] = {
+				255, 000, 255, 255,
+				000, 000, 000, 255,
+				255, 000, 255, 255,
+				000, 000, 000, 255
+			};
+			TextureSpecification spec;
+			spec.format = TextureFormat::RGBA;
+			spec.width = 2;
+			spec.height = 2;
+			spec.filterWrapSpec.minFilter = TextureMinFilterSpecification::Nearest;
+			spec.filterWrapSpec.magFilter = TextureMagFilterSpecification::Nearest;
+			spec.filterWrapSpec.wrapS = TextureWrapSpecification::Repeat;
+			spec.filterWrapSpec.wrapT = TextureWrapSpecification::Repeat;
+			spec.filterWrapSpec.wrapR = TextureWrapSpecification::Repeat;
+
+			Texture2D* defaultTexture = Texture2D::createPtr(spec, &defaultTextureData[0]);
+			return defaultTexture;
+		}
+	}
+
+	inline Texture2D* loadTexture2D(const char* filepath) {
 		using namespace Salad::Util;
 
 		int error = 0;
@@ -28,7 +51,7 @@ namespace Salad {
 
 		uint64_t count = 0;
 		unsigned char* textureData = buffer.readArray<unsigned char>(&count);
-		Ref<Texture2D> texture = Texture2D::create(spec, textureData);
+		Texture2D* texture = Texture2D::createPtr(spec, textureData);
 
 		buffer.freeBuffer();
 		archiveClose(archive);

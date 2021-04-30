@@ -76,6 +76,7 @@ namespace Salad {
 		static Ref<Texture2D> create(uint32_t width, uint32_t height);
 		static Ref<Texture2D> create(uint32_t width, uint32_t height, unsigned char* data);
 		static Ref<Texture2D> create(TextureSpecification& specs, unsigned char* data);
+		static Texture2D* createPtr(TextureSpecification& specs, unsigned char* data);
 	};
 
 	class TextureCubeMap : public Texture {

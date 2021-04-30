@@ -3,6 +3,7 @@
 
 #include "EditorLayer.h"
 #include "TestLayer.hpp"
+#include "Salad/Core/ResourceLayer.h"
 
 namespace Salad {
 
@@ -11,6 +12,8 @@ namespace Salad {
 		SaladBowl() :
 			Application("SaladBowl - Salad Editor")
 		{
+			pushLayer(new ResourceLayer());
+			
 			pushLayer(new EditorLayer());
 			//pushLayer(new TestLayer());
 		}

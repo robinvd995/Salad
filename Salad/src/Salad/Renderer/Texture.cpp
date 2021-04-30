@@ -45,6 +45,16 @@ namespace Salad {
 		return nullptr;
 	}
 
+	Texture2D* Texture2D::createPtr(TextureSpecification& specs, unsigned char* data) {
+		switch (Renderer::getAPI()) {
+			case RenderAPI::API::NONE: SLD_CORE_ASSERT(false, "Render API None is not supported!"); return nullptr;
+			case RenderAPI::API::OpenGL: return new OpenGLTexture2D(specs, data);
+		}
+
+		SLD_CORE_ASSERT(false, "Unknown renderer API!");
+		return nullptr;
+	}
+
 	Ref<TextureCubeMap> TextureCubeMap::create(const std::string& filepath, const std::string& extension) {
 		switch (Renderer::getAPI()) {
 			case RenderAPI::API::NONE: SLD_CORE_ASSERT(false, "Render API None is not supported!"); return nullptr;
