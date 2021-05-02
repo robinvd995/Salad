@@ -1,10 +1,16 @@
 #include "sldpch.h"
 #include "ResourceManager.h"
 
+#include "Salad/Renderer/TextureLoader.hpp"
+
 namespace Salad {
 
 #define SLD_TEXTURE_CACHE_SIZE 512 // Memory size = SLD_TEXTURE_CACHE_SIZE * sizeof(T*) = 8
 #define SLD_TEXTURE_MISSING_ID "defaults.texture_missing" // doesn't really matter, as long as it is unique and doesnt conflict with other resource id's
+
+	ResourceManager::ResourceManager(const std::string& archiveLocation) :
+		m_ResourceAcrhiveLocation(archiveLocation)
+	{}
 
 	void ResourceManager::init() {
 		m_TextureCache.alloc(SLD_TEXTURE_CACHE_SIZE);

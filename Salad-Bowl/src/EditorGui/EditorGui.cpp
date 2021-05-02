@@ -55,8 +55,9 @@ namespace Salad::EditorGui {
 		for (auto panel : m_Panels) panel->loadSettings();
 	}
 
-	void EditorUI::setSceneContext(Ref<Scene> scene) {
-		for (auto panel : m_Panels) panel->setContext(scene);
+	void EditorUI::setContext(EditorScene* context) {
+		m_EditorContext = context;
+		for (auto panel : m_Panels) panel->setContext(context);
 	}
 
 	void EditorUI::onImGuiRender() {
@@ -137,11 +138,23 @@ namespace Salad::EditorGui {
 
 		ImGui::Begin("Runtime");
 		ImVec2 runtimeButtonSize = { 64.0f, 64.0f };
-		ImGui::ImageButton((void*)iconsTextureId, ImVec2{ 32.0f, 32.0f }, ImVec2(0.125f, 0.0f), ImVec2(0.25f, 0.125f), 8);
+		ImGui::PushID(0);
+		if (ImGui::ImageButton((void*)iconsTextureId, ImVec2{ 32.0f, 32.0f }, ImVec2(0.125f, 0.0f), ImVec2(0.25f, 0.125f), 8) && m_EditorContext) {
+			m_EditorContext->startRuntime();
+		}
+		ImGui::PopID();
 		ImGui::SameLine();
-		ImGui::ImageButton((void*)iconsTextureId, ImVec2{ 32.0f, 32.0f }, ImVec2(0.25f, 0.0f), ImVec2(0.375f, 0.125f), 8);
+		ImGui::PushID(1);
+		if (ImGui::ImageButton((void*)iconsTextureId, ImVec2{ 32.0f, 32.0f }, ImVec2(0.25f, 0.0f), ImVec2(0.375f, 0.125f), 8) && m_EditorContext) {
+			m_EditorContext->pauseRuntime();
+		}
+		ImGui::PopID();
 		ImGui::SameLine();
-		ImGui::ImageButton((void*)iconsTextureId, ImVec2{ 32.0f, 32.0f }, ImVec2(0.0f, 0.0f), ImVec2(0.125f, 0.125f), 8);
+		ImGui::PushID(2);
+		if(ImGui::ImageButton((void*)iconsTextureId, ImVec2{ 32.0f, 32.0f }, ImVec2(0.0f, 0.0f), ImVec2(0.125f, 0.125f), 8) && m_EditorContext) {
+			m_EditorContext->stopRuntime();
+		}
+		ImGui::PopID();
 		ImGui::End();
 
 		bool status_bar = true;
@@ -209,7 +222,7 @@ namespace Salad::EditorGui {
 
 		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
 		if (m_ViewportSize != *((glm::vec2*)&viewportPanelSize) && viewportPanelSize.x > 0 && viewportPanelSize.y > 0) {
-			m_ResizeHandler();
+			EditorEventManager::submitEvent(EditorEventViewportResized(viewportPanelSize.x, viewportPanelSize.y));
 			m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 
 		}
@@ -220,7 +233,7 @@ namespace Salad::EditorGui {
 		//m_GizmoType = ImGuizmo::OPERATION::ROTATE;
 
 		// Gizmo
-		if (EditorSelectionContext::isSelectionContextType(EditorSelectionContextType::Entity)) {
+		if (m_EditorState != EditorState::Runtime && EditorSelectionContext::isSelectionContextType(EditorSelectionContextType::Entity)) {
 			EntitySelectionContext* context = EditorSelectionContext::getSelectionContext<EntitySelectionContext>();
 			Entity selectedEntity = context->getSelectedEntity(); // TODO: central selected entity
 			if (selectedEntity && m_GizmoType != -1) {
@@ -231,8 +244,9 @@ namespace Salad::EditorGui {
 				float windowHeight = (float)ImGui::GetWindowHeight();
 				ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight);
 
-				glm::mat4 viewMatrix = m_EditorCamera->getViewMatrix();
-				glm::mat4 projectionMatrix = m_EditorCamera->getProjection();
+				EditorCamera& editorCamera = m_EditorContext->getEditorCamera();
+				glm::mat4 viewMatrix = editorCamera.getViewMatrix();
+				glm::mat4 projectionMatrix = editorCamera.getProjection();
 
 				EntityTransform& et = selectedEntity.getComponent<TransformComponent>().Transform;
 				glm::mat4 ettm = et.getWorldSpaceTransformationMatrix();
@@ -273,5 +287,14 @@ namespace Salad::EditorGui {
 		}
 
 		m_EditorSettingsWindow.m_PreviousShowWindow = m_EditorSettingsWindow.m_ShowWindow;
+	}
+
+	void EditorUI::onEditorEvent(const EditorEvent& evnt) {
+		switch(evnt.type) {
+			case EditorEventType::StateChanged:
+				EditorEventStateChanged& e = (EditorEventStateChanged&)evnt;
+				m_EditorState = static_cast<EditorState>(e.state);
+				break;
+		}
 	}
 }

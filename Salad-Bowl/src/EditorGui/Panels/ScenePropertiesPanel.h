@@ -14,7 +14,7 @@ namespace Salad::EditorGui {
 
 		virtual void init() override;
 		virtual void loadSettings() override;
-		virtual void setContext(const Ref<Scene>& scene) override {}
+		virtual void setContext(EditorScene* scene) override {}
 
 	protected:
 		virtual void onImGuiRender() override;

@@ -5,12 +5,14 @@
 
 namespace Salad {
 
-	ResourceLayer::ResourceLayer() {
+	ResourceLayer::ResourceLayer(const std::string& resourceArchiveLocation) : 
+		m_ResourceArchiveLocation(resourceArchiveLocation)
+	{
 
 	}
 
 	void ResourceLayer::onAttach() {
-		ResourceManager::s_Instance = new ResourceManager();
+		ResourceManager::s_Instance = new ResourceManager(m_ResourceArchiveLocation);
 		ResourceManager::s_Instance->init();
 		ResourceManager::s_Instance->setupDefaultResources();
 	}

@@ -24,124 +24,17 @@ namespace Salad {
 		m_Registry.destroy(entity);
 	}
 
-	void Scene::onUpdateEditor(Timestep& ts, Camera& camera, glm::mat4& viewMatrix, Entity& selectedEntity) {
-
-		Salad::Renderer::beginScene({ camera.getProjection(), viewMatrix });
-
-		// Calculates Transformation Matrices where marked dirty
-		{
-			// TODO:	Add a "Dirty" Component to the child entities in need of updating
-			//			then group on TransformComponent,RelationshipComponent,Dirty
-			//			and update only the correct entities. This will make it so the sorting,
-			//			which is not beeing done atm, will not be as expensive as sorting all the static
-			//			entities in the scene
-			//			Sorting example:
-			// 
-			//				group.sort([this](const entt::entity lhd, const entt::entity rhd) {
-			//					EntityTransform& clhs = m_Registry.get<TransformComponent>(lhd);
-			//					EntityTransform& crhs = m_Registry.get<TransformComponent>(rhd);
-			//					return clhs.m_HierarchyDepth < crhs.m_HierarchyDepth;
-		    //				});
-			//
-			//	Source: https://skypjack.github.io/2019-08-20-ecs-baf-part-4-insights/
-
-			auto group = m_Registry.group<RelationshipComponent>(entt::get<TransformComponent>);
-
-			for(auto entity : group) {
-				auto [tc, relation] = group.get<TransformComponent, RelationshipComponent>(entity);
-				EntityTransform& entityTransform = tc.Transform;
-
-				if (entityTransform.m_TransformDirty) {
-					Entity parent = { relation.parentid, this };
-					EntityTransform& relativeTransform = parent ? parent.getComponent<TransformComponent>() : m_RootTransform;
-					entityTransform.calcWorldSpaceMatrix(relativeTransform);
-
-					entityTransform.m_TransformDirty = false;
-
-					for(entt::entity childid : relation.children) {
-						Entity child = { childid, this };
-						EntityTransform& childTransform = child.getComponent<TransformComponent>();
-						childTransform.m_TransformDirty = true;
-					}
-				}
-			}
-		}
-
-		// Rendering Meshes
-
-		auto group = m_Registry.group<TransformComponent>(entt::get<MeshComponent>);
-		for (auto entity : group) {
-			auto [t, m] = group.get<TransformComponent, MeshComponent>(entity);
-
-			m.MeshTexture->bind();
-			Salad::Renderer::submitEditorMesh(m.MeshShader, m.MeshVertexArray, t.Transform.getWorldSpaceTransformationMatrix(), (int)entity, entity == selectedEntity);
-		}
-
-		Salad::Renderer::endScene();
-	}
-
 	void Scene::onUpdate(Timestep& ts) {
 
-		// Update Scripts
-		{
-			m_Registry.view<NativeScriptComponent>().each([=](auto entity, NativeScriptComponent& nsc) {
+		// Updates
+		updateScripts(ts);
+		updateTransforms(ts);
 
-				if(!nsc.instance){
-					nsc.instance = nsc.instantiateScript();
-					nsc.instance->m_Entity = { entity, this };
-					nsc.instance->onCreate();
-				}
-
-				nsc.instance->onUpdate(ts);
-			});
+		// Renders
+		if (beginRenderScene()) {
+			renderMeshes(ts);
+			endRenderScene();
 		}
-
-		// Calculates Transformation Matrices where marked dirty
-		{
-			auto view = m_Registry.view<TransformComponent>();
-			for (auto entity : view) {
-				auto& tc = view.get<TransformComponent>(entity);
-				tc.Transform.updateTransform();
-				// BEFORE ENTITY_TRANSFORM: tc.Transform.calculateTransformationMatrix();
-			}
-		}
-
-		Camera* mainCam = nullptr;
-		// BEFORE ENTITY_TRANSFORM: Transform* mainCamTransform = nullptr;
-		EntityTransform* mainCamTransform = nullptr;
-		{
-			auto group = m_Registry.group<CameraComponent>(entt::get<TransformComponent>);
-			for(auto entity : group) {
-				auto [camTransform, camera] = group.get<TransformComponent, CameraComponent>(entity);
-
-				if(camera.Camera.isPrimaryCamera()) {
-					mainCam = &camera.Camera;
-					mainCamTransform = &camTransform.Transform;
-					break;
-				}
-			}
-		}
-
-		if(mainCam) {
-		
-			// BEFORE ENTITY_TRANSFORM: Salad::Renderer::beginScene({ mainCam->getProjection(), glm::inverse(mainCamTransform->getMatrix()) });
-			Salad::Renderer::beginScene({ mainCam->getProjection(), glm::inverse(mainCamTransform->getWorldSpaceTransformationMatrix()) });
-
-			// Rendering Meshes
-
-			auto group = m_Registry.group<TransformComponent>(entt::get<MeshComponent>);
-			for (auto entity : group) {
-				auto [t, m] = group.get<TransformComponent, MeshComponent>(entity);
-
-				m.MeshTexture->bind();
-				// BEFORE ENTITY_TRANSFORM: Salad::Renderer::submit(m.MeshShader, m.MeshVertexArray, t.Transform.getMatrix());
-				Salad::Renderer::submit(m.MeshShader, m.MeshVertexArray, t.Transform.getWorldSpaceTransformationMatrix());
-			}
-		
-			Salad::Renderer::endScene();
-		}
-		
-
 	}
 
 	Entity Scene::getFirstTagged(const std::string& tag) {
@@ -151,31 +44,6 @@ namespace Salad {
 			if (entityTag == tag) return { entity, this };
 		}
 	}
-
-	// Can do this but include components in scene header file
-
-	/*template<typename T>
-	bool Scene::entityHasComponent(Entity& entity) {
-		return m_Registry.has<T>(entity);
-	}
-
-	template<typename T, typename... Args>
-	T& Scene::entityAddComponent(Entity& entity, Args&&... args) {
-		SLD_CORE_ASSERT(!entityHasComponent<T>(entity), "Entity already has component!");
-		return m_Registry.emplace<T>(entity, std::forward<Args>(args)...);
-	}
-
-	template<typename T>
-	T& Scene::entityGetComponent(Entity& entity) {
-		SLD_CORE_ASSERT(entityHasComponent<T>(entity), "Entity does not have component!");
-		return m_Registry.get<T>(entity);
-	}
-
-	template<typename T>
-	void Scene::entityRemoveComponent(Entity& entity) {
-		SLD_CORE_ASSERT(entityHasComponent<T>(entity), "Entity does not have component!");
-		m_Registry.remove<T>(entity);
-	}*/
 
 	// ----- Entity Relationship Start -----
 
@@ -193,18 +61,12 @@ namespace Salad {
 	}*/
 
 	void Scene::setEntityParent(Entity& parent, Entity& child) {
-		//EntityTransform& parentTransform = parent.getComponent<TransformComponent>();
-		//EntityTransform& childTransform = child.getComponent<TransformComponent>();
-
 		RelationshipComponent& parentComponent = parent.getComponent<RelationshipComponent>();
 		RelationshipComponent& childComponent = child.getComponent<RelationshipComponent>();
 
 		parentComponent.children.push_back(child);
 		childComponent.parentid = parent;
 		childComponent.hierarchyDepth = parentComponent.hierarchyDepth + 1;
-
-		//childTransform.setParent(parent);
-		//parentTransform.addChild(child);
 	}
 
 	/*void Scene::addEntityChild(Entity& parent, Entity& child) {
@@ -212,5 +74,97 @@ namespace Salad {
 	}*/
 
 	// ----- Entity Relationship End -----
+
+	void Scene::updateScripts(Timestep ts) {
+		m_Registry.view<NativeScriptComponent>().each([=](auto entity, NativeScriptComponent& nsc) {
+
+			if (!nsc.instance) {
+				nsc.instance = nsc.instantiateScript();
+				nsc.instance->m_Entity = { entity, this };
+				nsc.instance->onCreate();
+			}
+
+			nsc.instance->onUpdate(ts);
+		});
+	}
+
+	void Scene::updateTransforms(Timestep ts) {
+
+		// TODO:	Add a "Dirty" Component to the child entities in need of updating
+		//			then group on TransformComponent,RelationshipComponent,Dirty
+		//			and update only the correct entities. This will make it so the sorting,
+		//			which is not beeing done atm, will not be as expensive as sorting all the static
+		//			entities in the scene
+		//			Sorting example:
+		// 
+		//				group.sort([this](const entt::entity lhd, const entt::entity rhd) {
+		//					EntityTransform& clhs = m_Registry.get<TransformComponent>(lhd);
+		//					EntityTransform& crhs = m_Registry.get<TransformComponent>(rhd);
+		//					return clhs.m_HierarchyDepth < crhs.m_HierarchyDepth;
+		//				});
+		//
+		//	Source: https://skypjack.github.io/2019-08-20-ecs-baf-part-4-insights/
+
+		auto group = m_Registry.group<RelationshipComponent>(entt::get<TransformComponent>);
+
+		for (auto entity : group) {
+			auto [tc, relation] = group.get<TransformComponent, RelationshipComponent>(entity);
+			EntityTransform& entityTransform = tc.Transform;
+
+			if (entityTransform.m_TransformDirty) {
+				Entity parent = { relation.parentid, this };
+				EntityTransform& relativeTransform = parent ? parent.getComponent<TransformComponent>() : m_RootTransform;
+				entityTransform.calcWorldSpaceMatrix(relativeTransform);
+
+				entityTransform.m_TransformDirty = false;
+
+				for (entt::entity childid : relation.children) {
+					Entity child = { childid, this };
+					EntityTransform& childTransform = child.getComponent<TransformComponent>();
+					childTransform.m_TransformDirty = true;
+				}
+			}
+		}
+	}
+
+	void Scene::renderMeshes(Timestep ts) {
+		auto group = m_Registry.group<TransformComponent>(entt::get<MeshComponent>);
+		for (auto entity : group) {
+			auto [t, m] = group.get<TransformComponent, MeshComponent>(entity);
+
+			m.MeshTexture->bind();
+			Salad::Renderer::submit(m.MeshShader, m.MeshVertexArray, t.Transform.getWorldSpaceTransformationMatrix());
+		}
+	}
+
+	bool Scene::beginRenderScene() {
+
+		Camera* mainCam = nullptr;
+		EntityTransform* mainCamTransform = nullptr;
+		{
+			auto group = m_Registry.group<CameraComponent>(entt::get<TransformComponent>);
+			for (auto entity : group) {
+				auto [camTransform, camera] = group.get<TransformComponent, CameraComponent>(entity);
+
+				if (camera.Camera.isPrimaryCamera()) {
+					mainCam = &camera.Camera;
+					mainCamTransform = &camTransform.Transform;
+					break;
+				}
+			}
+		}
+
+		if (mainCam) {
+			Salad::Renderer::beginScene({ mainCam->getProjection(), glm::inverse(mainCamTransform->getWorldSpaceTransformationMatrix()) });
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	void Scene::endRenderScene() {
+		Salad::Renderer::endScene();
+	}
 
 }

@@ -11,7 +11,7 @@ namespace Salad::Asset {
 
 	TextureAsset AssetSerializer::deserializeTexture(const std::string& filepath) {
 		TextureFilterWrapSpecification fwSpec;
-		std::string assetFilepath = assetFileFromPath(filepath);
+		std::string assetFilepath = assetFileFromPath(filepath, false);
 
 		if (!FileUtil::fileExists(assetFilepath)) {
 			serializeTextureData(assetFilepath, fwSpec);
@@ -27,7 +27,7 @@ namespace Salad::Asset {
 	}
 
 	void AssetSerializer::serializeTexture(TextureAsset& texture) {
-		serializeTextureData(assetFileFromPath(texture.getFilePath()), texture.getTextureFilterWrapSpecification());
+		serializeTextureData(assetFileFromPath(texture.getFilePath(), true), texture.getTextureFilterWrapSpecification());
 	}
 
 	void AssetSerializer::deserializeTextureData(const std::string& assetFilepath, TextureFilterWrapSpecification& fwSpec) {

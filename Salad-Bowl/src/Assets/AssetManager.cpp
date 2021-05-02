@@ -1,6 +1,6 @@
 #include "AssetManager.h"
 
-#include "Core.h"
+#include "Core/Core.h"
 #include "Util/FileUtils.hpp"
 
 #include "AssetExporter.hpp"
@@ -95,7 +95,7 @@ namespace Salad::Asset {
 		}
 
 		// Check if the asset file exists
-		if (!FileUtil::fileExists(assetFileFromPath(filepath))) {
+		if (!FileUtil::fileExists(assetFileFromPath(filepath, false))) {
 			SLD_BOWL_LOG_ERROR("Failed building asset '{0}', asset file does not exist!", filepath);
 			return false;
 		}

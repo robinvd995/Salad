@@ -124,22 +124,22 @@ namespace Salad::Xml {
 	};
 
 	XmlNode& XmlNode::appendAttribute(const char* key, int value) {
-		m_Node->append_attribute(m_Document->m_Xml->xml_doc.allocate_attribute(key, addSource<int>(value))); 
+		m_Node->append_attribute(m_Document->m_Xml->xml_doc.allocate_attribute(key, addPrimitiveSource<int>(value)));
 		return *this;
 	}
 
 	XmlNode& XmlNode::appendAttribute(const char* key, float value) {
-		m_Node->append_attribute(m_Document->m_Xml->xml_doc.allocate_attribute(key, addSource<float>(value))); 
+		m_Node->append_attribute(m_Document->m_Xml->xml_doc.allocate_attribute(key, addPrimitiveSource<float>(value)));
 		return *this;
 	}
 
 	XmlNode& XmlNode::appendAttribute(const char* key, bool value) {
-		m_Node->append_attribute(m_Document->m_Xml->xml_doc.allocate_attribute(key, addSource<int>(value ? 1 : 0))); 
+		m_Node->append_attribute(m_Document->m_Xml->xml_doc.allocate_attribute(key, addPrimitiveSource<int>(value ? 1 : 0)));
 		return *this;
 	}
 
 	XmlNode& XmlNode::appendAttribute(const char* key, uint64_t value) {
-		m_Node->append_attribute(m_Document->m_Xml->xml_doc.allocate_attribute(key, addSource<uint64_t>(value))); 
+		m_Node->append_attribute(m_Document->m_Xml->xml_doc.allocate_attribute(key, addPrimitiveSource<uint64_t>(value)));
 		return *this;
 	}
 
@@ -148,14 +148,31 @@ namespace Salad::Xml {
 		return *this;
 	}
 
+	XmlNode& XmlNode::setBufferedValue(const std::string& value) {
+		m_Node->value(addStrSource(value));
+		return *this;
+	}
+
 	template<typename T>
-	const char* XmlNode::addSource(T value) {
-		int curSize = m_Document->m_Xml->source_buffer.size();
+	const char* XmlNode::addPrimitiveSource(T value) {
+		//int curSize = m_Document->m_Xml->source_buffer.size();
 		std::string strVal = std::to_string(value);
-		int newSize = curSize + strVal.size();
+		//int newSize = curSize + strVal.size();
+		//if (newSize > XML_SOURCE_BUFFER_SIZE) { SLD_CORE_ERROR("Xml source buffer exceeded the predetermined max size!"); }
+		//m_Document->m_Xml->source_buffer.resize(newSize);
+		//memcpy(&m_Document->m_Xml->source_buffer.data()[curSize], strVal.data(), strVal.length());
+		//m_Document->m_Xml->source_buffer.push_back('\0');
+		//char* thing = &m_Document->m_Xml->source_buffer.data()[curSize];
+		//return thing;
+		return addStrSource(strVal);
+	}
+
+	const char* XmlNode::addStrSource(const std::string& value) {
+		int curSize = m_Document->m_Xml->source_buffer.size();
+		int newSize = curSize + value.size();
 		if (newSize > XML_SOURCE_BUFFER_SIZE) { SLD_CORE_ERROR("Xml source buffer exceeded the predetermined max size!"); }
 		m_Document->m_Xml->source_buffer.resize(newSize);
-		memcpy(&m_Document->m_Xml->source_buffer.data()[curSize], strVal.data(), strVal.length());
+		memcpy(&m_Document->m_Xml->source_buffer.data()[curSize], value.data(), value.length());
 		m_Document->m_Xml->source_buffer.push_back('\0');
 		char* thing = &m_Document->m_Xml->source_buffer.data()[curSize];
 		return thing;

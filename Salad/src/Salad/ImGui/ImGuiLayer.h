@@ -11,6 +11,7 @@ namespace Salad {
 
 	public:
 		ImGuiLayer();
+		ImGuiLayer(const char* imGuiIniFile);
 		~ImGuiLayer();
 
 		void begin();
@@ -23,6 +24,8 @@ namespace Salad {
 
 	private:
 		float m_Time = 0.0f;
+		bool m_HasCustomIniLocation = false;
+		const char* m_ImGuiIniFile;
 	};
 
 }

@@ -12,20 +12,16 @@
 
 #include "Io/ColladaLoader.h"
 
-#include "EditorCamera.h"
 #include "EditorSelectionContext.h"
 
 #include "Salad/Renderer/PostProcessing.h"
 
 #include "EditorGui/EditorGui.h"
+#include "Core/EditorScene.h"
 
 namespace Salad {
 
-	enum class EditorState {
-		Editor, Runtime
-	};
-
-	class EditorLayer : public Layer {
+	class EditorLayer : public Layer, public EditorEventListener {
 
 	public:
 
@@ -45,8 +41,9 @@ namespace Salad {
 		bool onKeyPressedEvent(KeyPressedEvent& e);
 		bool onMousePressedEvent(MouseButtonPressedEvent& e);
 
-		//void onViewportResized(uint32_t width, uint32_t height);
 		void onViewportResized();
+
+		virtual void onEditorEvent(const EditorEvent& evnt) override;
 
 	private:
 		void serialize();
@@ -54,56 +51,15 @@ namespace Salad {
 
 	private:
 		EditorGui::EditorUI m_EditorUI;
-
-		Entity m_CubeEntity;
-		Entity m_TreeEntity;
-		Entity m_LeavesEntity;
-		Entity m_PlatformEntity;
-		Entity m_CameraEntity;
+		EditorScene m_EditorScene;
 
 		Ref<VertexArray> m_SkyboxVAO;
 		Ref<Shader> m_SkyboxShader;
 		Ref<TextureCubeMap> m_SkyBoxTexture;
 
-		Ref<Texture2D> m_MaterialTexture;
-
-		Ref<Scene> m_Scene;
-
 		Ref<Framebuffer> m_Framebuffer;
-		//glm::vec2 m_ViewportSize;
 
-		//bool m_IsViewportFocused = false;
-		//bool m_IsViewportHovered = false;
-
-		EditorCamera m_EditorCamera;
-		EditorState m_EditorState = EditorState::Editor;
-
-		// Editor Panels
-		// EditorGui::SceneHierarchyPanel m_SceneHierarchyPanel;
-		// EditorGui::ScenePropertiesPanel m_ScenePropertiesPanel;
-		// EditorGui::MaterialExplorerPanel m_MaterialExplorerPanel;
-		// EditorGui::FileExplorerPanel m_FileExplorerPanel;
-		// 
-		// bool m_ShowSceneHierarchyPanel = true;
-		// bool m_ShowScenePropertiesPanel = true;
-		// bool m_ShowMaterialExplorerPanel = true;
-		// bool m_ShowFileExplorerPanel = true;
-
-		// Windows
-		EditorGui::EditorSettingsWindow m_EditorSettingsWindow;
-
-		float m_EditorCameraSensitivity = 0.5f;
-
-		//int m_GizmoType = -1;
-		//glm::mat4 m_GizmoTransform{ 1.0f };
-
-		//int m_ViewportMouseX = 0, m_ViewportMouseY = 0;
-		//int m_ViewportWidth = 0, m_ViewportHeight = 0;
-		//bool m_ImGuizmoIsHovering = false;
 		Entity m_HoveredEntity;
-
-		// Move to Editor Scene
-		//Ref<EditorSelectionContext> m_EditorSelectionContext;
 
 		// Frame timer
 		// Chrono stuff ooofff!
@@ -123,4 +79,3 @@ namespace Salad {
 	};
 
 }
-

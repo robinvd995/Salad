@@ -3,6 +3,7 @@
 #include <string>
 #include <algorithm>
 #include <fstream>
+#include <filesystem>
 
 #define SLD_FILE_PATH_SEPERATOR '/'
 
@@ -105,5 +106,15 @@ namespace Salad::FileUtil {
 		size_t index = path.find_first_of('.');
 		if (index == std::string::npos) return path;
 		return path.substr(0, index);
+	}
+
+	inline std::string popFileName(const std::string& path) {
+		size_t index = path.find_last_of('/');
+		if (index == std::string::npos) return path;
+		return path.substr(0, index);
+	}
+
+	inline void createDirectories(const std::string& path) {
+		std::filesystem::create_directories(path);
 	}
 }

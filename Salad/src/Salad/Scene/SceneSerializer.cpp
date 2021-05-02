@@ -65,7 +65,7 @@ namespace Salad {
 		m_Scene->m_Registry.each([this, &jsonEntities](auto p_entity) {
 			auto jEntity = json::object();
 
-			Entity entity{ p_entity, m_Scene.get() };
+			Entity entity{ p_entity, m_Scene };
 			jEntity["id"] = 215487643135;
 
 			serializeComponent<TagComponent>("TagComponent", entity, jEntity, [](json& jComponent, TagComponent& component) {

@@ -1,5 +1,6 @@
 <asset_manager>
-	<included_assets size="4">
+	<included_assets size="5">
+		<asset dirty="1">assets/textures/checkerboard.png</asset>
 		<asset dirty="0">assets/textures/crate_diffuse.png</asset>
 		<asset dirty="0">assets/textures/spritemap_link.png</asset>
 		<asset dirty="0">assets/textures/tree_bark_cartoon.png</asset>

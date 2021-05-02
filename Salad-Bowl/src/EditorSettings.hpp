@@ -15,7 +15,7 @@
 
 using json = nlohmann::json;
 
-#define SLD_EDITOR_SETTINGS_FILEPATH "editor_settings.jcfg"
+#define SLD_EDITOR_SETTINGS_FILEPATH ".editor/editor_settings.jcfg"
 
 namespace Salad {
 

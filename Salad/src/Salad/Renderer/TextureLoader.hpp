@@ -3,6 +3,8 @@
 #include "Texture.h"
 #include "Salad/Util/Archiver.hpp"
 
+#include "Salad/Core/ResourceManager.h"
+
 namespace Salad {
 
 	namespace Defaults {
@@ -32,7 +34,7 @@ namespace Salad {
 		using namespace Salad::Util;
 
 		int error = 0;
-		Archive archive = archiveOpen("temp_resource_output.zip", ArchiverOpenFlags_None, &error);
+		Archive archive = archiveOpen(ResourceManager::getResourceArchiveLocation().c_str(), ArchiverOpenFlags_None, &error);
 
 		// error handling here
 

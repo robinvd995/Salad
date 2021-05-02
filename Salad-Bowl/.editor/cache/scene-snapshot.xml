@@ -1,0 +1,64 @@
+<scene>
+	<entities>
+		<entity id="64" tag="Camera">
+			<component_transform>
+				<position>0.000000 0.000000 0.000000</position>
+				<rotation>0.000000 0.000000 0.000000 0.000000</rotation>
+				<scale>1.000000 1.000000 1.000000</scale>
+			</component_transform>
+			<component_relation parent="128" depth="0"/>
+			<component_camera projection_type="0" primary="1">
+				<perspective fov="65.000000" aspect_ratio="1.777778" near_clip="0.100000" far_clip="1000.000000"/>
+				<orthographic left="-16.000000" right="16.000000" top="9.000000" bottom="-9.000000" z_near="-1.000000" z_far="1.000000"/>
+			</component_camera>
+		</entity>
+		<entity id="64" tag="Platform">
+			<component_transform>
+				<position>0.000000 0.005000 0.000000</position>
+				<rotation>0.000000 0.000000 0.000000 0.000000</rotation>
+				<scale>10.000000 0.010000 10.000000</scale>
+			</component_transform>
+			<component_relation parent="128" depth="0"/>
+			<component_mesh model="models.not_yet_implemented" shader="shader.not_yet_implemented" texture="textures.not_yet_implemented"/>
+		</entity>
+		<entity id="64" tag="Leaves">
+			<component_transform>
+				<position>0.000000 0.000000 0.000000</position>
+				<rotation>0.000000 0.000000 0.000000 0.000000</rotation>
+				<scale>1.000000 1.000000 1.000000</scale>
+			</component_transform>
+			<component_relation parent="128" depth="1"/>
+			<component_mesh model="models.not_yet_implemented" shader="shader.not_yet_implemented" texture="textures.not_yet_implemented"/>
+		</entity>
+		<entity id="64" tag="Tree">
+			<component_transform>
+				<position>3.000000 0.000000 -3.000000</position>
+				<rotation>0.000000 0.000000 0.000000 0.000000</rotation>
+				<scale>0.400000 0.400000 0.400000</scale>
+			</component_transform>
+			<component_relation parent="128" depth="0">
+				<child>child_id</child>
+			</component_relation>
+			<component_mesh model="models.not_yet_implemented" shader="shader.not_yet_implemented" texture="textures.not_yet_implemented"/>
+		</entity>
+		<entity id="64" tag="Crate2">
+			<component_transform>
+				<position>-3.000000 1.000000 1.500000</position>
+				<rotation>0.000000 0.000000 0.000000 0.000000</rotation>
+				<scale>1.000000 1.000000 1.000000</scale>
+			</component_transform>
+			<component_relation parent="128" depth="0"/>
+			<component_mesh model="models.not_yet_implemented" shader="shader.not_yet_implemented" texture="textures.not_yet_implemented"/>
+		</entity>
+		<entity id="64" tag="Crate">
+			<component_transform>
+				<position>0.000000 1.000000 0.000000</position>
+				<rotation>0.000000 0.000000 0.000000 0.000000</rotation>
+				<scale>1.000000 1.000000 1.000000</scale>
+			</component_transform>
+			<component_relation parent="128" depth="0"/>
+			<component_mesh model="models.not_yet_implemented" shader="shader.not_yet_implemented" texture="textures.not_yet_implemented"/>
+		</entity>
+	</entities>
+</scene>
+

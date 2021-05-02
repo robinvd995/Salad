@@ -79,10 +79,13 @@ namespace Salad::Xml {
 		XmlNode& appendAttribute(const char* key, bool value);
 		XmlNode& appendAttribute(const char* key, uint64_t value);
 		XmlNode& setValue(const char* value);
+		XmlNode& setBufferedValue(const std::string& value);
 
 	private:
 		template<typename T>
-		const char* addSource(T value);
+		const char* addPrimitiveSource(T value);
+
+		const char* addStrSource(const std::string& value);
 
 	private:
 		XmlDocument* m_Document = nullptr;

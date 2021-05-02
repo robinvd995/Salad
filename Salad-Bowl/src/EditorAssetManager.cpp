@@ -68,14 +68,14 @@ namespace Salad {
 	}
 
 	void EditorAssetManager::onAssetIncluded(const std::string& filepath) {
-		std::string& assetFilepath = Asset::assetFileFromPath(filepath);
+		std::string& assetFilepath = Asset::assetFileFromPath(filepath, false);
 		s_Instance->m_FileObserver.addFile(filepath);
 		s_Instance->m_FileObserver.addFile(assetFilepath);
 		s_Instance->serialize();
 	}
 
 	void EditorAssetManager::onAssetExcluded(const std::string& filepath) {
-		std::string& assetFilepath = Asset::assetFileFromPath(filepath);
+		std::string& assetFilepath = Asset::assetFileFromPath(filepath, false);
 		s_Instance->m_FileObserver.removeFile(filepath);
 		s_Instance->m_FileObserver.removeFile(assetFilepath);
 	}

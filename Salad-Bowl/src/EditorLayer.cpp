@@ -14,11 +14,15 @@
 #include <glm/glm/gtc/type_ptr.hpp>
 #include <glm/gtx/matrix_decompose.hpp>
 
+#include "Core/Core.h"
+
 #include "EditorGui/EditorStyle.h"
 
 #include "EditorAssetManager.h"
 
 #include "Salad/Math/Math.h"
+
+#include "Core/EditorEventManager.hpp"
 
 #include <functional>
 
@@ -27,175 +31,7 @@
 
 namespace Salad {
 
-	EditorLayer::EditorLayer()
-	{
-		/*float minX = -0.5f, minY = -0.5f, minZ = -0.5f, minU = 0.0f, minV = 0.0f;
-		float maxX = 0.5f, maxY = 0.5f, maxZ = 0.5f, maxU = 1.0f, maxV = 1.0f;
-
-		float vertexData[] = {
-			minX, minY, minZ, minU, minV, 0.0f, 0.0f, 0.0f,
-			maxX, minY, minZ, maxU, minV, 0.0f, 0.0f, 0.0f,
-			minX, minY, maxZ, minU, maxV, 0.0f, 0.0f, 0.0f,
-			maxX, minY, maxZ, maxU, maxV, 0.0f, 0.0f, 0.0f,
-
-			minX, maxY, minZ, minU, maxV, 0.0f, 0.0f, 0.0f,
-			maxX, maxY, minZ, maxU, maxV, 0.0f, 0.0f, 0.0f,
-			minX, maxY, maxZ, minU, minV, 0.0f, 0.0f, 0.0f,
-			maxX, maxY, maxZ, maxU, minV, 0.0f, 0.0f, 0.0f
-		};
-
-		uint32_t indexData[] = {
-			0, 1, 2, 1, 3, 2, // Bottom Face
-			4, 5, 6, 5, 7, 6, // Top Face
-			0, 1, 5, 0, 5, 4, // Front Face
-			2, 3, 7, 2, 7, 6, // Back Face
-			0, 2, 6, 0, 6, 4, // Left Face
-			1, 3, 7, 1, 7, 5  // Right Face
-		};*/
-
-		m_Scene = createRef<Scene>();
-
-		ColladaLoader loader;
-		auto cubeVao = VertexArray::create();
-
-		{
-			auto meshes = loader.loadColladaModel("assets/models/cube.dae");
-			Mesh* cubeMesh = meshes[0];
-
-			Ref<Salad::VertexBuffer> cubeVbo = VertexBuffer::create(cubeMesh->getBuffer().getBuffer(), cubeMesh->getBuffer().getBufferSize() * 4, SLD_STATIC_DRAW);
-			cubeVbo->setLayout({
-				{ "a_Position", Salad::ShaderDataType::Float3 },
-				{ "a_TexCoord", Salad::ShaderDataType::Float2 },
-				{ "a_Normal",   Salad::ShaderDataType::Float3 }
-			});
-
-			cubeVao->addVertexBuffer(cubeVbo);
-			Ref<IndexBuffer> indexBuffer = IndexBuffer::create(&cubeMesh->getIndexBuffer().front(), cubeMesh->getIndexBuffer().size());
-			cubeVao->setIndexBuffer(indexBuffer);
-			cubeVao->unbind();
-		}
-
-		auto treeMeshes = loader.loadColladaModel("assets/models/tree.dae");
-		auto treeVao = VertexArray::create();
-		{
-			Mesh* treeMesh = treeMeshes[0];
-			Ref<Salad::VertexBuffer> cubeVbo = VertexBuffer::create(treeMesh->getBuffer().getBuffer(), treeMesh->getBuffer().getBufferSize() * 4, SLD_STATIC_DRAW);
-			cubeVbo->setLayout({
-				{ "a_Position", Salad::ShaderDataType::Float3 },
-				{ "a_TexCoord", Salad::ShaderDataType::Float2 },
-				{ "a_Normal",   Salad::ShaderDataType::Float3 }
-			});
-
-			treeVao->addVertexBuffer(cubeVbo);
-			Ref<IndexBuffer> indexBuffer = IndexBuffer::create(&treeMesh->getIndexBuffer().front(), treeMesh->getIndexBuffer().size());
-			treeVao->setIndexBuffer(indexBuffer);
-			treeVao->unbind();
-		}
-
-		auto treeLeavesVao = VertexArray::create();
-		{
-			Mesh* leavesMesh = treeMeshes[1];
-			Ref<Salad::VertexBuffer> cubeVbo = VertexBuffer::create(leavesMesh->getBuffer().getBuffer(), leavesMesh->getBuffer().getBufferSize() * 4, SLD_STATIC_DRAW);
-			cubeVbo->setLayout({
-				{ "a_Position", Salad::ShaderDataType::Float3 },
-				{ "a_TexCoord", Salad::ShaderDataType::Float2 },
-				{ "a_Normal",   Salad::ShaderDataType::Float3 }
-			});
-
-			treeLeavesVao->addVertexBuffer(cubeVbo);
-			Ref<IndexBuffer> indexBuffer = IndexBuffer::create(&leavesMesh->getIndexBuffer().front(), leavesMesh->getIndexBuffer().size());
-			treeLeavesVao->setIndexBuffer(indexBuffer);
-			treeLeavesVao->unbind();
-		}
-
-		/*auto cubeVao = VertexArray::create();
-
-		Ref<Salad::VertexBuffer> cubeVbo = VertexBuffer::create(vertexData, sizeof(vertexData), SLD_STATIC_DRAW);
-		cubeVbo->setLayout({
-			{ "a_Position", Salad::ShaderDataType::Float3 },
-			{ "a_TexCoord", Salad::ShaderDataType::Float2 },
-			{ "a_Normal",   Salad::ShaderDataType::Float3 }
-		});
-
-		cubeVao->addVertexBuffer(cubeVbo);
-		Ref<IndexBuffer> indexBuffer = IndexBuffer::create(indexData, 36);
-		cubeVao->setIndexBuffer(indexBuffer);
-		cubeVao->unbind();*/
-
-		// Load editor textures
-		//m_TextureButtonPlay = Salad::TextureManager::get().loadTexture2D("assets/textures/buttons/button_play.png");
-		//m_TextureButtonPause = Salad::TextureManager::get().loadTexture2D("assets/textures/buttons/button_pause.png");
-		//m_TextureButtonStop = Salad::TextureManager::get().loadTexture2D("assets/textures/buttons/button_stop.png");
-
-		//m_EditorIcons = Salad::TextureManager::get().loadTexture2D("assets/textures/editor_icons.png");
-
-		auto diffuseShader = Shader::create("assets/shaders/Diffuse.glsl");
-
-		//Ref<Texture2D> cubeTexture = loadTexture2D("textures.crate_diffuse");
-		auto cubeTexture = Salad::TextureManager::get().loadTexture2D("assets/textures/crate_diffuse.png");
-		auto grassTexture = Salad::TextureManager::get().loadTexture2D("assets/textures/grass_painted_large.png");
-		auto leavesTexture = Salad::TextureManager::get().loadTexture2D("assets/textures/leaves_cartoon.png");
-		auto treeBarkTexture = Salad::TextureManager::get().loadTexture2D("assets/textures/tree_bark_cartoon.png");
-
-		class CubeController : public ScriptableEntity {
-		
-		public:
-			virtual void onCreate() {}
-
-			virtual void onUpdate(Timestep ts) {
-				auto& transform = getComponent<TransformComponent>().Transform;
-
-				float dx = 0.0f;
-				float dy = 0.0f;
-				if(Input::isKeyPressed(SLD_KEY_A)) {
-					dx -= 5.0f * ts;
-				}
-				if (Input::isKeyPressed(SLD_KEY_D)) {
-					dx += 5.0f * ts;
-				}
-				if (Input::isKeyPressed(SLD_KEY_W)) {
-					dy += 5.0f * ts;
-				}
-				if (Input::isKeyPressed(SLD_KEY_S)) {
-					dy -= 5.0f * ts;
-				}
-
-				transform.translate(dx, dy, 0.0f);
-			}
-
-			virtual void onDestroy() override {}
-		
-		};
-
-		m_CubeEntity = m_Scene->createEntity("Crate");
-		m_CubeEntity.addComponent<MeshComponent>(cubeVao, diffuseShader, cubeTexture);
-		m_CubeEntity.addComponent<NativeScriptComponent>().bind<CubeController>();
-		m_CubeEntity.getComponent<TransformComponent>().Transform.setPosition(0.0f, 1.0f, 0.0f);
-
-		m_CubeEntity = m_Scene->createEntity("Crate2");
-		m_CubeEntity.addComponent<MeshComponent>(cubeVao, diffuseShader, cubeTexture);
-		m_CubeEntity.addComponent<NativeScriptComponent>().bind<CubeController>();
-		m_CubeEntity.getComponent<TransformComponent>().Transform.setPosition(-3.0f, 1.0f, 1.5f);
-
-		m_TreeEntity = m_Scene->createEntity("Tree");
-		m_TreeEntity.addComponent<MeshComponent>(treeVao, diffuseShader, treeBarkTexture);
-		m_TreeEntity.getComponent<TransformComponent>().Transform.setPosition(3.0f, 0.0f, -3.0f);
-		m_TreeEntity.getComponent<TransformComponent>().Transform.setScale(0.4f, 0.4f, 0.4f);
-
-		m_LeavesEntity = m_Scene->createEntity("Leaves");
-		m_LeavesEntity.addComponent<MeshComponent>(treeLeavesVao, diffuseShader, leavesTexture);
-
-		m_LeavesEntity.setParent(m_TreeEntity);
-
-		m_PlatformEntity = m_Scene->createEntity("Platform");
-		m_PlatformEntity.addComponent<MeshComponent>(cubeVao, diffuseShader, grassTexture);
-		m_PlatformEntity.getComponent<TransformComponent>().Transform.setPosition(0.0f, 0.005f, 0.0f);
-		m_PlatformEntity.getComponent<TransformComponent>().Transform.setScale(10.0f, 0.01f, 10.0f);
-
-		m_CameraEntity = m_Scene->createEntity("Camera");
-		PerspectiveCameraProperties camProps;
-		m_CameraEntity.addComponent<CameraComponent>(camProps);
-
+	EditorLayer::EditorLayer() {
 		float skyboxVertices[] = {
 			-1.0f,  1.0f, -1.0f,
 			-1.0f, -1.0f, -1.0f,
@@ -302,25 +138,32 @@ namespace Salad {
 	void EditorLayer::onAttach() {
 		Salad::RenderCommand::setClearColor(glm::vec4(0.05f, 0.05f, 0.85f, 1.0f));
 
-		m_EditorUI.init();
-		m_EditorUI.setSceneContext(m_Scene);
-
 		// Settings
 		EditorSettings::s_Instance = new EditorSettings();
 		m_EditorUI.loadPanelSettings();
-		m_EditorCamera.init();
-		EditorSettings::s_Instance->deserializeSettings();
+
+		m_EditorScene.init();
+
+		m_EditorUI.init();
+		m_EditorUI.setContext(&m_EditorScene);
 
 		// Asset Manager Initialization
-		EditorAssetManager::instantiate("temp_resource_output.zip", "temp_asset_registry.xml");
+		EditorAssetManager::instantiate(SLD_BOWL_RESOURCE_OUTPUT_LOCATION, ".editor/asset_registry.xml");
 
 		m_EditorUI.setViewportRenderId(m_PostProcessingComposer.getFramebuffer()->getColorAttachment(0));
 		std::function<void()> func = std::bind(&EditorLayer::onViewportResized, this);
-		m_EditorUI.setViewportResizeHandler(func);
-		m_EditorUI.setEditorCamera(&m_EditorCamera);
+		//m_EditorUI.setViewportResizeHandler(func);
+		//m_EditorUI.setEditorCamera(&m_EditorCamera);
 
 		// Create a new instance of the editor selection context
 		EditorSelectionContext::s_Instance = new EditorSelectionContext();
+
+		EditorSettings::s_Instance->deserializeSettings();
+
+		EditorEventManager::s_Instance = new EditorEventManager();
+		EditorEventManager::registerListener(&m_EditorUI);
+		EditorEventManager::registerListener(&m_EditorScene);
+		EditorEventManager::registerListener(this);
 	}
 
 	void EditorLayer::onDetach() {
@@ -332,6 +175,9 @@ namespace Salad {
 
 		delete EditorAssetManager::s_Instance;
 		EditorAssetManager::s_Instance = nullptr;
+
+		delete EditorEventManager::s_Instance;
+		EditorEventManager::s_Instance = nullptr;
 	}
 
 	void EditorLayer::onUpdate(Timestep ts) {
@@ -373,24 +219,15 @@ namespace Salad {
 		float clearColor[4] = { 0, 0, 0, 1 };
 		m_Framebuffer->clearColorBuffer(2, &clearColor[0]);
 
-		switch(m_EditorState){
-			case EditorState::Editor: {
-				if (m_EditorUI.isViewportFocused()) m_EditorCamera.updateCamera(ts);
+		m_EditorScene.setViewportHovered(m_EditorUI.isViewportHovered());
+		m_EditorScene.setViewportFocused(m_EditorUI.isViewportFocused());
 
-				Entity entity;
-				if(EditorSelectionContext::isSelectionContextType(EditorSelectionContextType::Entity)) {
-					EntitySelectionContext* selectionContext = EditorSelectionContext::getSelectionContext<EntitySelectionContext>();
-					entity = selectionContext->getSelectedEntity();
-				}
-				m_Scene->onUpdateEditor(ts, m_EditorCamera, m_EditorCamera.getViewMatrix(), entity);
-			} break;
-			case EditorState::Runtime: m_Scene->onUpdate(ts);
-		}
+		m_EditorScene.onUpdate(ts);
 
-		if(m_EditorUI.isMouseInViewport()) {
+		if(m_EditorScene.getEditorState() != EditorState::Runtime && m_EditorUI.isMouseInViewport()) {
 			int pixeldata = m_Framebuffer->readPixel(1, m_EditorUI.getViewportMouseX(), m_EditorUI.getViewportMouseY());
 			if(pixeldata != clearData) {
-				m_HoveredEntity = { (uint32_t)pixeldata, m_Scene.get() };
+				m_HoveredEntity = { (uint32_t)pixeldata, &m_EditorScene };
 			}
 			else {
 				m_HoveredEntity = {};
@@ -418,7 +255,7 @@ namespace Salad {
 		dispatcher.dispatch<MouseScrolledEvent>(SLD_BIND_EVENT_FN(EditorLayer::onMouseScrolledEvent));
 		dispatcher.dispatch<KeyPressedEvent>(SLD_BIND_EVENT_FN(EditorLayer::onKeyPressedEvent));
 		dispatcher.dispatch<MouseButtonPressedEvent>(SLD_BIND_EVENT_FN(EditorLayer::onMousePressedEvent));
-		if(!e.handled) m_EditorCamera.onEvent(e);
+		if(!e.handled) m_EditorScene.getEditorCamera().onEvent(e);
 	}
 
 	bool EditorLayer::onMouseScrolledEvent(MouseScrolledEvent& e) {
@@ -437,14 +274,18 @@ namespace Salad {
 			case SLD_KEY_Q: m_EditorUI.setGizmoType(-1); break;
 			case SLD_KEY_W: m_EditorUI.setGizmoType(ImGuizmo::OPERATION::TRANSLATE); break;
 			case SLD_KEY_E: m_EditorUI.setGizmoType(ImGuizmo::OPERATION::ROTATE); break;
-			case SLD_KEY_R:m_EditorUI.setGizmoType(ImGuizmo::OPERATION::SCALE); break;
+			case SLD_KEY_R: m_EditorUI.setGizmoType(ImGuizmo::OPERATION::SCALE); break;
 			case SLD_KEY_ESCAPE: EditorSelectionContext::setSelectionContextNone(); break;
-			//case SLD_KEY_ESCAPE: m_EditorSelectionContext->setSelectionContext({}); break; -------------------------------------------------------------
+
+			// Runtime Hotkeys
+			case SLD_KEY_F5: m_EditorScene.startRuntime(); break;
+			case SLD_KEY_F6: m_EditorScene.pauseRuntime(); break;
+			case SLD_KEY_F7: m_EditorScene.stopRuntime(); break;
 		}
 	}
 
 	bool EditorLayer::canMousePick() {
-		return m_HoveredEntity.isValid() && !m_EditorUI.isGizmoHovered();
+		return m_EditorScene.getEditorState() != EditorState::Runtime && m_HoveredEntity.isValid() && !m_EditorUI.isGizmoHovered();
 	}
 
 	bool EditorLayer::onMousePressedEvent(MouseButtonPressedEvent& e) {
@@ -456,6 +297,30 @@ namespace Salad {
 		}
 
 		return false;
+	}
+
+	void EditorLayer::onEditorEvent(const EditorEvent& evnt) {
+		switch(evnt.type) {
+			case EditorEventType::ViewportResized:
+				EditorEventViewportResized& resizeEvent = (EditorEventViewportResized&)evnt;
+
+				uint32_t width = resizeEvent.width;
+				uint32_t height = resizeEvent.height;
+
+				m_Framebuffer->resize(width, height);
+				m_PostProcessingFramebufferResize = true;
+				m_PostProcessingFramebufferWidth = width;
+				m_PostProcessingFramebufferHeight = height;
+
+				// TODO: Let camera handle viewport resizing based on projection type
+				PerspectiveCameraProperties camProps;
+				camProps.AspectRatio = (float)width / (float)height;
+				m_EditorScene.getEditorCamera().setPerspectiveProjection(camProps);
+				m_EditorScene.getEditorCamera().recalculateViewMatrix();
+
+				Renderer::onWindowResized((uint32_t)width, (uint32_t)height);
+				break;
+		}
 	}
 
 	void EditorLayer::onViewportResized() {
@@ -470,8 +335,8 @@ namespace Salad {
 		// TODO: Let camera handle viewport resizing based on projection type
 		PerspectiveCameraProperties camProps;
 		camProps.AspectRatio = (float)width / (float)height;
-		m_EditorCamera.setPerspectiveProjection(camProps);
-		m_EditorCamera.recalculateViewMatrix();
+		m_EditorScene.getEditorCamera().setPerspectiveProjection(camProps);
+		m_EditorScene.getEditorCamera().recalculateViewMatrix();
 
 		Renderer::onWindowResized((uint32_t)width, (uint32_t)height);
 	}
@@ -483,8 +348,8 @@ namespace Salad {
 	}
 
 	void EditorLayer::serialize() {
-		SceneSerializer serializer(m_Scene);
-		serializer.serializeScene("assets/scenes/example.sld");
+		//SceneSerializer serializer(m_EditorScene);
+		//serializer.serializeScene("assets/scenes/example.sld");
 	}
 
 	void EditorLayer::deserialize() {}

@@ -14,8 +14,16 @@
 namespace Salad {
 
 	ImGuiLayer::ImGuiLayer() :
-		Layer("ImGuiLayer")
+		Layer("ImGuiLayer"),
+        m_ImGuiIniFile("default")
 	{}
+
+    ImGuiLayer::ImGuiLayer(const char* imGuiIniFile) :
+        Layer("ImGuiLayer"),
+        m_ImGuiIniFile(imGuiIniFile),
+        m_HasCustomIniLocation(true)
+    {
+    }
 
 	ImGuiLayer::~ImGuiLayer() {
 
@@ -49,6 +57,9 @@ namespace Salad {
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
         ImGuiIO& io = ImGui::GetIO(); (void)io;
+
+        if (m_HasCustomIniLocation) io.IniFilename = m_ImGuiIniFile;
+
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
         //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
         io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking

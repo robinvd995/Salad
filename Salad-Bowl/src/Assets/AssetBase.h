@@ -35,7 +35,7 @@ namespace Salad::Asset {
 		virtual uint64_t calculateAssetSize() = 0;
 	};
 
-	std::string assetFileFromPath(const std::string& filepath);
+	std::string assetFileFromPath(const std::string& filepath, bool createPath);
 	AssetType assetTypeFromFilepath(const std::string& filepath);
 	bool isAssetFile(const std::string& filepath);
 	std::string assetSourceFromAssetFile(const std::string& filepath);

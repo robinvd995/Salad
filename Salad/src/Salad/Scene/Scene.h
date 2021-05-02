@@ -10,9 +10,9 @@
 #include <glm/glm.hpp>
 
 // -- TEMP -- TODO: remove this and the friend class for scene hierarchy panel into EditorScene
-namespace Salad::EditorGui {
-	class SceneHierarchyPanel;     // Prototyping SceneHierarchyPanel class used in Salad-Bowl (Editor)
-}
+// namespace Salad::EditorGui {
+// 	class SceneHierarchyPanel;     // Prototyping SceneHierarchyPanel class used in Salad-Bowl (Editor)
+// }
 
 namespace Salad {
 
@@ -24,8 +24,12 @@ namespace Salad {
 		Scene();
 		~Scene();
 
-		void onUpdateEditor(Timestep& ts, Camera& camera, glm::mat4& transform, Entity& selectedEntity);
-		void onUpdate(Timestep& ts);
+		void onSceneStart() {}
+
+		//void onUpdateEditor(Timestep& ts, Camera& camera, glm::mat4& transform, Entity& selectedEntity);
+		virtual void onUpdate(Timestep& ts);
+
+		void onSceneEnd() {}
 
 		Entity createEntity(const std::string& tag = std::string("Unnamed Entity"));
 		void removeEntity(Entity entity);
@@ -52,13 +56,21 @@ namespace Salad {
 
 		// ----- Entity Relationship End -----
 
-	private:
+	protected:
+		virtual bool beginRenderScene();
+		virtual void endRenderScene();
+
+		virtual void renderMeshes(Timestep ts);
+
+		virtual void updateScripts(Timestep ts);
+		virtual void updateTransforms(Timestep ts);
+
+	protected:
 		entt::registry m_Registry;
 
 		EntityTransform m_RootTransform;
 
 		friend class Entity;
-		friend class EditorGui::SceneHierarchyPanel;
 		friend class SceneSerializer;
 	};
 

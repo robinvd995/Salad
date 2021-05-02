@@ -2,6 +2,7 @@
 
 #include "imgui/imgui.h"
 #include "Salad/Scene/Scene.h"
+#include "Core/EditorScene.h"
 
 #include <string>
 
@@ -24,7 +25,7 @@ namespace Salad::EditorGui {
 		virtual void init() {};
 		virtual void loadSettings() {};
 
-		virtual void setContext(const Ref<Scene>& scene) {}
+		virtual void setContext(EditorScene* scene) {}
 
 		virtual const std::string getPanelName() { return m_PanelName; }
 		virtual bool* getPanelStatus() { return &m_PanelOpen; }

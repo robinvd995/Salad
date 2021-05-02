@@ -53,4 +53,5 @@ namespace Salad {
 
 	//Define in client
 	Application* createApplication();
+	ImGuiLayer* createImGuiLayer();
 }

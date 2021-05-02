@@ -1,7 +1,8 @@
 #pragma once
 
-#include "Salad/Renderer/TextureLoader.hpp"
 #include "Salad/Util/Stack.hpp"
+
+#include "Salad/Renderer/Texture.h"
 
 #include <map>
 
@@ -73,7 +74,8 @@ namespace Salad {
 	class ResourceManager {
 	
 	public:
-		ResourceManager() = default;
+		ResourceManager() = delete;
+		ResourceManager(const std::string& archiveLocation);
 		~ResourceManager() = default;
 
 		void init();
@@ -85,6 +87,8 @@ namespace Salad {
 
 		static Texture2D* getTexture(ResourceHandle handle) { return s_Instance->m_TextureCache.getResource(handle); }
 
+		static const std::string& getResourceArchiveLocation() { return s_Instance->m_ResourceAcrhiveLocation; }
+
 	private:
 		inline static ResourceManager* s_Instance = nullptr;
 
@@ -92,6 +96,8 @@ namespace Salad {
 		void freeTextureImpl(ResourceHandle handle);
 
 	private:
+		std::string m_ResourceAcrhiveLocation;
+
 		ResourceCache<Texture2D*> m_TextureCache;
 
 		friend class ResourceLayer;

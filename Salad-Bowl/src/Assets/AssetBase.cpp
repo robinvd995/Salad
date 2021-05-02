@@ -18,9 +18,12 @@ namespace Salad::Asset {
 		{ AssetType::Model, AssetTypeData{ "dae" } }
 	};
 
-	std::string assetFileFromPath(const std::string& filepath) {
+	std::string assetFileFromPath(const std::string& filepath, bool createPath) {
+		std::string prefix = ".editor/";
 		std::string s = filepath;
-		return s.append(SLD_ASSET_FILE_EXTENSION);
+		std::string fullpath = prefix.append(s.append(SLD_ASSET_FILE_EXTENSION));
+		FileUtil::createDirectories(FileUtil::popFileName(fullpath));
+		return fullpath;
 	}
 
 	AssetType assetTypeFromFilepath(const std::string& filepath) {
@@ -44,7 +47,8 @@ namespace Salad::Asset {
 	}
 
 	std::string assetSourceFromAssetFile(const std::string& filepath) {
-		SLD_CORE_ASSERT(isAssetFile(filepath), "Asset is not a filepath");
-		return FileUtil::popExtension(filepath);
+		std::string s = filepath.substr(9);
+		SLD_CORE_ASSERT(isAssetFile(s), "Asset is not a filepath");
+		return FileUtil::popExtension(s);
 	}
 }

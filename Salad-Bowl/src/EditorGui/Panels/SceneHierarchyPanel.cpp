@@ -18,7 +18,7 @@ namespace Salad::EditorGui {
 
 	}
 
-	void SceneHierarchyPanel::setContext(const Ref<Scene>& scene) {
+	void SceneHierarchyPanel::setContext(EditorScene* scene) {
 		m_Context = scene;
 	}
 
@@ -27,7 +27,7 @@ namespace Salad::EditorGui {
 		//ImGui::Begin("Scene Hierarchy");
 
 		m_Context->m_Registry.each([&](auto entityid) {
-			drawEntityNode({ entityid, m_Context.get() });
+			drawEntityNode({ entityid, m_Context });
 		});
 
 		if(ImGui::IsMouseDown(0) && ImGui::IsWindowHovered()) {

@@ -28,7 +28,7 @@ namespace Salad {
 
 		Renderer::init();
 
-		m_ImGuiLayer = new ImGuiLayer();
+		m_ImGuiLayer = createImGuiLayer();
 		pushOverlay(m_ImGuiLayer);
 
 		m_Running = true;
