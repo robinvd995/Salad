@@ -78,6 +78,9 @@ namespace Salad::Xml {
 		XmlNode& appendAttribute(const char* key, float value);
 		XmlNode& appendAttribute(const char* key, bool value);
 		XmlNode& appendAttribute(const char* key, uint64_t value);
+
+		XmlNode& appendBufferedAttribute(const char* key, const std::string& value);
+
 		XmlNode& setValue(const char* value);
 		XmlNode& setBufferedValue(const std::string& value);
 

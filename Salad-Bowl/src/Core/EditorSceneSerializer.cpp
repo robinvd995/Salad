@@ -96,9 +96,9 @@ namespace Salad {
 			});
 
 			serializeComponent<MeshComponent>(meshComponentId, entity, doc, entityNode, [&doc](XmlNode& node, MeshComponent component) {
-				node.appendAttribute("model", "models.not_yet_implemented") // TODO
-					.appendAttribute("shader", "shader.not_yet_implemented") // TODO
-					.appendAttribute("texture", "textures.not_yet_implemented"); // TODO
+				node.appendBufferedAttribute("mesh_resource", component.meshResourceId) // TODO
+					.appendBufferedAttribute("shader_resource", component.shaderResourceId) // TODO
+					.appendBufferedAttribute("texture_resource", component.textureResourceId); // TODO
 			});
 
 			serializeComponent<NativeScriptComponent>(nativeScriptComponentId, entity, doc, entityNode, [&doc](XmlNode& node, NativeScriptComponent component) {

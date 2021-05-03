@@ -18,8 +18,8 @@ namespace Salad {
 		{
 			pushLayer(new ResourceLayer(SLD_BOWL_RESOURCE_OUTPUT_LOCATION));
 			
-			pushLayer(new EditorLayer());
-			//pushLayer(new TestLayer());
+			//pushLayer(new EditorLayer());
+			pushLayer(new TestLayer());
 		}
 		~SaladBowl() {}
 	};

@@ -204,8 +204,9 @@ namespace Salad::EditorGui {
 
 			Util::drawEntityComponent<MeshComponent>("Mesh Renderer", entity, [&entity]() {
 				auto& component = entity.getComponent<MeshComponent>();
-				ImGuiWidgets::drawTextboxControl("Mesh", &component.meshIdentifier);
-				ImGuiWidgets::drawTextboxControl("Material", &component.materialIdentifier);
+				ImGuiWidgets::drawTextboxControl("Mesh", &component.meshResourceId);
+				ImGuiWidgets::drawTextboxControl("Shader", &component.shaderResourceId);
+				ImGuiWidgets::drawTextboxControl("Texture", &component.textureResourceId);
 			});
 
 			if (ImGui::Button("Add Component")) {

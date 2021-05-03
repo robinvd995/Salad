@@ -143,6 +143,11 @@ namespace Salad::Xml {
 		return *this;
 	}
 
+	XmlNode& Xml::XmlNode::appendBufferedAttribute(const char* key, const std::string& value) {
+		m_Node->append_attribute(m_Document->m_Xml->xml_doc.allocate_attribute(key, addStrSource(value)));
+		return *this;
+	}
+
 	XmlNode& XmlNode::setValue(const char* value) {
 		m_Node->value(value); 
 		return *this;
