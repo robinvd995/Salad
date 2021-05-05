@@ -146,7 +146,8 @@ project "Sandbox"
         "Salad/vendor",
         "%{IncludeDir.glm}",
         "%{IncludeDir.entt}",
-        "%{IncludeDir.LuaBridge}"
+        "%{IncludeDir.LuaBridge}",
+        "%{IncludeDir.Glad}"
     }
 
     links {
