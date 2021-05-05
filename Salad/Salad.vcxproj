@@ -208,6 +208,7 @@
     <ClInclude Include="src\Salad\Scene\SceneSerializer.h" />
     <ClInclude Include="src\Salad\Scene\ScriptableEntity.h" />
     <ClInclude Include="src\Salad\Util\Archiver.hpp" />
+    <ClInclude Include="src\Salad\Util\PlatformUtils.h" />
     <ClInclude Include="src\Salad\Util\Stack.hpp" />
     <ClInclude Include="src\sldpch.h" />
     <ClInclude Include="vendor\ImGuizmo\ImGuizmo.h" />
@@ -223,6 +224,7 @@
     <ClCompile Include="src\Platform\OpenGL\OpenGLTexture.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLVertexArray.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsInput.cpp" />
+    <ClCompile Include="src\Platform\Windows\WindowsPlatformUtils.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
     <ClCompile Include="src\Salad\Core\Application.cpp" />
     <ClCompile Include="src\Salad\Core\BinaryIO.cpp" />

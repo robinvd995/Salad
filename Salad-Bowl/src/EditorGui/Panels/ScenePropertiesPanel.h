@@ -1,7 +1,9 @@
 #pragma once
 
 #include "Salad/Scene/Entity.h"
+
 #include "EditorPanelBase.hpp"
+#include "EditorGui/Popups.h"
 
 namespace Salad::EditorGui {
 
@@ -23,5 +25,10 @@ namespace Salad::EditorGui {
 		void renderEntityProperties();
 		void renderEditorShaderProperties();
 		void renderEditorTextureProperties();
+		void renderEditorModelProperties();
+		void renderEditorMaterialProperties();
+
+	private:
+		AssetExplorerPopup m_AssetExplorerPopup;
 	};
 }

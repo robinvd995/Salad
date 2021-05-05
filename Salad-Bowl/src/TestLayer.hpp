@@ -3,11 +3,15 @@
 
 #include "Salad/Util/Archiver.hpp"
 #include "Util/Xml.h"
-#include "Assets/AssetManager.h"
-#include "Assets/AssetManagerSerializer.hpp"
+#include "Assets/Core/AssetManager.h"
+#include "Assets/Core/AssetManagerSerializer.hpp"
 
 #include "Salad/Core/ResourceManager.h"
+#include "Util/Buffers.hpp"
 
+#include "Assets/Io/ColladaLoader.h"
+
+#include <vector>
 #include <iostream>
 
 #define SLD_ARCHIVE_TEST_FILE "test.zip"
@@ -145,7 +149,6 @@ namespace Salad {
 
 			archiveClose(archiveRead);
 		}
-
 		void testXml() {
 			using namespace Salad::Xml;
 
@@ -210,7 +213,6 @@ namespace Salad {
 				return false;
 			});*/
 		}
-
 		void testAssetManager() {
 			using namespace Salad::Asset;
 
@@ -220,10 +222,10 @@ namespace Salad {
 				AssetManager manager(resourcePath, assetManagerPath);
 				manager.clean();
 
-				manager.includeAsset("assets/textures/checkerboard.png");
-				manager.includeAsset("assets/textures/crate_diffuse.png");
-				manager.includeAsset("assets/textures/crate_specular.png");
-				manager.includeAsset("assets/shaders/test/ShaderBuilderTest.glsl");
+				manager.includeAsset("assets/textures/checkerboard.png", AssetType::Texture);
+				manager.includeAsset("assets/textures/crate_diffuse.png", AssetType::Texture);
+				manager.includeAsset("assets/textures/crate_specular.png", AssetType::Texture);
+				manager.includeAsset("assets/shaders/test/ShaderBuilderTest.glsl", AssetType::Shader);
 
 				AssetManagerSerializer serializer;
 				serializer.serialize(manager);
@@ -240,7 +242,6 @@ namespace Salad {
 
 			} // Read
 		}
-
 		void testInheritance() {
 			Asset::ShaderAsset shader("somepath");
 			Asset::AssetBase* assets = &shader;
@@ -261,7 +262,6 @@ namespace Salad {
 			std::cout << static_cast<int>(texture.getAssetType()) << std::endl;
 			std::cout << static_cast<int>(assett->getAssetType()) << std::endl;
 		}
-
 		void testResourceManager() {
 			ResourceHandle textureHandle = ResourceManager::allocateTexture("textures.crate_diffuse");
 			ResourceHandle textureHandle2 = ResourceManager::allocateTexture("textures.crate_specular");
@@ -272,13 +272,70 @@ namespace Salad {
 			ResourceHandle textureHandle3 = ResourceManager::allocateTexture("textures.checkerboard");
 			Texture2D* texture3 = ResourceManager::getTexture(textureHandle3);
 		}
+		void testBuffer() {
+			Util::ByteBuffer buffer;
+			buffer.allocate<float>(7);
+			std::cout << "buffer element count(float): " << buffer.getBufferElementCount<float>() << std::endl;
+			std::cout << "buffer element count(int): " << buffer.getBufferElementCount<int>() << std::endl;
+			std::cout << "buffer element count(char): " << buffer.getBufferElementCount<char>() << std::endl;
+
+			buffer.write<float>(1.0f);
+			buffer.write<float>(2.0f);
+			buffer.write<float>(3.0f);
+			buffer.write<float>(4.0f);
+
+			buffer.moveIterator(0);
+			std::cout << "buffer read float: " << buffer.read<float>() << std::endl;
+			std::cout << "buffer read float: " << buffer.read<float>() << std::endl;
+			std::cout << "buffer read float: " << buffer.read<float>() << std::endl;
+			std::cout << "buffer read float: " << buffer.read<float>() << std::endl;
+
+			buffer.mark();
+			buffer.write<int>(23);
+			buffer.write<int>(58);
+			buffer.write<int>(85);
+
+			buffer.moveToMark();
+			std::cout << "buffer read int: " << buffer.read<int>() << std::endl;
+			std::cout << "buffer read int: " << buffer.read<int>() << std::endl;
+			std::cout << "buffer read int: " << buffer.read<int>() << std::endl;
+
+			buffer.moveToMark();
+			float floatArray[] = { 0.0625f, 0.125f, 0.1875f };
+			buffer.writeArray(floatArray, 3);
+
+			buffer.moveToMark();
+			std::cout << "buffer read floatArray: " << buffer.read<float>() << std::endl;
+			std::cout << "buffer read floatArray: " << buffer.read<float>() << std::endl;
+			std::cout << "buffer read floatArray: " << buffer.read<float>() << std::endl;
+
+			buffer.moveToMark();
+			float* floatData = buffer.readArray<float>(3);
+			for(int i = 0; i < 3; i++) {
+				std::cout << "buffer read_array float: " << floatData[i] << std::endl;
+			}
+
+			buffer.freeBuffer();
+			buffer.moveIterator(0);
+			std::cout << "buffer read after free: " << buffer.read<float>() << std::endl;
+		}
+
+		void testColladaLoader() {
+			Ref<Asset::ModelAsset> model;
+
+			Asset::ColladaLoader loader;
+			loader.loadColladaModel("assets/models/cube_child_parent.dae", model);
+			//loader.loadColladaModel("assets/models/cube.dae", model);
+		}
 
 		virtual void onAttach() override {
 			//testArchive();
 			//testXml();
 			//testAssetManager();
 			//testInheritance();
-			testResourceManager();
+			//testResourceManager();
+			//testBuffer();
+			testColladaLoader();
 		}
 
 		virtual void onDetach() override {}

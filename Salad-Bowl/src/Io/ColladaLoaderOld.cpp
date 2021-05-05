@@ -1,4 +1,4 @@
-#include "ColladaLoader.h"
+#include "ColladaLoaderOld.h"
 
 #include "Mesh.h"
 
@@ -51,7 +51,7 @@ namespace Salad {
 		}
 	}
 
-	std::vector<Mesh*> ColladaLoader::loadColladaModel(const std::string& filepath) {
+	std::vector<Mesh*> ColladaLoaderOld::loadColladaModel(const std::string& filepath) {
 	
 		Assimp::Importer importer;
 

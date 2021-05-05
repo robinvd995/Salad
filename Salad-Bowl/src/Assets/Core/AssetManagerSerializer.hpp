@@ -25,6 +25,7 @@ namespace Salad::Asset {
 				XmlNode assetNode = doc.allocateNode("asset");
 				assetNode.setValue(it->first.c_str());
 				assetNode.appendAttribute("dirty", it->second.dirty);
+				assetNode.appendBufferedAttribute("type", assetTypeToString(it->second.type));
 				includeNode.appendNode(assetNode);
 			}
 
@@ -44,9 +45,9 @@ namespace Salad::Asset {
 			const XmlNode root = doc.getRootNode();
 			const XmlNode includeNode = root.getFirstChild("included_assets");
 			includeNode.iterate("asset", [&manager](const XmlNode& node) -> bool {
-				AssetData data;
-				data.dirty = node.getAttributeAsBool("dirty");
-				manager.includeAsset(node.getValue(), data);
+				bool dirty = node.getAttributeAsBool("dirty");
+				AssetType type = assetTypeFromString(node.getAttribute("type"));
+				manager.includeAsset(node.getValue(), AssetData{ dirty, type });
 				return false;
 			});
 		}

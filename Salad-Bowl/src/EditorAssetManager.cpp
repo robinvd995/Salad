@@ -1,6 +1,6 @@
 #include "EditorAssetManager.h"
 
-#include "Assets/AssetManagerSerializer.hpp"
+#include "Assets/Core/AssetManagerSerializer.hpp"
 
 #include <iostream>
 

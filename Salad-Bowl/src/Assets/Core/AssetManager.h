@@ -4,6 +4,7 @@
 
 #include "Salad/Util/Archiver.hpp"
 
+#include <vector>
 #include <string>
 #include <set>
 #include <map>
@@ -19,9 +20,10 @@ namespace Salad::Asset {
 
 	struct AssetData {
 		bool dirty = true;
+		AssetType type = AssetType::Unknown;
 
-		AssetData() = default;
-		AssetData(bool p_dirty);
+		AssetData() = delete;
+		AssetData(bool p_dirty, AssetType p_type);
 	};
 
 	class AssetManager {
@@ -34,7 +36,7 @@ namespace Salad::Asset {
 		AssetManager(const AssetManager&) = delete;
 		~AssetManager() = default;
 
-		bool includeAsset(const std::string& filepath, bool notifySubscribers = true);
+		bool includeAsset(const std::string& filepath, AssetType type, bool notifySubscribers = true);
 		bool includeAsset(const std::string& filepath, AssetData& data, bool notifySubscribers = true);
 		bool excludeAsset(const std::string& filepath, bool notifySubscribers = true);
 		bool buildAsset(const std::string& filepath, bool forceBuild);
@@ -50,6 +52,8 @@ namespace Salad::Asset {
 
 		void subscribeToInclude(AssetEventSubscribeFunc function);
 		void subscribeToExclude(AssetEventSubscribeFunc function);
+
+		void getAllAssetsOfType(AssetType type, std::vector<std::string>& assetList);
 
 	private:
 		bool buildAssetInternal(const std::string& filepath, AssetData& data, bool forceBuild);

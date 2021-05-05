@@ -1,10 +1,6 @@
 <asset_manager>
-	<included_assets size="5">
-		<asset dirty="1">assets/textures/checkerboard.png</asset>
-		<asset dirty="0">assets/textures/crate_diffuse.png</asset>
-		<asset dirty="0">assets/textures/spritemap_link.png</asset>
-		<asset dirty="0">assets/textures/tree_bark_cartoon.png</asset>
-		<asset dirty="0">assets/textures/ui.png</asset>
+	<included_assets size="1">
+		<asset dirty="1" type="Shader">assets/shaders/test/ShaderBuilderTest.glsl</asset>
 	</included_assets>
 </asset_manager>
 

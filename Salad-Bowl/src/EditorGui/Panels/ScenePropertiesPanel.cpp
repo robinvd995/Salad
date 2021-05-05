@@ -9,7 +9,10 @@
 #include "Salad/ImGui/ImGuiWidgets.h"
 
 #include "EditorSelectionContext.h"
-#include "Assets/AssetSerializer.h"
+#include "Assets/Core/AssetSerializer.h"
+
+#include "Util/FileUtils.hpp"
+#include "Assets/Io/ShaderAssetBuilder.h"
 
 namespace Salad::EditorGui {
 
@@ -21,11 +24,19 @@ namespace Salad::EditorGui {
 	static const char* s_TextureMagFilterStyleStrings[2] = { "Linear", "Nearest" };
 	static const char* s_TextureWrapStyleStrings[5] = { "Repeat", "Clamp Edge", "Clamp Border", "Mirrored Repeat", "Mirrored Clamp Edge" };
 
+	static const char* s_ModelLayoutTypeStrings[4] = { "Unknown", "Vertex Positions", "Texture Coordinates(0)", "Vertex Normals" };
+	static const char* s_ModelLayoutDataTypeString[16] = {
+		"Int",    "Int2",    "Int3",    "Int4",
+		"Uint",   "Uint2",   "Uint3",   "Uint4",
+		"Float",  "Float2",  "Float3",  "Float4",
+		"Double", "Double2", "Double3", "Double4"
+	};
+
 	namespace Util {
 
 		void drawTreeNode(const char* label, void* id, std::function<void()> lambda) {
-			ImGui::PushStyleColor(ImGuiCol_Header, { 0.15f, 0.2f, 0.25f, 1.0f });
-			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 4.0f, 4.0f });
+			//ImGui::PushStyleColor(ImGuiCol_Header, { 0.15f, 0.2f, 0.25f, 1.0f });
+			//ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 4.0f, 4.0f });
 
 			auto flags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_AllowItemOverlap;
 			bool open = ImGui::TreeNodeEx(id, flags, label);
@@ -45,16 +56,16 @@ namespace Salad::EditorGui {
 				ImGui::TreePop();
 			}
 
-			ImGui::PopStyleVar();
-			ImGui::PopStyleColor(1);
+			//ImGui::PopStyleVar();
+			//ImGui::PopStyleColor(1);
 		}
 
 		template<typename T>
 		void drawEntityComponent(const char* label, Entity entity, std::function<void()> lambda) {
 			if (entity.hasComponent<T>()) {
 				//drawTreeNode(label, (void*)typeid(T).hash_code(), lambda);
-				ImGui::PushStyleColor(ImGuiCol_Header, { 0.15f, 0.2f, 0.25f, 1.0f });
-				ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 4.0f, 4.0f });
+				//ImGui::PushStyleColor(ImGuiCol_Header, { 0.15f, 0.2f, 0.25f, 1.0f });
+				//ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 4.0f, 4.0f });
 
 				auto flags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_AllowItemOverlap;
 				bool open = ImGui::TreeNodeEx((void*)typeid(T).hash_code(), flags, label);
@@ -74,8 +85,8 @@ namespace Salad::EditorGui {
 					ImGui::TreePop();
 				}
 
-				ImGui::PopStyleVar();
-				ImGui::PopStyleColor(1);
+				//ImGui::PopStyleVar();
+				//ImGui::PopStyleColor(1);
 			}
 		}
 
@@ -299,10 +310,104 @@ namespace Salad::EditorGui {
 		if(ImGui::Button("Export", {100, 24})) {
 			//Asset::exportTextureAsset(texture);
 		}
-		
+	}
+
+	void ScenePropertiesPanel::renderEditorModelProperties() {
+		ModelSelectionContext* context = EditorSelectionContext::getSelectionContext<ModelSelectionContext>();
+		Ref<Asset::ModelAsset> model = context->getModel();
+
+		ImGui::Columns(2);
+		ImGui::SetColumnWidth(0, 100.0f);
+		ImGui::Text("Model");
+		ImGui::NextColumn();
+		ImGui::Text(model->getFileName().c_str());
+		ImGui::Columns(1);
+
+		ImGui::Separator();
+
+		Util::drawTreeNode("Model Preview", (void*)0, [&model]() {
+			ImGui::Button("PREVIEW NOT YET SUPPORTED!", ImVec2{ 256,256 });
+		});
+
+		Util::drawTreeNode("Meshes", (void*)1, [&model]() {
+			auto& modelMeshMap = model->getMeshMap();
+			for(auto it = modelMeshMap.begin(); it != modelMeshMap.end(); it++) {
+				Util::drawTreeNode(it->first.c_str(), (void*)it->first.c_str(), [&it]() {
+					ImGui::Unindent(0.0f);
+					float contentRegAvailX = ImGui::GetContentRegionAvail().x;
+					ImGui::Columns(3);
+					ImGui::SetColumnWidth(0, 30.0f);
+					ImGui::SetColumnWidth(1, contentRegAvailX - 90.0f);
+					ImGui::SetColumnWidth(2, 60.0f);
+
+					Asset::MeshLayout& layout = it->second->meshLayout;
+					for(auto& entry : layout.layoutEntries) {
+						ImGui::Text(std::to_string(entry.location).c_str());
+						ImGui::NextColumn();
+						const std::string& typestr = s_ModelLayoutTypeStrings[static_cast<int>(entry.type)];
+						ImGui::Text(typestr.c_str());
+						ImGui::NextColumn();
+						const std::string datastr = s_ModelLayoutDataTypeString[static_cast<int>(entry.data)];
+						ImGui::Text(datastr.c_str());
+						ImGui::NextColumn();
+					}
+
+					ImGui::Columns(1);
+					ImGui::Indent(0.0f);
+				});
+			}
+		});
+	}
+
+	void ScenePropertiesPanel::renderEditorMaterialProperties() {
+		MaterialSelectionContext* context = EditorSelectionContext::getSelectionContext<MaterialSelectionContext>();
+		Ref<Asset::MaterialAsset> material = context->getMaterial();
+
+		ImGui::Columns(2);
+		ImGui::SetColumnWidth(0, 100.0f);
+		ImGui::Text("Material");
+		ImGui::NextColumn();
+		ImGui::Text(material->getFileName().c_str());
+		ImGui::Columns(1);
+
+		ImGui::Separator();
+
+		Util::drawTreeNode("Preview", (void*)0, [&material]() {
+			ImGui::Button("PREVIEW NOT YET SUPPORTED!", ImVec2{ 256,256 });
+		});
+
+		Util::drawTreeNode("Shader", (void*)1, [&material, this]() {
+
+			ImGui::Text(FileUtil::fileNameFromPath(material->getShaderAssetId()).c_str());
+
+			if (ImGui::Button("...", ImVec2{ 60, 24 }))
+				m_AssetExplorerPopup.show(Asset::AssetType::Shader);
+				
+			if(m_AssetExplorerPopup.draw()) {
+				material->setShaderAssetId(m_AssetExplorerPopup.getResult());
+				Asset::ShaderAssetBuilder builder;
+				Ref<Asset::ShaderAsset> shader = createRef<Asset::ShaderAsset>(builder.build(m_AssetExplorerPopup.getResult()));
+				material->reflectFromShader(shader);
+			}
+		});
+
+		Util::drawTreeNode("Textures", (void*)2, [&material]() {
+			if (material->getTextures().empty()) ImGui::Text("Nothing to display.");
+			else for(auto& texture : material->getTextures()) {
+				ImGui::Text(texture.name.c_str());
+			}
+		});
+
+		Util::drawTreeNode("Properties", (void*)3, [&material]() {
+			if (material->getUniforms().empty()) ImGui::Text("Nothing to display.");
+			else for (auto& uniform : material->getUniforms()) {
+				ImGui::Text(uniform.name.c_str());
+			}
+		});
 	}
 
 	void ScenePropertiesPanel::onImGuiRender() {
+
 
 		ImGui::Begin("Properties");
 		EditorSelectionContextType selectionType = EditorSelectionContext::getSelectionContextType();
@@ -311,6 +416,8 @@ namespace Salad::EditorGui {
 			case EditorSelectionContextType::Entity: renderEntityProperties(); break;
 			case EditorSelectionContextType::Shader: renderEditorShaderProperties(); break;
 			case EditorSelectionContextType::Texture: renderEditorTextureProperties(); break;
+			case EditorSelectionContextType::Model: renderEditorModelProperties(); break;
+			case EditorSelectionContextType::Material: renderEditorMaterialProperties(); break;
 
 			default: ImGui::Text("Nothing to display"); break;
 		}

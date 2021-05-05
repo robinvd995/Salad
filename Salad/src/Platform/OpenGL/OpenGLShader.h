@@ -30,6 +30,8 @@ namespace Salad {
 		virtual void setMat3(const std::string& name, const glm::mat3& value) override;
 		virtual void setMat4(const std::string& name, const glm::mat4& value) override;
 
+		virtual uint32_t getProgramId() override { return m_ShaderId; }
+
 	private:
 		uint32_t m_ShaderId;
 		std::string m_Name;

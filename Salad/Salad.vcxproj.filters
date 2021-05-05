@@ -123,6 +123,9 @@
     <ClInclude Include="src\Salad\Core\MouseButtonCodes.h">
       <Filter>src\Salad\Core</Filter>
     </ClInclude>
+    <ClInclude Include="src\Salad\Core\ResourceLayer.h">
+      <Filter>src\Salad\Core</Filter>
+    </ClInclude>
     <ClInclude Include="src\Salad\Core\ResourceManager.h">
       <Filter>src\Salad\Core</Filter>
     </ClInclude>
@@ -261,6 +264,12 @@
     <ClInclude Include="src\Salad\Util\Archiver.hpp">
       <Filter>src\Salad\Util</Filter>
     </ClInclude>
+    <ClInclude Include="src\Salad\Util\PlatformUtils.h">
+      <Filter>src\Salad\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Salad\Util\Stack.hpp">
+      <Filter>src\Salad\Util</Filter>
+    </ClInclude>
     <ClInclude Include="src\sldpch.h">
       <Filter>src</Filter>
     </ClInclude>
@@ -270,8 +279,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\Salad\Util\Stack.hpp" />
-    <ClInclude Include="src\Salad\Core\ResourceLayer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp">
@@ -301,6 +308,9 @@
     <ClCompile Include="src\Platform\Windows\WindowsInput.cpp">
       <Filter>src\Platform\Windows</Filter>
     </ClCompile>
+    <ClCompile Include="src\Platform\Windows\WindowsPlatformUtils.cpp">
+      <Filter>src\Platform\Windows</Filter>
+    </ClCompile>
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp">
       <Filter>src\Platform\Windows</Filter>
     </ClCompile>
@@ -317,6 +327,9 @@
       <Filter>src\Salad\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\Salad\Core\Log.cpp">
+      <Filter>src\Salad\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Salad\Core\ResourceLayer.cpp">
       <Filter>src\Salad\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\Salad\Core\ResourceManager.cpp">
@@ -430,6 +443,5 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\Salad\Core\ResourceLayer.cpp" />
   </ItemGroup>
 </Project>

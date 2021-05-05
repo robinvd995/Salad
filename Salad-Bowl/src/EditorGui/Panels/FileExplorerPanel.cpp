@@ -14,7 +14,7 @@
 #include "Util/FileUtils.hpp";
 
 #include "EditorSettings.hpp"
-#include "Assets/AssetSerializer.h"
+#include "Assets/Core/AssetSerializer.h"
 #include "EditorAssetManager.h"
 
 #include "EditorGui/EditorStyle.h"
@@ -31,7 +31,8 @@ namespace Salad::EditorGui {
 			{"glsl", FileExplorerItemType::GLSL},
 			{"ttf", FileExplorerItemType::TrueTypeFont},
 			{"cs", FileExplorerItemType::SharpScript},
-			{"lua", FileExplorerItemType::LuaScript}
+			{"lua", FileExplorerItemType::LuaScript},
+			{"mat", FileExplorerItemType::Material}
 		};
 
 		static const std::map<FileExplorerItemType, std::pair<float, float>> s_FileTypeIconCoordinateMap{
@@ -41,8 +42,9 @@ namespace Salad::EditorGui {
 			{ FileExplorerItemType::Texture, { 0.25f, 0.0f } },
 			{ FileExplorerItemType::GLSL, { 0.375f, 0.0f } },
 			{ FileExplorerItemType::TrueTypeFont, { 0.625f, 0.0f } },
-			{ FileExplorerItemType::SharpScript, {0.75f, 0.0f} },
-			{ FileExplorerItemType::LuaScript, {0.875f, 0.0f} }
+			{ FileExplorerItemType::SharpScript, { 0.75f, 0.0f } },
+			{ FileExplorerItemType::LuaScript, { 0.875f, 0.0f } },
+			{ FileExplorerItemType::Material, { 0.125f, 0.125f } }
 		};
 
 		static const std::map<Asset::AssetState, std::pair<float, float>> s_AssetIconCoordinateMap{
@@ -86,6 +88,16 @@ namespace Salad::EditorGui {
 				if (extension == ignore) return true;
 			}
 			return false;
+		}
+
+		Asset::AssetType assetTypeFromFileType(FileExplorerItemType type) {
+			switch(type) {
+				default: return Asset::AssetType::Unknown;
+				case FileExplorerItemType::Model: return Asset::AssetType::Model;
+				case FileExplorerItemType::Texture: return Asset::AssetType::Texture;
+				case FileExplorerItemType::GLSL: return Asset::AssetType::Shader;
+				case FileExplorerItemType::Material: return Asset::AssetType::Material;
+			}
 		}
 
 	}
@@ -191,6 +203,20 @@ namespace Salad::EditorGui {
 				Asset::AssetSerializer serializer;
 				Asset::TextureAsset texture = serializer.deserializeTexture(item->path);
 				EditorSelectionContext::setSelectionContext<TextureSelectionContext>(texture);
+			} break;
+
+			case FileExplorerItemType::Model:
+			{
+				Asset::AssetSerializer serializer;
+				Ref<Asset::ModelAsset> model = serializer.deserializeModel(item->path);
+				EditorSelectionContext::setSelectionContext<ModelSelectionContext>(model);
+			} break;
+
+			case FileExplorerItemType::Material:
+			{
+				Asset::AssetSerializer serializer;
+				Ref<Asset::MaterialAsset> material = serializer.deserializeMaterial(item->path);
+				EditorSelectionContext::setSelectionContext<MaterialSelectionContext>(material);
 			} break;
 		}
 	}
@@ -328,7 +354,7 @@ namespace Salad::EditorGui {
 
 					if(!assetManager.isAssetIncluded(item->path)) {
 						templateContextItem("context_include", "Include", ContextItemData().setPrefix(0.1875f, 0.125f, 0.25f, 0.1875f, 16, 16), [&assetManager, item]() {
-							assetManager.includeAsset(item->path);
+							assetManager.includeAsset(item->path, Helper::assetTypeFromFileType(item->type));
 						});
 					}
 					else {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Assets/AssetManager.h"
+#include "Assets/Core/AssetManager.h"
 #include "Util/FileObserver.h"
 
 #include <thread>
@@ -17,11 +17,13 @@ namespace Salad {
 
 		static Asset::AssetManager& assetManager() { return s_Instance->m_AssetManager; }
 
-		static void includeAsset(const std::string& filepath) { s_Instance->m_AssetManager.includeAsset(filepath); }
+		static void includeAsset(const std::string& filepath, Asset::AssetType type) { s_Instance->m_AssetManager.includeAsset(filepath, type); }
 		static void excludeAsset(const std::string& filepath) { s_Instance->m_AssetManager.excludeAsset(filepath); }
 		static void buildAsset(const std::string& filepath, bool forceBuild) { s_Instance->m_AssetManager.buildAsset(filepath, forceBuild); }
 		static void buildAll(bool forceBuild) { s_Instance->m_AssetManager.buildAll(forceBuild); }
 		static void clean() { s_Instance->m_AssetManager.clean(); }
+
+		static void getAllAssetsOfType(Asset::AssetType type, std::vector<std::string>& assetList) { return s_Instance->m_AssetManager.getAllAssetsOfType(type, assetList); }
 
 	private:
 		static void instantiate(const std::string& assetOutput, const std::string& assetRegisry);

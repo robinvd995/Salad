@@ -1,7 +1,7 @@
 #pragma once
 
-#include "TextureAsset.hpp"
-#include "ShaderAsset.hpp"
+#include "Assets/TextureAsset.hpp"
+#include "Assets/ShaderAsset.hpp"
 
 #include "Salad/Util/Archiver.hpp"
 

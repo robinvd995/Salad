@@ -1,6 +1,8 @@
 #include "AssetSerializer.h"
 
-#include "ShaderAssetBuilder.h"
+#include "Assets/Io/ShaderAssetBuilder.h"
+
+#include "Assets/Io/ColladaLoader.h"
 
 #include "Util/FileUtils.hpp";
 #include "Util/Xml.h"
@@ -64,6 +66,8 @@ namespace Salad::Asset {
 
 	// ----- Texture Serialization -----
 
+	// ----- Shader Serialization -----
+
 	ShaderAsset AssetSerializer::deserializeShader(const std::string& filepath) {
 		ShaderAssetBuilder builder;
 		ShaderAsset shader = builder.build(filepath);
@@ -73,4 +77,48 @@ namespace Salad::Asset {
 	void AssetSerializer::serializeShader(ShaderAsset& shader) {
 
 	}
+
+	// ----- Shader Serialization -----
+
+	// ----- Model Serialization -----
+
+	void AssetSerializer::serializeModel(Ref<ModelAsset> model) {
+		
+	}
+
+	Ref<ModelAsset> AssetSerializer::deserializeModel(const std::string& filepath) {
+
+		Ref<ModelAsset> model = createRef<ModelAsset>();
+		model->setFileName(FileUtil::fileNameFromPath(filepath));
+
+		std::string extension = "";
+		bool hasExtension = FileUtil::fileExtensionFromPath(filepath, &extension);
+		if (!hasExtension) return model;
+
+		if(extension == "dae") {
+			ColladaLoader colladaLoader;
+			colladaLoader.loadColladaModel(filepath, model);
+		}
+		else{
+			
+		}
+
+		return model;
+	}
+
+	// ----- Model Serialization -----
+
+	// ----- Material Serialization -----
+
+	void AssetSerializer::serializeMaterial(Ref<MaterialAsset> material) {
+
+	}
+
+	Ref<MaterialAsset> AssetSerializer::deserializeMaterial(const std::string& filepath) {
+		Ref<MaterialAsset> material = createRef<MaterialAsset>();
+		material->setFileName(FileUtil::fileNameFromPath(filepath));
+		return material;
+	}
+
+	// ----- Material Serialization -----
 }

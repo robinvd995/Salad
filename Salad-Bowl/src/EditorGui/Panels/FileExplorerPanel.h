@@ -18,7 +18,8 @@ namespace Salad::EditorGui {
 		GLSL = 3,
 		TrueTypeFont = 4,
 		SharpScript = 5,
-		LuaScript = 6
+		LuaScript = 6,
+		Material = 7
 	};
 
 	struct FileExplorerItem {

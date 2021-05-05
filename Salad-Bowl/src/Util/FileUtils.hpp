@@ -46,6 +46,11 @@ namespace Salad::FileUtil {
 		return fileExtensionFromName(path, extension);
 	}
 
+	inline bool fileExtensionFromPath(const std::string& path, std::string* extension) {
+		std::string filename = fileNameFromPath(path);
+		return fileExtensionFromName(path, extension);
+	}
+
 	inline bool fileExists(std::string& path) {
 		std::ifstream ifs(path);
 		bool good = ifs.good();

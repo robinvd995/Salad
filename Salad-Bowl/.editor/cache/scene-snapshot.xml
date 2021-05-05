@@ -43,9 +43,9 @@
 		</entity>
 		<entity id="64" tag="Crate2">
 			<component_transform>
-				<position>-1.773865 1.000000 4.417699</position>
-				<rotation>0.332370 0.313520 0.138576 0.878653</rotation>
-				<scale>1.330000 1.330000 1.330000</scale>
+				<position>-3.000000 1.000000 1.500000</position>
+				<rotation>0.000000 0.000000 0.000000 0.000000</rotation>
+				<scale>1.000000 1.000000 1.000000</scale>
 			</component_transform>
 			<component_relation parent="128" depth="0"/>
 			<component_mesh mesh_resource="mesh" shader_resource="material" texture_resource="texture"/>

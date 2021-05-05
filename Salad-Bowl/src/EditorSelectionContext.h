@@ -4,6 +4,8 @@
 
 #include "Assets/ShaderAsset.hpp"
 #include "Assets/TextureAsset.hpp"
+#include "Assets/ModelAsset.hpp"
+#include "Assets/MaterialAsset.hpp"
 
 namespace Salad {
 
@@ -12,7 +14,9 @@ namespace Salad {
 		Entity = 1,
 		EntityGroup = 2,
 		Shader = 3,
-		Texture
+		Texture = 4,
+		Model = 5,
+		Material = 6
 	};
 
 	class EntitySelectionContext { 
@@ -71,6 +75,40 @@ namespace Salad {
 
 	private:
 		Asset::TextureAsset m_Texture;
+	};
+
+	class ModelSelectionContext {
+	
+	public:
+		ModelSelectionContext() = delete;
+		ModelSelectionContext(Ref<Asset::ModelAsset> model) : m_Model(model) {}
+		~ModelSelectionContext() = default;
+
+		// Selection Context Mandatory Functions
+		static EditorSelectionContextType getSelectionType() { return EditorSelectionContextType::Model; }
+		static void deallocate(void* ptr) { delete ((ModelSelectionContext*)ptr); }
+
+		Ref<Asset::ModelAsset> getModel() { return m_Model; }
+
+	private:
+		Ref<Asset::ModelAsset> m_Model;
+	};
+
+	class MaterialSelectionContext {
+	
+	public:
+		MaterialSelectionContext() = delete;
+		MaterialSelectionContext(Ref<Asset::MaterialAsset> material) : m_Material(material) {}
+		~MaterialSelectionContext() = default;
+
+		// Selection Context Mandatory Functions
+		static EditorSelectionContextType getSelectionType() { return EditorSelectionContextType::Material; }
+		static void deallocate(void* ptr) { delete ((ModelSelectionContext*)ptr); }
+
+		Ref<Asset::MaterialAsset> getMaterial() { return m_Material; }
+
+	private:
+		Ref<Asset::MaterialAsset> m_Material;
 	};
 
 	class EditorSelectionContext {

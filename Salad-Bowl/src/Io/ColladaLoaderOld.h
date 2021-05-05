@@ -12,12 +12,12 @@
 
 namespace Salad {
 	
-	class ColladaLoader {
+	class ColladaLoaderOld {
 
 	public:
 
-		ColladaLoader() = default;
-		~ColladaLoader() = default;
+		ColladaLoaderOld() = default;
+		~ColladaLoaderOld() = default;
 
 		std::vector<Mesh*> loadColladaModel(const std::string& filepath);
 

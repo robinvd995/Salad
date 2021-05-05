@@ -15,7 +15,12 @@ namespace Salad::Asset {
 		{ AssetType::Unknown, AssetTypeData{ " "} },
 		{ AssetType::Texture, AssetTypeData{ "png"} },
 		{ AssetType::Shader, AssetTypeData{ "glsl" } },
-		{ AssetType::Model, AssetTypeData{ "dae" } }
+		{ AssetType::Model, AssetTypeData{ "dae" } },
+		{ AssetType::Material, AssetTypeData{ "mat" } }
+	};
+
+	const std::string Salad::Asset::assetTypeName[assetTypeSize] = {
+		"Unknown", "Texture", "Shader", "Model", "Material"
 	};
 
 	std::string assetFileFromPath(const std::string& filepath, bool createPath) {
@@ -50,5 +55,16 @@ namespace Salad::Asset {
 		std::string s = filepath.substr(9);
 		SLD_CORE_ASSERT(isAssetFile(s), "Asset is not a filepath");
 		return FileUtil::popExtension(s);
+	}
+
+	const std::string& assetTypeToString(AssetType type) {
+		int assetTypeId = static_cast<int>(type);
+		return assetTypeName[assetTypeId];
+	}
+
+	AssetType assetTypeFromString(const std::string& value) {
+		for(int i = 0; i < assetTypeSize; i++) {
+			if (assetTypeName[i] == value) return static_cast<AssetType>(i);
+		}
 	}
 }

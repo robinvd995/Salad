@@ -8,7 +8,7 @@
 
 namespace Salad::Asset {
 
-	AssetData::AssetData(bool p_dirty) : dirty(p_dirty) {}
+	AssetData::AssetData(bool p_dirty, AssetType p_type) : dirty(p_dirty), type(p_type) {}
 
 	void dummyExportFunc(Util::ArchiveIOBuffer& buffer, AssetBase* asset) {
 		SLD_BOWL_LOG_ERROR("Trying to export an asset with a not supported type!");
@@ -29,8 +29,8 @@ namespace Salad::Asset {
 		return path_no_extension;
 	}
 
-	bool AssetManager::includeAsset(const std::string& filepath, bool notifySubscribers) {
-		bool result = includeAssetInternal(filepath, AssetData());
+	bool AssetManager::includeAsset(const std::string& filepath, AssetType type, bool notifySubscribers) {
+		bool result = includeAssetInternal(filepath, AssetData{ true, type });
 		if (result && notifySubscribers) informSubscribersInclude(filepath);
 		return result;
 	}
@@ -194,6 +194,12 @@ namespace Salad::Asset {
 
 	void AssetManager::subscribeToExclude(AssetEventSubscribeFunc function) {
 		m_ExcludeSubscriptions.push_back(function);
+	}
+
+	void Asset::AssetManager::getAllAssetsOfType(AssetType type, std::vector<std::string>& assetList) {
+		for(auto it = m_IncludedAssets.begin(); it != m_IncludedAssets.end(); it++) {
+			if (it->second.type == type) assetList.push_back(it->first);
+		}
 	}
 
 	void AssetManager::informSubscribersInclude(const std::string& filepath) {

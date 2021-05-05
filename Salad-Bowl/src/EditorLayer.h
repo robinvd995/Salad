@@ -10,8 +10,6 @@
 
 #include "EditorGui/Windows/EditorSettingsWindow.h"
 
-#include "Io/ColladaLoader.h"
-
 #include "EditorSelectionContext.h"
 
 #include "Salad/Renderer/PostProcessing.h"

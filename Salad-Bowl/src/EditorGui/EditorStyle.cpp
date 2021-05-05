@@ -102,6 +102,8 @@ namespace Salad::EditorGui {
 				const ImVec4 textDisabledColor = ColorFromBytes(151, 151, 151);
 				const ImVec4 borderColor = ColorFromBytes(78, 78, 78);
 
+				ImVec4 modalBackgroundColor = ImVec4{ 1.0f, 1.0f, 1.0f, 0.1f };
+
 				colors[ImGuiCol_Text] = textColor;
 				colors[ImGuiCol_TextDisabled] = textDisabledColor;
 				colors[ImGuiCol_TextSelectedBg] = panelActiveColor;
@@ -140,7 +142,7 @@ namespace Salad::EditorGui {
 				colors[ImGuiCol_PlotLinesHovered] = panelHoverColor;
 				colors[ImGuiCol_PlotHistogram] = panelActiveColor;
 				colors[ImGuiCol_PlotHistogramHovered] = panelHoverColor;
-				colors[ImGuiCol_ModalWindowDarkening] = bgColor;
+				colors[ImGuiCol_ModalWindowDarkening] = modalBackgroundColor;
 				colors[ImGuiCol_DragDropTarget] = bgColor;
 				colors[ImGuiCol_NavHighlight] = bgColor;
 				colors[ImGuiCol_DockingPreview] = panelActiveColor;

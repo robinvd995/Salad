@@ -1,6 +1,6 @@
 #pragma once
 
-#include "AssetBase.h"
+#include "Core/AssetBase.h"
 
 #include <set>
 #include <string>
@@ -32,6 +32,9 @@ namespace Salad::Asset {
 		Vertex = 1,
 		Fragment = 2
 	};
+
+	inline constexpr ShaderStageType shaderStages[] = { ShaderStageType::Vertex, ShaderStageType::Fragment };
+	inline constexpr uint32_t shaderStagesSize = 2;
 
 	// Struct representation of a shader variable
 	struct ShaderVariable {

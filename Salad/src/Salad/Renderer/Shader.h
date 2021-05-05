@@ -27,6 +27,8 @@ namespace Salad {
 		virtual void setMat3(const std::string& name, const glm::mat3& value) = 0;
 		virtual void setMat4(const std::string& name, const glm::mat4& value) = 0;
 
+		virtual uint32_t getProgramId() = 0;
+
 		static Ref<Shader> create(const std::string& filepath);
 		static Ref<Shader> create(const std::string& name, const std::string& vertexSource, const std::string& fragmentSource);
 	};

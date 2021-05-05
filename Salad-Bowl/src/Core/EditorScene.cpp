@@ -1,7 +1,7 @@
 #include "EditorScene.h"
 
 #include "Salad/Renderer/TextureManager.h"
-#include "Io/ColladaLoader.h"
+#include "Io/ColladaLoaderOld.h"
 #include "EditorSelectionContext.h"
 #include "EditorSceneSerializer.h";
 
@@ -9,7 +9,7 @@ namespace Salad {
 
 	void EditorScene::init() {
 
-		ColladaLoader loader;
+		ColladaLoaderOld loader;
 		auto cubeVao = VertexArray::create();
 
 		{
@@ -21,7 +21,7 @@ namespace Salad {
 				{ "a_Position", Salad::ShaderDataType::Float3 },
 				{ "a_TexCoord", Salad::ShaderDataType::Float2 },
 				{ "a_Normal",   Salad::ShaderDataType::Float3 }
-				});
+			});
 
 			cubeVao->addVertexBuffer(cubeVbo);
 			Ref<IndexBuffer> indexBuffer = IndexBuffer::create(&cubeMesh->getIndexBuffer().front(), cubeMesh->getIndexBuffer().size());
@@ -38,7 +38,7 @@ namespace Salad {
 				{ "a_Position", Salad::ShaderDataType::Float3 },
 				{ "a_TexCoord", Salad::ShaderDataType::Float2 },
 				{ "a_Normal",   Salad::ShaderDataType::Float3 }
-				});
+			});
 
 			treeVao->addVertexBuffer(cubeVbo);
 			Ref<IndexBuffer> indexBuffer = IndexBuffer::create(&treeMesh->getIndexBuffer().front(), treeMesh->getIndexBuffer().size());
@@ -54,7 +54,7 @@ namespace Salad {
 				{ "a_Position", Salad::ShaderDataType::Float3 },
 				{ "a_TexCoord", Salad::ShaderDataType::Float2 },
 				{ "a_Normal",   Salad::ShaderDataType::Float3 }
-				});
+			});
 
 			treeLeavesVao->addVertexBuffer(cubeVbo);
 			Ref<IndexBuffer> indexBuffer = IndexBuffer::create(&leavesMesh->getIndexBuffer().front(), leavesMesh->getIndexBuffer().size());

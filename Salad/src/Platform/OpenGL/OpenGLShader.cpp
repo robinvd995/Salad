@@ -229,4 +229,8 @@ namespace Salad {
 		glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(value));
 	}
 
+	/*uint32_t OpenGLShader::getUniformBlockIndex(const std::string name) {
+		GLuint location = glGetUniformBlockIndex(m_ShaderId, name.c_str());
+		return location;
+	}*/
 }
