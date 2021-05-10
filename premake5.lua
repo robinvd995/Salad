@@ -200,7 +200,7 @@ project "Sandbox"
 
 project "Salad-Bowl"
     location "Salad-Bowl"
-    kind "ConsoleApp"
+    kind "StaticLib"
     language "C++"
     cppdialect "C++17"
     staticruntime "off"
@@ -233,6 +233,62 @@ project "Salad-Bowl"
     links {
         "Salad",
         "assimp"
+    }
+
+    filter "system:windows"
+        systemversion "latest"
+
+        defines{
+            "SLD_PLATFORM_WINDOWS"
+        }
+
+    filter "configurations:Debug"
+        defines "SLD_DEBUG"
+        runtime "Debug"
+        symbols "on"
+
+    filter "configurations:Release"
+        defines "SLD_RELEASE"
+        runtime "Release"
+        optimize "on"
+
+    filter "configurations:Dist"
+        defines "SLD_DIST"
+        runtime "Release"
+        optimize "on"
+
+project "Salad-Bowl-Application"
+    location "Salad-Bowl-Application"
+    kind "ConsoleApp"
+    language "C++"
+    cppdialect "C++17"
+    staticruntime "off"
+
+    targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+    objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+
+    files {
+        "%{prj.name}/src/SaladBowlApp.cpp"
+    }
+
+    includedirs {
+        "Salad-Bowl/src",
+        "Salad/vendor/spdlog/include",
+        "Salad/src",
+        "Salad/vendor",
+        "%{IncludeDir.glm}",
+        "%{IncludeDir.entt}",
+        "%{IncludeDir.ImGuizmo}",
+        "%{IncludeDir.json}",
+        "%{IncludeDir.libzip}",
+        "%{IncludeDir.rapidxml}",
+        "%{VulkanInclude}",
+        IncludeDir["assimp"]
+    }
+
+    links {
+        "Salad",
+        "Salad-Bowl"
     }
 
     filter "system:windows"

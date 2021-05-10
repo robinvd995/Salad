@@ -19,7 +19,7 @@
 
 namespace Salad {
 
-	TEST(TestCaseName, TestName) {
+	TEST(Archiver_Tests, Generic) {
 		int error = 0;
 
 		using namespace Util;
@@ -144,4 +144,5 @@ namespace Salad {
 
 		archiveClose(archiveRead);
 	}
+
 }

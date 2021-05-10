@@ -79,7 +79,7 @@ group "Tests"
             "%{prj.name}/test/**.c",
             "%{prj.name}/test/**.h",
             "%{prj.name}/test/**.hpp",
-            "%{prj.name}/test/**.cpp"
+            "%{prj.name}/test/**.cpp",
         }
 
         includedirs {
