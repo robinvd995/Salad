@@ -6,7 +6,7 @@ group "Tests"
         location "Salad-Test"
         language "C++"
         cppdialect "C++17"
-        staticruntime "on"
+        staticruntime "off"
 
         targetdir ("bin/" .. outputdir .. "/%{prj.name}")
         objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -19,8 +19,11 @@ group "Tests"
         }
 
         includedirs {
-            "%{wks.location}/Salad/src",
             "third_party/googletest/googletest/include",
+
+            "%{wks.location}/Salad/src",
+            "%{wks.location}/Salad/vendor/spdlog/include",
+
             "%{wks.location}/%{IncludeDir.GLFW}",
             "%{wks.location}/%{IncludeDir.Glad}",
             "%{wks.location}/%{IncludeDir.glm}",
@@ -67,7 +70,7 @@ group "Tests"
         location "Salad-Bowl-Test"
         language "C++"
         cppdialect "C++17"
-        staticruntime "on"
+        staticruntime "off"
 
         targetdir ("bin/" .. outputdir .. "/%{prj.name}")
         objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -81,7 +84,11 @@ group "Tests"
 
         includedirs {
             "third_party/googletest/googletest/include",
+
             "%{wks.location}/Salad/src",
+            "%{wks.location}/Salad-Bowl/src",
+            "%{wks.location}/Salad/vendor/spdlog/include",
+
             "%{wks.location}/%{IncludeDir.glm}",
             "%{wks.location}/%{IncludeDir.entt}",
             "%{wks.location}/%{IncludeDir.ImGuizmo}",
@@ -124,7 +131,7 @@ group "Tests"
         location "Sandbox-Test"
         language "C++"
         cppdialect "C++17"
-        staticruntime "on"
+        staticruntime "off"
 
         targetdir ("bin/" .. outputdir .. "/%{prj.name}")
         objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -138,7 +145,10 @@ group "Tests"
 
         includedirs {
             "third_party/googletest/googletest/include",
+
             "%{wks.location}/Salad/src",
+            "%{wks.location}/Salad/vendor/spdlog/include",
+
             "%{wks.location}/Salad/vendor",
             "%{wks.location}/%{IncludeDir.glm}",
             "%{wks.location}/%{IncludeDir.entt}",
