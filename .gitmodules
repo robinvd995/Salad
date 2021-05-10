@@ -28,3 +28,6 @@
 [submodule "Salad/vendor/libzip"]
 	path = Salad/vendor/libzip
 	url = https://github.com/robinvd995/libzip
+[submodule "test/third_party/googletest"]
+	path = test/third_party/googletest
+	url = https://github.com/robinvd995/googletest

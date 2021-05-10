@@ -199,65 +199,66 @@ project "Sandbox"
         optimize "on"
 
 project "Salad-Bowl"
-        location "Salad-Bowl"
-        kind "ConsoleApp"
-        language "C++"
-        cppdialect "C++17"
-        staticruntime "off"
-    
-        targetdir ("bin/" .. outputdir .. "/%{prj.name}")
-        objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
-    
-        files {
-            "%{prj.name}/src/**.c",
-            "%{prj.name}/src/**.h",
-            "%{prj.name}/src/**.hpp",
-            "%{prj.name}/src/**.cpp"
+    location "Salad-Bowl"
+    kind "ConsoleApp"
+    language "C++"
+    cppdialect "C++17"
+    staticruntime "off"
+
+    targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+    objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+
+    files {
+        "%{prj.name}/src/**.c",
+        "%{prj.name}/src/**.h",
+        "%{prj.name}/src/**.hpp",
+        "%{prj.name}/src/**.cpp"
+    }
+
+    includedirs {
+        "%{prj.name}/src",
+        "Salad/vendor/spdlog/include",
+        "Salad/src",
+        "Salad/vendor",
+        "%{IncludeDir.glm}",
+        "%{IncludeDir.entt}",
+        "%{IncludeDir.ImGuizmo}",
+        "%{IncludeDir.json}",
+        "%{IncludeDir.libzip}",
+        "%{IncludeDir.rapidxml}",
+        "%{VulkanInclude}",
+        IncludeDir["assimp"]
+    }
+
+    links {
+        "Salad",
+        "assimp"
+    }
+
+    filter "system:windows"
+        systemversion "latest"
+
+        defines{
+            "SLD_PLATFORM_WINDOWS"
         }
-    
-        includedirs {
-            "%{prj.name}/src",
 
-            "Salad/vendor/spdlog/include",
-            "Salad/src",
-            "Salad/vendor",
-            "%{IncludeDir.glm}",
-            "%{IncludeDir.entt}",
-            "%{IncludeDir.ImGuizmo}",
-            "%{IncludeDir.json}",
-            "%{IncludeDir.libzip}",
+    filter "configurations:Debug"
+        defines "SLD_DEBUG"
+        runtime "Debug"
+        symbols "on"
 
-            "%{IncludeDir.rapidxml}",
+    filter "configurations:Release"
+        defines "SLD_RELEASE"
+        runtime "Release"
+        optimize "on"
 
-            "%{VulkanInclude}",
+    filter "configurations:Dist"
+        defines "SLD_DIST"
+        runtime "Release"
+        optimize "on"
 
-            IncludeDir["assimp"]
-
-        }
-    
-        links {
-            "Salad",
-            "assimp"
-        }
-    
-        filter "system:windows"
-            systemversion "latest"
-    
-            defines{
-                "SLD_PLATFORM_WINDOWS"
-            }
-    
-        filter "configurations:Debug"
-            defines "SLD_DEBUG"
-            runtime "Debug"
-            symbols "on"
-    
-        filter "configurations:Release"
-            defines "SLD_RELEASE"
-            runtime "Release"
-            optimize "on"
-    
-        filter "configurations:Dist"
-            defines "SLD_DIST"
-            runtime "Release"
-            optimize "on"
+group "Tests"
+    include "test"
+    --include "test/Test_Salad-Bowl"
+    --include "test/Test_Sandbox"
+group ""
