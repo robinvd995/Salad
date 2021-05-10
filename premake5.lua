@@ -1,3 +1,5 @@
+include "vulkan_includes.lua"
+
 workspace "Salad"
     architecture "x64"
     startproject "Salad-Bowl"
@@ -46,7 +48,7 @@ project "Salad"
     kind "StaticLib"
     language "C++"
     cppdialect "C++17"
-    staticruntime "on"
+    staticruntime "off"
 
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -83,7 +85,8 @@ project "Salad"
         "%{IncludeDir.lua53}",
         "%{IncludeDir.LuaBridge}",
         "%{IncludeDir.freetype}",
-        "%{IncludeDir.libzip}"
+        "%{IncludeDir.libzip}",
+        "%{VulkanInclude}"
     }
 
     links{
@@ -113,22 +116,40 @@ project "Salad"
         runtime "Debug"
         symbols "on"
 
+        links {
+            "%{VulkanDebugLibraries.ShaderC_Debug}",
+            "%{VulkanDebugLibraries.SPIRV_Cross_Debug}",
+            "%{VulkanDebugLibraries.SPIRV_Cross_GLSL_Debug}"
+        }
+
     filter "configurations:Release"
         defines "SLD_RELEASE"
         runtime "Release"
         optimize "on"
+
+        links {
+            "%{VulkanLibraries.ShaderC}",
+            "%{VulkanLibraries.SPIRV_Cross}",
+            "%{VulkanLibraries.SPIRV_Cross_GLSL}"
+        }
 
     filter "configurations:Dist"
         defines "SLD_DIST"
         runtime "Release"
         optimize "on"
 
+        links {
+            "%{VulkanLibraries.ShaderC}",
+            "%{VulkanLibraries.SPIRV_Cross}",
+            "%{VulkanLibraries.SPIRV_Cross_GLSL}"
+        }
+
 project "Sandbox"
     location "Sandbox"
     kind "ConsoleApp"
     language "C++"
     cppdialect "C++17"
-    staticruntime "on"
+    staticruntime "off"
 
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -147,7 +168,8 @@ project "Sandbox"
         "%{IncludeDir.glm}",
         "%{IncludeDir.entt}",
         "%{IncludeDir.LuaBridge}",
-        "%{IncludeDir.Glad}"
+        "%{IncludeDir.Glad}",
+        "%{VulkanInclude}"
     }
 
     links {
@@ -181,7 +203,7 @@ project "Salad-Bowl"
         kind "ConsoleApp"
         language "C++"
         cppdialect "C++17"
-        staticruntime "on"
+        staticruntime "off"
     
         targetdir ("bin/" .. outputdir .. "/%{prj.name}")
         objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -206,6 +228,9 @@ project "Salad-Bowl"
             "%{IncludeDir.libzip}",
 
             "%{IncludeDir.rapidxml}",
+
+            "%{VulkanInclude}",
+
             IncludeDir["assimp"]
 
         }

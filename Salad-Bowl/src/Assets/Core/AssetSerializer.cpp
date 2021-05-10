@@ -1,7 +1,5 @@
 #include "AssetSerializer.h"
 
-#include "Assets/Io/ShaderAssetBuilder.h"
-
 #include "Assets/Io/ColladaLoader.h"
 
 #include "Util/FileUtils.hpp";
@@ -69,9 +67,9 @@ namespace Salad::Asset {
 	// ----- Shader Serialization -----
 
 	ShaderAsset AssetSerializer::deserializeShader(const std::string& filepath) {
-		ShaderAssetBuilder builder;
-		ShaderAsset shader = builder.build(filepath);
-		return shader;
+		/*ShaderAssetBuilder builder;
+		ShaderAsset shader = builder.build(filepath);*/
+		return ShaderAsset();
 	}
 
 	void AssetSerializer::serializeShader(ShaderAsset& shader) {

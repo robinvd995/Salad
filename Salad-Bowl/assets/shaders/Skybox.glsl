@@ -22,7 +22,7 @@ in vec3 v_TexCoords;
 
 uniform samplerCube skybox;
 
-layout(location = 0) out vec4 frag_color;
+out vec4 frag_color;
 
 void main() {
 	frag_color = texture(skybox, v_TexCoords);

@@ -46,7 +46,7 @@ namespace Salad::Asset {
 		int layoutLocation = -1;
 	};
 
-	struct ShaderStage {
+	struct ShaderAssetStage {
 
 		ShaderStageType shaderType = ShaderStageType::None;
 		std::string shaderSource;
@@ -55,7 +55,7 @@ namespace Salad::Asset {
 		std::vector<ShaderVariable> outputs;
 		std::vector<ShaderVariable> uniforms;
 
-		bool operator < (const ShaderStage& other) const { return static_cast<int>(shaderType) < static_cast<int>(other.shaderType); };
+		bool operator < (const ShaderAssetStage& other) const { return static_cast<int>(shaderType) < static_cast<int>(other.shaderType); };
 	};
 
 	struct ShaderVertexBufferElement {
@@ -102,7 +102,7 @@ namespace Salad::Asset {
 		const std::string& getFilePath() { return m_FilePath; }
 
 		bool hasStage(ShaderStageType type) { return m_ShaderStages.find(type) != m_ShaderStages.end(); }
-		ShaderStage& getStage(ShaderStageType type) { /*TODO: Assert*/ return m_ShaderStages.find(type)->second; }
+		ShaderAssetStage& getStage(ShaderStageType type) { /*TODO: Assert*/ return m_ShaderStages.find(type)->second; }
 
 		const ShaderVertexBufferLayout& getVertexBufferLayout() const { return m_VertexBufferLayout; }
 
@@ -122,19 +122,19 @@ namespace Salad::Asset {
 			uint64_t assetSize = (uint64_t)(8 + 8 + 4 + 4);
 
 			if (hasStage(ShaderStageType::Vertex)) {
-				ShaderStage& stage = getStage(ShaderStageType::Vertex);
+				ShaderAssetStage& stage = getStage(ShaderStageType::Vertex);
 				assetSize += stage.shaderSource.size();
 				
 			}
 			if (hasStage(ShaderStageType::Fragment)) {
-				ShaderStage& stage = getStage(ShaderStageType::Fragment);
+				ShaderAssetStage& stage = getStage(ShaderStageType::Fragment);
 				assetSize += stage.shaderSource.size();
 			}
 			return assetSize;
 		}
 
 	private:
-		std::map<ShaderStageType, ShaderStage> m_ShaderStages;
+		std::map<ShaderStageType, ShaderAssetStage> m_ShaderStages;
 		ShaderVertexBufferLayout m_VertexBufferLayout;
 
 		std::string m_FilePath;

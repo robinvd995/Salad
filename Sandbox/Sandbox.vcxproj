@@ -79,10 +79,10 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>SLD_PLATFORM_WINDOWS;SLD_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Salad\vendor\spdlog\include;..\Salad\src;..\Salad\vendor;..\Salad\vendor\glm;..\Salad\vendor\entt\include;..\Salad\vendor\LuaBridge\Source;..\Salad\vendor\Glad\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Salad\vendor\spdlog\include;..\Salad\src;..\Salad\vendor;..\Salad\vendor\glm;..\Salad\vendor\entt\include;..\Salad\vendor\LuaBridge\Source;..\Salad\vendor\Glad\include;..\..\VulkanSdk\1.2.176.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -95,13 +95,13 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>SLD_PLATFORM_WINDOWS;SLD_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Salad\vendor\spdlog\include;..\Salad\src;..\Salad\vendor;..\Salad\vendor\glm;..\Salad\vendor\entt\include;..\Salad\vendor\LuaBridge\Source;..\Salad\vendor\Glad\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Salad\vendor\spdlog\include;..\Salad\src;..\Salad\vendor;..\Salad\vendor\glm;..\Salad\vendor\entt\include;..\Salad\vendor\LuaBridge\Source;..\Salad\vendor\Glad\include;..\..\VulkanSdk\1.2.176.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <MinimalRebuild>false</MinimalRebuild>
       <StringPooling>true</StringPooling>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -115,13 +115,13 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>SLD_PLATFORM_WINDOWS;SLD_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Salad\vendor\spdlog\include;..\Salad\src;..\Salad\vendor;..\Salad\vendor\glm;..\Salad\vendor\entt\include;..\Salad\vendor\LuaBridge\Source;..\Salad\vendor\Glad\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Salad\vendor\spdlog\include;..\Salad\src;..\Salad\vendor;..\Salad\vendor\glm;..\Salad\vendor\entt\include;..\Salad\vendor\LuaBridge\Source;..\Salad\vendor\Glad\include;..\..\VulkanSdk\1.2.176.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <MinimalRebuild>false</MinimalRebuild>
       <StringPooling>true</StringPooling>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>

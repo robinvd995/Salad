@@ -77,10 +77,10 @@
       <PrecompiledHeaderFile>sldpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;SLD_PLATFORM_WINDOWS;SLD_BUILD_DLL;GLFW_INCLUDE_NONE;SLD_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\entt\include;vendor\nlohmann\include;vendor\ImGuizmo;vendor\lua53\include;vendor\LuaBridge\Source;vendor\freetype\include;vendor\libzip;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\entt\include;vendor\nlohmann\include;vendor\ImGuizmo;vendor\lua53\include;vendor\LuaBridge\Source;vendor\freetype\include;vendor\libzip;..\..\VulkanSdk\1.2.176.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -88,7 +88,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;..\..\VulkanSdk\1.2.176.0\Lib\shaderc_sharedd.lib;..\..\VulkanSdk\1.2.176.0\Lib\spirv-cross-cored.lib;..\..\VulkanSdk\1.2.176.0\Lib\spirv-cross-glsld.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -97,13 +97,13 @@
       <PrecompiledHeaderFile>sldpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;SLD_PLATFORM_WINDOWS;SLD_BUILD_DLL;GLFW_INCLUDE_NONE;SLD_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\entt\include;vendor\nlohmann\include;vendor\ImGuizmo;vendor\lua53\include;vendor\LuaBridge\Source;vendor\freetype\include;vendor\libzip;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\entt\include;vendor\nlohmann\include;vendor\ImGuizmo;vendor\lua53\include;vendor\LuaBridge\Source;vendor\freetype\include;vendor\libzip;..\..\VulkanSdk\1.2.176.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <MinimalRebuild>false</MinimalRebuild>
       <StringPooling>true</StringPooling>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -112,7 +112,7 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;..\..\VulkanSdk\1.2.176.0\Lib\shaderc_shared.lib;..\..\VulkanSdk\1.2.176.0\Lib\spirv-cross-core.lib;..\..\VulkanSdk\1.2.176.0\Lib\spirv-cross-glsl.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
@@ -121,13 +121,13 @@
       <PrecompiledHeaderFile>sldpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;SLD_PLATFORM_WINDOWS;SLD_BUILD_DLL;GLFW_INCLUDE_NONE;SLD_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\entt\include;vendor\nlohmann\include;vendor\ImGuizmo;vendor\lua53\include;vendor\LuaBridge\Source;vendor\freetype\include;vendor\libzip;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\entt\include;vendor\nlohmann\include;vendor\ImGuizmo;vendor\lua53\include;vendor\LuaBridge\Source;vendor\freetype\include;vendor\libzip;..\..\VulkanSdk\1.2.176.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <MinimalRebuild>false</MinimalRebuild>
       <StringPooling>true</StringPooling>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -136,7 +136,7 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;..\..\VulkanSdk\1.2.176.0\Lib\shaderc_shared.lib;..\..\VulkanSdk\1.2.176.0\Lib\spirv-cross-core.lib;..\..\VulkanSdk\1.2.176.0\Lib\spirv-cross-glsl.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>

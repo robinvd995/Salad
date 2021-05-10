@@ -10,6 +10,7 @@
 #include "Util/Buffers.hpp"
 
 #include "Assets/Io/ColladaLoader.h"
+#include "Assets/Io/ShaderCompiler.h"
 
 #include <vector>
 #include <iostream>
@@ -319,13 +320,36 @@ namespace Salad {
 			buffer.moveIterator(0);
 			std::cout << "buffer read after free: " << buffer.read<float>() << std::endl;
 		}
-
 		void testColladaLoader() {
 			Ref<Asset::ModelAsset> model;
 
 			Asset::ColladaLoader loader;
 			loader.loadColladaModel("assets/models/cube_child_parent.dae", model);
 			//loader.loadColladaModel("assets/models/cube.dae", model);
+		}
+		void testShaderCompiler() {
+			using namespace Salad::Asset;
+			ShaderCompilerFlags flags = ShaderCompilerFlags_CompileOpenGL | ShaderCompilerFlags_CompileVulkan | ShaderCompilerFlags_Reflect;
+			ShaderCompiler compiler("assets/shaders/test/ShaderCompilerTest.glsl", flags);
+
+			if (compiler.hasCompilerErrors(ShaderCompilerFlags_CompileOpenGL))
+				 std::cout << compiler.getCompilerErrorMessages(ShaderCompilerFlags_CompileOpenGL) << std::endl;
+			else std::cout << "OpenGL compilation success!" << std::endl;
+
+			if (compiler.hasCompilerErrors(ShaderCompilerFlags_CompileVulkan))
+				 std::cout << compiler.getCompilerErrorMessages(ShaderCompilerFlags_CompileVulkan) << std::endl;
+			else std::cout << "Vulkan compilation success!" << std::endl;
+
+			if(compiler.hasReflectionData()) {
+				ShaderReflectionData* reflectionData = compiler.getReflectionData();
+				
+				const auto& uniformBuffers = reflectionData->getUniformBuffers();
+				for(auto uniformBuffer : uniformBuffers) {
+					std::cout << "UniformBufferName: " << uniformBuffer->getName() << std::endl;
+				}
+			}
+
+			compiler.cleanup();
 		}
 
 		virtual void onAttach() override {
@@ -335,7 +359,8 @@ namespace Salad {
 			//testInheritance();
 			//testResourceManager();
 			//testBuffer();
-			testColladaLoader();
+			//testColladaLoader();
+			testShaderCompiler();
 		}
 
 		virtual void onDetach() override {}

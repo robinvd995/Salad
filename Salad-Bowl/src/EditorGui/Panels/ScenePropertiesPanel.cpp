@@ -12,7 +12,6 @@
 #include "Assets/Core/AssetSerializer.h"
 
 #include "Util/FileUtils.hpp"
-#include "Assets/Io/ShaderAssetBuilder.h"
 
 namespace Salad::EditorGui {
 
@@ -126,7 +125,7 @@ namespace Salad::EditorGui {
 			ImGui::Columns(1);
 		}
 
-		void drawShaderStage(const char* label, Asset::ShaderStage& stage) {
+		void drawShaderStage(const char* label, Asset::ShaderAssetStage& stage) {
 			drawTreeNode(label, (void*)(static_cast<int>(stage.shaderType)), [&stage]() {
 
 				drawShaderVariables("Input", stage.inputs);
@@ -242,12 +241,12 @@ namespace Salad::EditorGui {
 		ImGui::Text(shader.getFilePath().c_str());
 
 		if(shader.hasStage(Asset::ShaderStageType::Vertex)) {
-			Asset::ShaderStage& vertexStage = shader.getStage(Asset::ShaderStageType::Vertex);
+			Asset::ShaderAssetStage& vertexStage = shader.getStage(Asset::ShaderStageType::Vertex);
 			Util::drawShaderStage("Vertex Shader", vertexStage);
 		}
 
 		if (shader.hasStage(Asset::ShaderStageType::Fragment)) {
-			Asset::ShaderStage& fragmentStage = shader.getStage(Asset::ShaderStageType::Fragment);
+			Asset::ShaderAssetStage& fragmentStage = shader.getStage(Asset::ShaderStageType::Fragment);
 			Util::drawShaderStage("Fragment Shader", fragmentStage);
 		}
 	}
@@ -385,9 +384,9 @@ namespace Salad::EditorGui {
 				
 			if(m_AssetExplorerPopup.draw()) {
 				material->setShaderAssetId(m_AssetExplorerPopup.getResult());
-				Asset::ShaderAssetBuilder builder;
-				Ref<Asset::ShaderAsset> shader = createRef<Asset::ShaderAsset>(builder.build(m_AssetExplorerPopup.getResult()));
-				material->reflectFromShader(shader);
+				//Asset::ShaderAssetBuilder builder;
+				//Ref<Asset::ShaderAsset> shader = createRef<Asset::ShaderAsset>(builder.build(m_AssetExplorerPopup.getResult()));
+				//material->reflectFromShader(shader);
 			}
 		});
 

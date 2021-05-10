@@ -39,7 +39,7 @@ namespace Salad::Asset {
 			for(int i = 0; i < shaderStagesSize; i++) {
 				ShaderStageType stageType = shaderStages[i];
 				if (!shader->hasStage(stageType)) continue;
-				ShaderStage stage = shader->getStage(stageType);
+				ShaderAssetStage stage = shader->getStage(stageType);
 				
 				for(auto& variable : stage.uniforms) {
 					ShaderAssetDataType t = variable.type;

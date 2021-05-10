@@ -18,7 +18,7 @@ namespace Salad {
 		{
 			pushLayer(new ResourceLayer(SLD_BOWL_RESOURCE_OUTPUT_LOCATION));
 			
-			bool test = false;
+			bool test = true;
 			if(!test) pushLayer(new EditorLayer());
 			else pushLayer(new TestLayer());
 		}

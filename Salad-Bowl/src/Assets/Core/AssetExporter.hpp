@@ -63,7 +63,7 @@ namespace Salad::Asset {
 
 		// write vertex stage
 		if(shader->hasStage(ShaderStageType::Vertex)) {
-			ShaderStage& vertexStage = shader->getStage(ShaderStageType::Vertex);
+			ShaderAssetStage& vertexStage = shader->getStage(ShaderStageType::Vertex);
 			uint64_t stageSize = vertexStage.shaderSource.size();
 			buffer.writeUInt(stageSize);
 			buffer.writeArray<char>(&vertexStage.shaderSource[0], stageSize);
@@ -74,7 +74,7 @@ namespace Salad::Asset {
 
 		// write fragment stage
 		if(shader->hasStage(ShaderStageType::Fragment)) {
-			ShaderStage& fragmentStage = shader->getStage(ShaderStageType::Fragment);
+			ShaderAssetStage& fragmentStage = shader->getStage(ShaderStageType::Fragment);
 			uint64_t stageSize = fragmentStage.shaderSource.size();
 			buffer.writeUInt(stageSize);
 			buffer.writeArray<char>(&fragmentStage.shaderSource[0], stageSize);

@@ -8,6 +8,8 @@
 #include <glad/glad.h>
 #include <glm/glm/gtc/type_ptr.hpp>
 
+//#include "ShaderCompiler.h"
+
 namespace Salad {
 
 	class OpenGLSandbox : public Layer {
@@ -17,6 +19,7 @@ namespace Salad {
 		~OpenGLSandbox() = default;
 
 		virtual void onAttach() override {
+
 			Salad::RenderCommand::setClearColor(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 			m_Camera.setPerspectiveProjection(PerspectiveCameraProperties());
 
@@ -73,7 +76,6 @@ namespace Salad {
 			glBufferData(GL_UNIFORM_BUFFER, sizeof(glm::vec4), NULL, GL_STATIC_DRAW);
 			glBindBufferRange(GL_UNIFORM_BUFFER, 2, m_RedMaterialBufferId, 0, sizeof(glm::vec4));
 			glBindBuffer(GL_UNIFORM_BUFFER, 0);*/
-
 			
 			glGenBuffers(1, &m_MaterialBufferId);
 			glBindBuffer(GL_UNIFORM_BUFFER, m_MaterialBufferId);
