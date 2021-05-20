@@ -2,7 +2,7 @@
 
 #include "Core/AssetBase.h"
 
-#include "SaladBowl/Util/Buffers.hpp"
+#include "Salad/Util/DataBuffers.hpp"
 
 #include <vector>
 #include <map>

@@ -1,0 +1,1 @@
+Working directory needs to be set in visual studio to $(SolutionDir)\test

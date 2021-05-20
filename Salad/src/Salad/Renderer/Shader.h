@@ -1,9 +1,13 @@
 #pragma once
 
-#include <string>
-#include <unordered_map>
+#include "Salad/Core/Core.h"
+
+#include "Salad/Util/DataBuffers.hpp"
 
 #include <glm/glm.hpp>
+
+#include <string>
+#include <unordered_map>
 
 namespace Salad {
 
@@ -31,6 +35,7 @@ namespace Salad {
 
 		static Ref<Shader> create(const std::string& filepath);
 		static Ref<Shader> create(const std::string& name, const std::string& vertexSource, const std::string& fragmentSource);
+		static Ref<Shader> create(const std::string& name, Util::ByteBuffer* buffer);
 	};
 
 	class ShaderLibrary {

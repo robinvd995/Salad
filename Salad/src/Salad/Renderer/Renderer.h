@@ -2,6 +2,7 @@
 
 #include "RenderAPI.h"
 #include "Camera.h"
+#include "Buffer.h"
 
 #include "Shader.h"
 #include "Salad/Core/Transform.h"
@@ -31,13 +32,20 @@ namespace Salad {
 
 		inline static RenderAPI::API getAPI() { return RenderAPI::getAPI(); }
 
+		static void registerUniformBuffer(const uint32_t binding, const uint32_t size);
+		static UniformBuffer* getUniformBuffer(const uint32_t binding);
+
 	private:
 		struct SceneData {
 			glm::mat4 viewMatrix;
 			glm::mat4 projectionMatrix;
 		};
 
-		static SceneData* m_SceneData;
-	};
+		struct UniformBufferData {
+			std::vector<UniformBuffer*> m_UniformBuffers;
+		};
 
+		static SceneData* m_SceneData;
+		static UniformBufferData* s_UniformBufferData;
+	};
 }

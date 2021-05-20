@@ -27,6 +27,13 @@ namespace Salad {
 		return nullptr;
 	}
 
+	Ref<Shader> Shader::create(const std::string& name, Util::ByteBuffer* buffer) {
+		switch (Renderer::getAPI()) {
+			case RenderAPI::API::NONE: SLD_CORE_ASSERT(false, "Render API None is not supported!"); return nullptr;
+			case RenderAPI::API::OpenGL: return std::make_shared<OpenGLShader>(name, buffer);
+		}
+	}
+
 	void ShaderLibrary::add(const std::string& name, const Ref<Shader>& shader) {
 		SLD_CORE_ASSERT((m_Shaders.find(name) == m_Shaders.end()), "Shader already exists!");
 		m_Shaders[name] = shader;

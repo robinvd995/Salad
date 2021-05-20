@@ -16,7 +16,9 @@ layout(std140, binding = 1) uniform u_Material {
 	vec4 u_Color;
 };
 
-uniform mat4 u_Transform;
+layout(std140, binding = 2) uniform Transform {
+	mat4 u_Transform;
+};
 
 out vec4 v_Color;
 
@@ -33,5 +35,5 @@ in vec4 v_Color;
 out vec4 frag_color;
 
 void main() {
-	frag_color = v_Color + vec4(0.0, 0.0, 0.0, 1.0);
+	frag_color = v_Color;
 }

@@ -1,16 +1,13 @@
 #include "ShaderCompiler.h"
 
 #include <vulkan/vulkan.hpp>
+#include <spirv_cross/spirv_cross.hpp>
 #include <spirv_cross/spirv_glsl.hpp>
 #include <spirv_cross/spirv_hlsl.hpp>
-
 #include <shaderc/shaderc.hpp>
-#include <spirv_cross/spirv_cross.hpp>
 
 #include <fstream>
-
 #include <iostream>
-
 #include <chrono>
 
 namespace Salad::Asset {
@@ -365,6 +362,16 @@ namespace Salad::Asset {
         return m_Samplers;
     }
 
+    UniformBuffer* ShaderReflectionData::getMaterialBuffer() {
+        return bufferForBinding(2); // TODO: Have a renderconstants thing to define the binding number for the material buffer
+    }
+
+    UniformBuffer* ShaderReflectionData::bufferForBinding(uint32_t binding) {
+        for (UniformBuffer* buffer : m_UniformBuffers)
+            if (buffer->getBinding() == binding) return buffer;
+        return nullptr;
+    }
+
     // ----- ShaderReflectionData -----
 
     // ----- Shader Compiler -----
@@ -581,4 +588,107 @@ namespace Salad::Asset {
     }
 
     // ----- Shader Compiler -----
+
+    // ----- ShaderConverter -----
+
+    ShaderConverter::ShaderConverter(ShaderCompiler* compiler) :
+        m_Compiler(compiler) 
+    {}
+
+    const OpenGLSourceMap ShaderConverter::getOpenGL() const {
+        OpenGLSourceMap sourceMap;
+        auto& containerIt = m_Compiler->m_ApiCompilerContainers.find(GraphicsAPI::OPENGL.ordinal());
+        if (containerIt == m_Compiler->m_ApiCompilerContainers.end()) return sourceMap;
+
+        for(auto it = containerIt->second->m_SourceMap.begin(); it != containerIt->second->m_SourceMap.end(); it++) {
+            spirv_cross::CompilerGLSL glslCompiler(it->second);
+            sourceMap.insert({ it->first, glslCompiler.compile() });
+        }
+
+        return sourceMap;
+    }
+
+    const VulkanSourceMap ShaderConverter::getVulkan() const {
+        return 0; //TODO
+    }
+
+    const DirectXSourceMap ShaderConverter::getDirectX() const {
+        DirectXSourceMap sourceMap;
+
+        auto& containerIt = m_Compiler->m_ApiCompilerContainers.find(GraphicsAPI::DIRECTX.ordinal());
+        if (containerIt == m_Compiler->m_ApiCompilerContainers.end()) return sourceMap;
+
+        for (auto it = containerIt->second->m_SourceMap.begin(); it != containerIt->second->m_SourceMap.end(); it++) {
+            spirv_cross::CompilerHLSL hlslCompiler(it->second);
+            sourceMap.insert({ it->first, hlslCompiler.compile() });
+        }
+
+        return sourceMap;
+    }
+
+    const MetalSourceMap ShaderConverter::getMetal() const {
+        return 0; //TODO
+    }
+
+    void ShaderConverter::cleanup() {
+        m_Compiler->cleanup();
+    }
+
+    // ----- ShaderConverter -----
+
+    // ----- ShaderExporter -----
+
+    ShaderExporter::ShaderExporter(const ShaderConverter* converter) : 
+        c_Converter(converter)
+    {
+        exportShader();
+    }
+
+    Util::ByteBuffer* ShaderExporter::buffer() {
+        return m_Buffer;
+    }
+
+    void ShaderExporter::cleanup() {
+        m_Buffer->freeBuffer();
+        delete m_Buffer;
+
+    }
+
+    void ShaderExporter::exportShader() {
+        using namespace Salad::Util;
+
+        std::vector<char> openglBuffer;
+        std::vector<char> directxBuffer;
+        std::vector<char> vulkanBuffer;
+        std::vector<char> metalBuffer;
+
+        const OpenGLSourceMap opengl = c_Converter->getOpenGL();
+        for(const ShaderStage* stage : ShaderStage::VALUES) {
+            auto it = opengl.find(stage->ordinal());
+
+            uint32_t stagesize = (it != opengl.end()) ? (uint32_t)it->second.size() : 0;
+
+            uint32_t cursize = openglBuffer.size();
+            uint32_t newsize = cursize + sizeof(uint32_t) + stagesize;
+
+            openglBuffer.resize(newsize);
+            memcpy(&openglBuffer[cursize], &stagesize, sizeof(uint32_t));
+
+            if(stagesize > 0) {
+                memcpy(&openglBuffer[cursize + sizeof(uint32_t)], it->second.data(), stagesize);
+            }
+        }
+
+        m_Buffer = new ByteBuffer();
+        m_Buffer->allocate<char>(32 + openglBuffer.size());
+        
+        m_Buffer->write<uint64_t>(openglBuffer.size() > 0 ? 32 : 0); // opengl index, if 0 no shader
+        m_Buffer->write<uint64_t>(0); // directx index, if 0 no shader
+        m_Buffer->write<uint64_t>(0); // vulkan index, if 0 no shader
+        m_Buffer->write<uint64_t>(0); // metal index, if 0 no shader
+
+        m_Buffer->writeArray<char>(&openglBuffer[0], openglBuffer.size());
+    }
+
+    // ----- ShaderExporter -----
 }

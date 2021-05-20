@@ -119,7 +119,8 @@ project "Salad"
         links {
             "%{VulkanDebugLibraries.ShaderC_Debug}",
             "%{VulkanDebugLibraries.SPIRV_Cross_Debug}",
-            "%{VulkanDebugLibraries.SPIRV_Cross_GLSL_Debug}"
+            "%{VulkanDebugLibraries.SPIRV_Cross_GLSL_Debug}",
+            "%{VulkanDebugLibraries.SPIRV_Cross_HLSL_Debug}"
         }
 
     filter "configurations:Release"
@@ -130,7 +131,8 @@ project "Salad"
         links {
             "%{VulkanLibraries.ShaderC}",
             "%{VulkanLibraries.SPIRV_Cross}",
-            "%{VulkanLibraries.SPIRV_Cross_GLSL}"
+            "%{VulkanLibraries.SPIRV_Cross_GLSL}",
+            "%{VulkanLibraries.SPIRV_Cross_HLSL}"
         }
 
     filter "configurations:Dist"
@@ -141,62 +143,9 @@ project "Salad"
         links {
             "%{VulkanLibraries.ShaderC}",
             "%{VulkanLibraries.SPIRV_Cross}",
-            "%{VulkanLibraries.SPIRV_Cross_GLSL}"
+            "%{VulkanLibraries.SPIRV_Cross_GLSL}",
+            "%{VulkanLibraries.SPIRV_Cross_HLSL}"
         }
-
-project "Sandbox"
-    location "Sandbox"
-    kind "ConsoleApp"
-    language "C++"
-    cppdialect "C++17"
-    staticruntime "off"
-
-    targetdir ("bin/" .. outputdir .. "/%{prj.name}")
-    objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
-
-    files {
-        "%{prj.name}/src/**.c",
-        "%{prj.name}/src/**.h",
-        "%{prj.name}/src/**.hpp",
-        "%{prj.name}/src/**.cpp"
-    }
-
-    includedirs {
-        "Salad/vendor/spdlog/include",
-        "Salad/src",
-        "Salad/vendor",
-        "%{IncludeDir.glm}",
-        "%{IncludeDir.entt}",
-        "%{IncludeDir.LuaBridge}",
-        "%{IncludeDir.Glad}",
-        "%{VulkanInclude}"
-    }
-
-    links {
-        "Salad"
-    }
-
-    filter "system:windows"
-        systemversion "latest"
-
-        defines{
-            "SLD_PLATFORM_WINDOWS"
-        }
-
-    filter "configurations:Debug"
-        defines "SLD_DEBUG"
-        runtime "Debug"
-        symbols "on"
-
-    filter "configurations:Release"
-        defines "SLD_RELEASE"
-        runtime "Release"
-        optimize "on"
-
-    filter "configurations:Dist"
-        defines "SLD_DIST"
-        runtime "Release"
-        optimize "on"
 
 project "Salad-Bowl"
     location "Salad-Bowl"
@@ -233,6 +182,62 @@ project "Salad-Bowl"
     links {
         "Salad",
         "assimp"
+    }
+
+    filter "system:windows"
+        systemversion "latest"
+
+        defines{
+            "SLD_PLATFORM_WINDOWS"
+        }
+
+    filter "configurations:Debug"
+        defines "SLD_DEBUG"
+        runtime "Debug"
+        symbols "on"
+
+    filter "configurations:Release"
+        defines "SLD_RELEASE"
+        runtime "Release"
+        optimize "on"
+
+    filter "configurations:Dist"
+        defines "SLD_DIST"
+        runtime "Release"
+        optimize "on"
+
+project "Sandbox"
+    location "Sandbox"
+    kind "ConsoleApp"
+    language "C++"
+    cppdialect "C++17"
+    staticruntime "off"
+
+    targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+    objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+
+    files {
+        "%{prj.name}/src/**.c",
+        "%{prj.name}/src/**.h",
+        "%{prj.name}/src/**.hpp",
+        "%{prj.name}/src/**.cpp"
+    }
+
+    includedirs {
+        "Salad/vendor/spdlog/include",
+        "Salad/src",
+        "Salad/vendor",
+        "Salad-Bowl/src",
+        "%{IncludeDir.glm}",
+        "%{IncludeDir.entt}",
+        "%{IncludeDir.LuaBridge}",
+        "%{IncludeDir.Glad}",
+        "%{VulkanInclude}"
+    }
+
+    links {
+        "Salad",
+        "Salad-Bowl"
     }
 
     filter "system:windows"

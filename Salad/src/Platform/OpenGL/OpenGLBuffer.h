@@ -38,24 +38,16 @@ namespace Salad {
 		uint32_t m_Count;
 	};
 
-	/*class OpenGLFramebuffer : public Framebuffer {
-
+	class OpenGLUniformBuffer : public UniformBuffer {
+	
 	public:
-		OpenGLFramebuffer(uint32_t width, uint32_t height);
-		virtual ~OpenGLFramebuffer() override;
+		OpenGLUniformBuffer(const uint32_t binding, const uint32_t size);
 
-		virtual uint32_t getWidth() const override { return m_Width; }
-		virtual uint32_t getHeight() const override { return m_Height; }
-
-		virtual void bind() const override;
-		virtual void unbind() const override;
-
-		virtual Ref<Texture2D> getColorBuffer() const override { return m_ColorBuffer; }
+		virtual void updateBuffer(const void* data) override;
+		virtual void updateBuffer(const uint32_t offset, const uint32_t size, const void* data) override;
 
 	private:
-		uint32_t m_Width, m_Height;
+		uint32_t m_BufferId = 0;
 
-		uint32_t m_FramebufferId, m_RenderBufferId;
-		Ref<Texture2D> m_ColorBuffer;
-	};*/
+	};
 }

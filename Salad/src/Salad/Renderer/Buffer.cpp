@@ -26,6 +26,15 @@ namespace Salad {
 		return nullptr;
 	}
 
+	UniformBuffer* Salad::UniformBuffer::create(const uint32_t binding, const uint32_t size) {
+		switch (Renderer::getAPI()) {
+			case RenderAPI::API::NONE: SLD_CORE_ASSERT(false, "Render API None is not supported!"); return nullptr;
+			case RenderAPI::API::OpenGL: return new OpenGLUniformBuffer(binding, size);
+		}
+		SLD_CORE_ASSERT(false, "Unknown renderer API!");
+		return nullptr;
+	}
+
 	/*Ref<Framebuffer> Framebuffer::create(const uint32_t width, const uint32_t height) {
 		switch (Renderer::getAPI()) {
 			case RenderAPI::API::NONE: SLD_CORE_ASSERT(false, "Render API None is not supported!"); return nullptr;

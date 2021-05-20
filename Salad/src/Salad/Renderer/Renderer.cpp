@@ -8,6 +8,7 @@
 namespace Salad {
 
 	Renderer::SceneData* Renderer::m_SceneData = new Renderer::SceneData;
+	Renderer::UniformBufferData* Renderer::s_UniformBufferData = new Renderer::UniformBufferData;
 
 	void Renderer::init() {
 		RenderCommand::init();
@@ -65,5 +66,20 @@ namespace Salad {
 		shader->setMat4("u_View", view);
 
 		RenderCommand::drawTriangles(vertexArray, 36);
+	}
+
+	void Salad::Renderer::registerUniformBuffer(const uint32_t binding, const uint32_t size) {
+		int vectorSize = s_UniformBufferData->m_UniformBuffers.size();
+		if (binding >= vectorSize) s_UniformBufferData->m_UniformBuffers.resize(binding + 1);
+
+		SLD_CORE_ASSERT((s_UniformBufferData->m_UniformBuffers[binding] == nullptr), "Trying to bind a uniform buffer to a already bound index!");
+
+		s_UniformBufferData->m_UniformBuffers[binding] = UniformBuffer::create(binding, size);
+	}
+
+	UniformBuffer* Salad::Renderer::getUniformBuffer(const uint32_t binding) {
+		SLD_CORE_ASSERT((binding < s_UniformBufferData->m_UniformBuffers.size()), "Binding out of bounds!");
+		SLD_CORE_ASSERT((s_UniformBufferData->m_UniformBuffers[binding] != nullptr), "No uniform buffer is registered at this index!");
+		return s_UniformBufferData->m_UniformBuffers[binding];
 	}
 }

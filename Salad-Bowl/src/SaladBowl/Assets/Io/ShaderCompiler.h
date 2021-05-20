@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Salad/Util/DataBuffers.hpp"
+
 #include <string>
 #include <vector>
 #include <map>
@@ -18,7 +20,11 @@ namespace Salad::Asset {
 
 	using SPIRVSource = const std::vector<uint32_t>;
 	using SPIRVStageMap = std::map<uint32_t, SPIRVSource>;
-	using GLSLStageMap = std::map<uint32_t, std::string>;
+
+	typedef std::map<uint32_t, std::string> OpenGLSourceMap;
+	typedef uint32_t VulkanSourceMap;
+	typedef std::map<uint32_t, std::string> DirectXSourceMap;
+	typedef uint32_t MetalSourceMap;
 
 	class GraphicsAPI {
 
@@ -261,6 +267,9 @@ namespace Salad::Asset {
 		const std::vector<UniformBuffer*>& getUniformBuffers();
 		const std::vector<SamplerEntry*>& getSamplers();
 
+		UniformBuffer* getMaterialBuffer();
+		UniformBuffer* bufferForBinding(uint32_t binding);
+
 	private:
 		std::vector<UniformBuffer*> m_UniformBuffers;
 		std::vector<SamplerEntry*> m_Samplers;
@@ -320,5 +329,46 @@ namespace Salad::Asset {
 
 		ShaderErrorData* m_ReflectionErrors = nullptr;
 		ShaderReflectionData* m_ReflectionData = nullptr;
+
+		friend class ShaderConverter;
+	};
+
+	class ShaderConverter {
+
+	public:
+
+		ShaderConverter() = delete;
+		ShaderConverter(ShaderCompiler* compiler);
+		~ShaderConverter() = default;
+
+		const OpenGLSourceMap getOpenGL() const;
+		const VulkanSourceMap getVulkan() const;
+		const DirectXSourceMap getDirectX() const;
+		const MetalSourceMap getMetal() const;
+
+		void cleanup();
+
+	private:
+		ShaderCompiler* m_Compiler;
+
+	};
+
+	class ShaderExporter {
+	
+	public:
+		ShaderExporter() = delete;
+		ShaderExporter(const ShaderConverter* converter);
+		~ShaderExporter() = default;
+
+		Util::ByteBuffer* buffer();
+
+		void cleanup();
+
+	private:
+		void exportShader();
+
+	private:
+		const ShaderConverter* c_Converter;
+		Util::ByteBuffer* m_Buffer;
 	};
 }

@@ -43,6 +43,87 @@ namespace Salad {
 		compile(shaderSource);
 	}
 
+	OpenGLShader::OpenGLShader(const std::string& name, Util::ByteBuffer* buffer) :
+		m_Name(name)
+	{
+		//buffer->skip<uint64_t>(0);
+		buffer->moveIterator(0);
+		uint64_t openglindex = buffer->read<uint64_t>();
+
+		// uint64_t directxindex = buffer->read<uint64_t>();
+		// uint64_t vulkanindex = buffer->read<uint64_t>();
+		// uint64_t metalindex = buffer->read<uint64_t>();
+
+		SLD_CORE_ASSERT(openglindex > 0, "Unable to load shader, index = 0!");
+		buffer->moveIterator(openglindex);
+
+		std::vector<uint32_t> shaderIds;
+		const static GLenum stageMap[4] = { GL_VERTEX_SHADER, GL_GEOMETRY_SHADER, GL_FRAGMENT_SHADER, GL_COMPUTE_SHADER };
+
+		for(int i = 0; i < 4; i++) {
+			uint32_t stagesize = buffer->read<uint32_t>();
+			if (stagesize == 0) continue;
+
+			GLenum stage = GL_VERTEX_SHADER;
+			switch(i){
+				case 0: stage = GL_VERTEX_SHADER; break;
+				case 1: stage = GL_GEOMETRY_SHADER; break;
+				case 2: stage = GL_FRAGMENT_SHADER; break;
+				case 3: stage = GL_COMPUTE_SHADER; break;
+			}
+
+			uint32_t shaderid = glCreateShader(stage);
+			char* stageSource = buffer->readArray<char>(stagesize);
+
+			glShaderSource(shaderid, 1, &stageSource, 0);
+			glCompileShader(shaderid);
+
+			int compileStatus = 0;
+			glGetShaderiv(shaderid, GL_COMPILE_STATUS, &compileStatus);
+			if (compileStatus == GL_FALSE) 			{
+				GLint maxLength = 500;
+				glGetShaderiv(shaderid, GL_INFO_LOG_LENGTH, &maxLength);
+
+				std::vector<GLchar> infoLog(maxLength);
+				glGetShaderInfoLog(shaderid, maxLength, &maxLength, &infoLog[0]);
+				glDeleteShader(shaderid);
+
+				SLD_CORE_ERROR("{0}", infoLog.data());
+				SLD_CORE_ASSERT(false, "Shader compilation failure!");
+				break;
+			}
+			else {
+				shaderIds.push_back(shaderid);
+			}
+		}
+
+		GLuint program = glCreateProgram();
+		for(uint32_t shaderid : shaderIds) glAttachShader(program, shaderid);
+
+		glLinkProgram(program);
+		GLint isLinked = 0;
+		glGetProgramiv(program, GL_LINK_STATUS, (int*)&isLinked);
+		if (isLinked == GL_FALSE) 		{
+			GLint maxLength = 0;
+			glGetProgramiv(program, GL_INFO_LOG_LENGTH, &maxLength);
+
+			std::vector<GLchar> infoLog(maxLength);
+			glGetProgramInfoLog(program, maxLength, &maxLength, &infoLog[0]);
+
+			glDeleteProgram(program);
+
+			for (uint32_t shaderid : shaderIds) glDeleteShader(shaderid);
+
+			SLD_CORE_ERROR("{0}", infoLog.data());
+			SLD_CORE_ASSERT(false, "Shader link failure!");
+
+			return;
+		}
+
+		for (uint32_t shaderid : shaderIds) glDetachShader(program, shaderid);
+		m_ShaderId = program;
+	}
+
 	std::string OpenGLShader::readFile(const std::string& filepath) {
 		std::ifstream in(filepath, std::ios::in | std::ios::binary);
 		std::string result;
@@ -172,8 +253,6 @@ namespace Salad {
 
 			SLD_CORE_ERROR("{0}", infoLog.data());
 			SLD_CORE_ASSERT(false, "Shader link failure!");
-
-			return;
 		}
 
 		for (GLuint i = 0; i < sourcesAmount; i++)

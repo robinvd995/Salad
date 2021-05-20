@@ -128,6 +128,27 @@ namespace Salad {
 		static Ref<IndexBuffer> create(uint32_t* indices, uint32_t size);
 	};
 
+	class UniformBuffer {
+	
+	public:
+		UniformBuffer() = delete;
+		UniformBuffer(const UniformBuffer&) = delete;
+		UniformBuffer(const uint32_t binding, const uint32_t size) : c_Binding(binding), c_BufferSize(size) {}
+		virtual ~UniformBuffer() {}
+
+		virtual void updateBuffer(const void* data) = 0;
+		virtual void updateBuffer(const uint32_t offset, const uint32_t size, const void* data) = 0;
+
+		virtual const uint32_t getBinding() const { return c_Binding; }
+		virtual const uint32_t getBufferSize() const { return c_BufferSize; }
+
+		static UniformBuffer* create(const uint32_t binding, const uint32_t size);
+
+	protected:
+		const uint32_t c_Binding;
+		const uint32_t c_BufferSize;
+	};
+
 	/*class Framebuffer {
 	public:
 		virtual ~Framebuffer() = default;

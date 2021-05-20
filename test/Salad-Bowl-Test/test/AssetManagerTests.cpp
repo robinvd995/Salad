@@ -7,7 +7,7 @@
 #include "SaladBowl/Assets/Core/AssetManagerSerializer.hpp"
 
 #include "Salad/Core/ResourceManager.h"
-#include "SaladBowl/Util/Buffers.hpp"
+#include "Salad/Util/DataBuffers.hpp"
 
 #include "SaladBowl/Assets/Io/ColladaLoader.h"
 #include "SaladBowl/Assets/Io/ShaderCompiler.h"

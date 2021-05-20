@@ -17,10 +17,22 @@ namespace Salad {
 		{}
 
 		void setPosition(float x, float y, float z);
+
 		void translate(float x, float y, float z);
+		void translate(glm::vec3& distances);
+		void translate(float distance, glm::vec3& axis);
+
+		void translateForward(float distance);
+		void translateUp(float distance);
+		void translateLeft(float distance);
 
 		/*void setRotation(float x, float y, float z);
 		void rotate(float x, float y, float z);*/
+
+		void rotate(float angle, glm::vec3& axis);
+		//void rotateDeg(float amount, glm::vec3& angle);
+
+		void setOrientation(glm::quat& orientation) { m_Orientation = orientation; }
 
 		void setScale(float x, float y, float z);
 		void scale(float x, float y, float z);
@@ -51,8 +63,9 @@ namespace Salad {
 	private:
 		glm::vec3 m_Position { 0.0f };
 		//glm::vec3 m_Rotation { 0.0f };
-		glm::quat m_Orientation{};
-		glm::vec3 m_Scale    { 1.0f };
+		//glm::quat m_Orientation{ 0.0f, 0.0f, 0.0f, 1.0f };
+		glm::quat m_Orientation = glm::identity<glm::quat>();
+		glm::vec3 m_Scale { 1.0f };
 
 		glm::mat4 m_TransformMatrix{ 1.0f };
 

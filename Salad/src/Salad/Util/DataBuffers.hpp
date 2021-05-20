@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <memory>
+#include <iostream>
 
 namespace Salad::Util {
 
@@ -9,13 +10,16 @@ namespace Salad::Util {
 
 	public:
 		ByteBuffer() = default;
+		ByteBuffer(char* data, size_t size) : m_BufferSize(size), m_IsDataOwner(false){ m_BufferData = data; m_Iterator = 0; }
 		ByteBuffer(size_t maxSegmentedWriteSize) : m_MaxSegmentedWriteSize(maxSegmentedWriteSize) {}
 		~ByteBuffer() = default;
 
 		template<typename T>
 		void allocate(size_t count) {
-			m_BufferSize = sizeof(T) * count;
-			m_BufferData = (char*)malloc(m_BufferSize);
+			if (m_IsDataOwner) {
+				m_BufferSize = sizeof(T) * count;
+				m_BufferData = (char*)malloc(m_BufferSize);
+			}
 		}
 
 		template<typename T>
@@ -60,15 +64,26 @@ namespace Salad::Util {
 			return ((T*)&m_BufferData[pos]);
 		}
 
+		size_t getIteratorIndex() { return m_Iterator; }
+
 		void moveIterator(size_t newpos) { m_Iterator = newpos; }
 
 		void mark() { m_MarkedPos = m_Iterator; }
 		void moveToMark() { m_Iterator = m_MarkedPos; }
 
 		template<typename T>
+		void skip(size_t amount) { m_Iterator += (sizeof(T) * amount); }
+
+		template<typename T>
 		T* get() { return (T*)m_BufferData; }
 
-		void freeBuffer() { free((char*)m_BufferData); }
+		void freeBuffer() { if(m_IsDataOwner) free((char*)m_BufferData); }
+
+	public:
+		friend std::ostream& operator<<(std::ostream& os, const ByteBuffer& buffer) {
+			os.write(buffer.m_BufferData, buffer.m_BufferSize);
+			return os;
+		}
 
 	private:
 		char* m_BufferData = nullptr;
@@ -77,6 +92,8 @@ namespace Salad::Util {
 
 		size_t m_MarkedPos = 0;
 		size_t m_MaxSegmentedWriteSize = 65536;
+
+		bool m_IsDataOwner = true;
 	};
 
 	class FloatBuffer {

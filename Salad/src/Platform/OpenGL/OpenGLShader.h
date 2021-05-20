@@ -13,6 +13,7 @@ namespace Salad {
 	public:
 		OpenGLShader(const std::string& filepath);
 		OpenGLShader(const std::string& name, const std::string& vertexSource, const std::string& fragmentSource);
+		OpenGLShader(const std::string& name, Util::ByteBuffer* buffer);
 		~OpenGLShader();
 
 		virtual void bind() const override;
