@@ -127,6 +127,13 @@ namespace Salad {
 			data.push_back(normalZ);
 		}
 
+		float heightFunc(float original, float exponent, float amplitude) {
+			float blendFac0 = pow(original * 2.0f - 1.0f, 9.0f) * 0.5f + 0.5f;
+			float blendFac1 = pow(original, exponent) * amplitude;
+			float value = blendFac0 + blendFac1;
+			return value;
+		}
+
 		void loadTerrain() {
 
 			const static uint32_t terrainVertexSize = 8;
@@ -134,7 +141,7 @@ namespace Salad {
 
 			Timer timer;
 			timer.start();
-			float amplitude = 8.0f;
+			float amplitude = 10.0f;
 
 			float terrainWidth = 512;
 			float terrainHeight = 512;
@@ -145,7 +152,7 @@ namespace Salad {
 
 			Timer noiseTimer;
 			noiseTimer.start();
-			NoiseData noise = generateNoisePerlin2D(512, 512, 1.2f, 6, 0.5f, 2.0f, false);
+			NoiseData noise = generateNoisePerlin2D(512, 512, 1.2f, 8, 0.5f, 2.0f, false);
 			noiseTimer.end();
 			std::cout << "Noise gen time: " << noiseTimer.getTimeMillis() << "ms" << std::endl;
 
@@ -166,7 +173,8 @@ namespace Salad {
 				int x = i % noise.c_Width;
 				int y = i / noise.c_Width;
 
-				float height = pow(noise.m_Data[i], terrainPow) * amplitude;
+				//float height = pow(noise.m_Data[i], terrainPow) * amplitude;
+				float height = heightFunc(noise.m_Data[i], terrainPow, amplitude);
 
 				int ileft = i - 1;
 				int iright = i + 1;
@@ -178,12 +186,27 @@ namespace Salad {
 				if (itop < 0) itop = i;
 				if (ibot >= noise.c_Height) ibot = i;
 
-				float left = pow(noise.m_Data[ileft], 4) * amplitude;;
-				float right = pow(noise.m_Data[iright], 4) * amplitude;
-				float top = pow(noise.m_Data[itop], 4) * amplitude;
-				float bot = pow(noise.m_Data[ibot], 4) * amplitude;
+				float left = heightFunc(noise.m_Data[ileft], terrainPow, amplitude);
+				float right = heightFunc(noise.m_Data[iright], terrainPow, amplitude);
+				float top = heightFunc(noise.m_Data[itop], terrainPow, amplitude);
+				float bot = heightFunc(noise.m_Data[ibot], terrainPow, amplitude);
+				 
+				glm::vec3 normal = glm::normalize(glm::vec3((left - right) * terrainResolution, 2.0f, (bot - top) * terrainResolution));
 
-				glm::vec3 normal = glm::normalize(glm::vec3(left - right, 2.0f, bot - top));
+				/*glm::vec3 p0 = glm::vec3((float)x / terrainResolution, height, (float)y / terrainResolution);
+				glm::vec3 p2 = glm::vec3((float)(x + 1) / terrainResolution, right, (float)y / terrainResolution);
+				glm::vec3 p1 = glm::vec3((float)(x) / terrainResolution, bot, (float)(y + 1) / terrainResolution);
+
+				glm::vec3 u = p1 - p0;
+				glm::vec3 v = p2 - p0;
+
+				glm::vec3 normal = glm::vec3(
+					(u.y * v.z) - (u.z * v.y),
+					(u.z * v.x) - (u.x * v.z),
+					(u.x * v.y) - (u.y * v.x)
+				);*/
+
+				//if(i < 100) std::cout << normal.x << "," << normal.y << "," << normal.z << std::endl;
 
 				vertexData[(size_t)i * terrainVertexSize + 0] = (float)x / terrainResolution;
 				vertexData[(size_t)i * terrainVertexSize + 1] = height;
@@ -294,6 +317,7 @@ namespace Salad {
 			Salad::RenderCommand::setClearColor(glm::vec4(0.05f, 0.05f, 0.05f, 1.0f));
 			m_Camera.setPerspectiveProjection(PerspectiveCameraProperties());
 
+			// Cube Vao
 			m_Cube = VertexArray::create();
 
 			Ref<Salad::VertexBuffer> vertexBuffer = VertexBuffer::create(Constants::vertexData, sizeof(Constants::vertexData), SLD_STATIC_DRAW);
@@ -304,15 +328,41 @@ namespace Salad {
 			});
 
 			m_Cube->addVertexBuffer(vertexBuffer);
-			Ref<IndexBuffer> indexBuffer = IndexBuffer::create(Constants::indexData, sizeof(Constants::indexData));
+			Ref<IndexBuffer> indexBuffer = IndexBuffer::create(Constants::indexData, 36);
 			m_Cube->setIndexBuffer(indexBuffer);
 			m_Cube->unbind();
+
+			// Skybox VAO
+			m_SkyboxVao = VertexArray::create();
+
+			Ref<VertexBuffer> skyboxVertexBuffer = VertexBuffer::create(Constants::skyboxData, sizeof(Constants::skyboxData), SLD_STATIC_DRAW);
+			skyboxVertexBuffer->setLayout({
+				{ "a_Position", Salad::ShaderDataType::Float3 }
+			});
+			m_SkyboxVao->addVertexBuffer(skyboxVertexBuffer);
+			Ref<IndexBuffer> skyboxIndexBuffer = IndexBuffer::create(Constants::skyboxIndices, 36);
+			m_SkyboxVao->setIndexBuffer(skyboxIndexBuffer);
+			m_SkyboxVao->unbind();
+
+			// Billboard VAO
+			m_BillboardVao = VertexArray::create();
+			
+			Ref<VertexBuffer> billboardVertexBuffer = VertexBuffer::create(Constants::billboardData, sizeof(Constants::billboardData), SLD_STATIC_DRAW);
+			billboardVertexBuffer->setLayout({
+				{"a_Position", Salad::ShaderDataType::Float3}
+			});
+			m_BillboardVao->addVertexBuffer(billboardVertexBuffer);
+			Ref<IndexBuffer> billboardIndexBuffer = IndexBuffer::create(Constants::billoardIndices, 6);
+			m_BillboardVao->setIndexBuffer(billboardIndexBuffer);
+			m_BillboardVao->unbind();
 
 			// Export shaders
 			
 			exportShader("assets/shaders/FlatColor", false);
-			exportShader("assets/shaders/Terrain", false);
+			exportShader("assets/shaders/Terrain", true);
 			exportShader("assets/shaders/Water", true);
+			exportShader("assets/shaders/Sky", true);
+			exportShader("assets/shaders/CelestialBody", false);
 
 			// Load shaders
 
@@ -334,6 +384,18 @@ namespace Salad {
 			Util::ByteBuffer waterShaderBuffer(waterShaderContents.data(), waterShaderContents.size());
 
 			m_WaterShader = Shader::create("Water", &waterShaderBuffer);
+
+			std::ifstream skyShaderFile("assets/shaders/Sky.shader");
+			std::string skyShaderContents((std::istreambuf_iterator<char>(skyShaderFile)), std::istreambuf_iterator<char>());
+			Util::ByteBuffer skyShaderBuffer(skyShaderContents.data(), skyShaderContents.size());
+
+			m_SkyShader = Shader::create("Sky", &skyShaderBuffer);
+
+			std::ifstream celestialBodyShaderFile("assets/shaders/CelestialBody.shader");
+			std::string celestialBodyShaderContents((std::istreambuf_iterator<char>(celestialBodyShaderFile)), std::istreambuf_iterator<char>());
+			Util::ByteBuffer celestialBodyShaderBuffer(celestialBodyShaderContents.data(), celestialBodyShaderContents.size());
+			
+			m_CelestialBodyShader = Shader::create("CelestialBody", &celestialBodyShaderBuffer);
 
 			// Load noise texture
 			NoiseData noise = generateNoisePerlin2D(256, 256, m_NoiseTextureScale, m_NoiseTextureOctaves,
@@ -366,6 +428,7 @@ namespace Salad {
 			Renderer::registerUniformBuffer(2, 256);
 			Renderer::registerUniformBuffer(3, 256);
 			Renderer::registerUniformBuffer(4, 64);
+			Renderer::registerUniformBuffer(5, 64);
 
 			// Create materials
 			Util::ByteBuffer materialBuffer;
@@ -397,6 +460,14 @@ namespace Salad {
 			materialBuffer.write<float>(1.0f);
 
 			m_TerrainMaterial = new Material(materialBuffer.getBufferSize(), materialBuffer.get<char>());
+			Ref<Texture2D> terrainSand = Texture2D::create("assets/textures/terrain_sand.png", TextureFilterWrapSpecification());
+			Ref<Texture2D> terrainGrass = Texture2D::create("assets/textures/terrain_grass.png", TextureFilterWrapSpecification());
+			Ref<Texture2D> terrainRock = Texture2D::create("assets/textures/terrain_rock.png", TextureFilterWrapSpecification());
+			Ref<Texture2D> terrainSnow = Texture2D::create("assets/textures/terrain_snow.png", TextureFilterWrapSpecification());
+			m_TerrainMaterial->attachTexture(terrainSand, 0);
+			m_TerrainMaterial->attachTexture(terrainGrass, 1);
+			m_TerrainMaterial->attachTexture(terrainRock, 2);
+			m_TerrainMaterial->attachTexture(terrainSnow, 3);
 
 			Util::ByteBuffer waterMaterialBuffer;
 			waterMaterialBuffer.allocate<char>(sizeof(glm::vec4) * 2);
@@ -405,20 +476,28 @@ namespace Salad {
 			// Bump0 properties
 			waterMaterialBuffer.write<float>(32.0f);
 			waterMaterialBuffer.write<float>(0.05f);
-			waterMaterialBuffer.write<float>(0.5f);
 			waterMaterialBuffer.write<float>(0.25f);
+			waterMaterialBuffer.write<float>(0.125f);
 
 			// Bump1 properties
 			waterMaterialBuffer.write<float>(64.0f);
 			waterMaterialBuffer.write<float>(0.01f);
-			waterMaterialBuffer.write<float>(0.25f);
 			waterMaterialBuffer.write<float>(0.125f);
+			waterMaterialBuffer.write<float>(0.0625f);
 
 			m_WaterMaterial = new Material(waterMaterialBuffer.getBufferSize(), waterMaterialBuffer.get<char>());
 			Ref<Texture2D> waterBump0 = Texture2D::create("assets/textures/water_bump_0.png", TextureFilterWrapSpecification());
 			Ref<Texture2D> waterBump1 = Texture2D::create("assets/textures/water_bump_1.png", TextureFilterWrapSpecification());
+			Ref<Texture2D> waterNormal0 = Texture2D::create("assets/textures/water_normal_0.png", TextureFilterWrapSpecification());
+			Ref<Texture2D> waterNormal1 = Texture2D::create("assets/textures/water_normal_1.png", TextureFilterWrapSpecification());
 			m_WaterMaterial->attachTexture(waterBump0, 0);
 			m_WaterMaterial->attachTexture(waterBump1, 1);
+			m_WaterMaterial->attachTexture(waterNormal0, 2);
+			m_WaterMaterial->attachTexture(waterNormal1, 3);
+
+			Util::ByteBuffer sunMaterialBuffer;
+			m_SunMaterial = new Material(sunMaterialBuffer.getBufferSize(), sunMaterialBuffer.get<char>());
+			m_SunMaterial->attachTexture(Texture2D::create("assets/textures/sun.png", TextureFilterWrapSpecification()), 0);
 
 			// Cube transforms
 
@@ -485,6 +564,9 @@ namespace Salad {
 
 			timer = timer + ts;
 
+			if(m_IncrementTimeOfDay) m_TimeOfDay += ts * m_TimeMultiplier;
+			while (m_TimeOfDay > c_TimeInDay) m_TimeOfDay -= c_TimeInDay;
+
 			glm::mat4 camTransform = glm::mat4(1.0f);
 			camTransform[3][2] = 10.0f;
 			m_Camera.recalculateViewMatrix();
@@ -528,22 +610,40 @@ namespace Salad {
 			UniformBuffer* transformBuffer = Renderer::getUniformBuffer(2);
 			UniformBuffer* lightBuffer = Renderer::getUniformBuffer(3);
 			UniformBuffer* timeBuffer = Renderer::getUniformBuffer(4);
+			UniformBuffer* specularBuffer = Renderer::getUniformBuffer(5);
 
 			// Update scene buffer with projection and view matrix
 			glm::mat4 camMatrix = m_CameraTransform.getMatrix();
 			glm::mat4 viewmatrix = glm::inverse(m_CameraTransform.getMatrixCpy());
 			sceneBuffer->updateBuffer(0, sizeof(glm::mat4), glm::value_ptr(m_Camera.getProjection()));
 			sceneBuffer->updateBuffer(sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(viewmatrix));
+			sceneBuffer->updateBuffer(sizeof(glm::mat4) * 2, sizeof(glm::vec3), glm::value_ptr(m_CameraTransform.getPosition()));
 
-			m_LightTransform.setOrientation(glm::quat(glm::vec3((-m_LightDirX) * 3.141519f, 0.0f, (-m_LightDirZ) * 3.141519f)));
+			// Light positions
+			float timeofday = m_TimeOfDay / c_TimeInDay;
+			m_LightTransform.setOrientation(glm::quat(glm::vec3((-m_LightDir.x) * 3.141519f * (timeofday * 2), (-m_LightDir.y) * 3.141519f, (-m_LightDir.z) * 3.141519f)));
 			glm::vec3 lightDir = m_LightTransform.getOrientation() * glm::vec3(0.0f, 0.0f, 1.0f);
+			float lightX = lightDir.x;
+			float lightY = lightDir.y;
+			float lightZ = lightDir.z;
+			m_SunTransform.setPosition(lightX, lightY, lightZ);
+			m_SunTransform.setOrientation(m_CameraTransform.getOrientation());
+			m_SunTransform.setScale(0.1f, 0.1f, 0.1f);
+			m_SunTransform.calculateTransformationMatrix();
+
 			lightBuffer->updateBuffer(0, sizeof(glm::vec3), glm::value_ptr(lightDir));
 
 			// Update time and buffer
 			float sinTimer = (sin(timer) + 1.0f) * 0.5f;
 			float normalizedTime = timer - (int)timer;
+			float normalizedTimeOfDay = (m_TimeOfDay / c_TimeInDay - 0.5f) * 2.0f;
 			timeBuffer->updateBuffer(0, sizeof(float), &timer);
 			timeBuffer->updateBuffer(sizeof(float), sizeof(float), &normalizedTime);
+			timeBuffer->updateBuffer(sizeof(float) * 2, sizeof(float), &normalizedTimeOfDay);
+
+			specularBuffer->updateBuffer(0, sizeof(glm::vec3), glm::value_ptr(m_SpecularColor));
+			specularBuffer->updateBuffer(sizeof(glm::vec3), sizeof(float), &m_Specular);
+			specularBuffer->updateBuffer(sizeof(glm::vec3) + sizeof(float), sizeof(float), &m_Shininess);
 
 			// Bind the shader
 			m_BlueShader->bind();
@@ -577,6 +677,21 @@ namespace Salad {
 
 			glCullFace(GL_BACK);
 
+			// Render Sky
+			glDepthMask(GL_FALSE);
+			m_SkyShader->bind();
+			m_SkyboxVao->bind();
+			Salad::RenderCommand::drawIndexed(m_SkyboxVao);
+
+			// Render sun
+			m_CelestialBodyShader->bind();
+			m_BillboardVao->bind();
+			m_SunMaterial->bind();
+			transformBuffer->updateBuffer(glm::value_ptr(m_SunTransform.getMatrix()));
+			Salad::RenderCommand::drawIndexed(m_BillboardVao);
+
+			glDepthMask(GL_TRUE);
+
 			// Render terrain
 			m_TerrainShader->bind();
 			m_TerrainMaterial->bind();
@@ -589,14 +704,26 @@ namespace Salad {
 			m_WaterMaterial->bind();
 			m_Water->bind();
 			Salad::RenderCommand::drawIndexed(m_Water);
+
 		}
 
 		virtual void onImGuiRender() override {
 			ImGui::Begin("Controls");
 
 			if(ImGui::TreeNodeEx("Light")) {
-				ImGui::SliderFloat("LightDirX", &m_LightDirX, .0f, 1.0f, "%.3f");
-				ImGui::SliderFloat("LightDirZ", &m_LightDirZ, .0f, 1.0f, "%.3f");
+				ImGui::SliderFloat("LightDirX", &m_LightDir.x, -1.0f, 1.0f, "%.3f");
+				ImGui::SliderFloat("LightDirY", &m_LightDir.y, -1.0f, 1.0f, "%.3f");
+				ImGui::SliderFloat("LightDirZ", &m_LightDir.z, -1.0f, 1.0f, "%.3f");
+				ImGui::Checkbox("Increase Time", &m_IncrementTimeOfDay);
+				if (!m_IncrementTimeOfDay) ImGui::SliderFloat("Time", &m_TimeOfDay, 0.0f, c_TimeInDay);
+				else ImGui::SliderFloat("Time speed", &m_TimeMultiplier, 1.0f, 100.0f, "%.1f");
+				ImGui::TreePop();
+			}
+
+			if(ImGui::TreeNodeEx("Specular")) {
+				ImGui::SliderFloat3("Specular Color", glm::value_ptr(m_SpecularColor), 0.0f, 1.0f);
+				ImGui::SliderFloat("Specular", &m_Specular, 0.0f, 1.0f, "%.2f");
+				ImGui::SliderFloat("Shininess", &m_Shininess, 0.0f, 128.0f, "%.2f");
 				ImGui::TreePop();
 			}
 
@@ -665,8 +792,7 @@ namespace Salad {
 		Material* m_TerrainMaterial;
 		Material* m_WaterMaterial;
 		Transform m_LightTransform;
-		float m_LightDirX = 0.5f;
-		float m_LightDirZ = 0.25f;
+		glm::vec3 m_LightDir{1.0f, -0.5f, 0.0f};
 
 		Ref<Texture2D> m_NoiseTexture;
 		float m_NoiseTextureScale = 0.25f;
@@ -676,5 +802,22 @@ namespace Salad {
 		bool m_NoiseTextureAbsolute = false;
 		float m_NoiseTexturePow = 1;
 		float m_NoiseTextureMask = 0.0f;
+
+		glm::vec3 m_SpecularColor = glm::vec3(1.0f, 1.0f, 1.0f);
+		float m_Specular = 0.3f;
+		float m_Shininess = 64.0f;
+
+		Ref<VertexArray> m_SkyboxVao;
+		Ref<Shader> m_SkyShader;
+
+		Ref<VertexArray> m_BillboardVao;
+		Ref<Shader> m_CelestialBodyShader;
+		Transform m_SunTransform;
+		Material* m_SunMaterial;
+
+		const float c_TimeInDay = 1200.0f;
+		float m_TimeOfDay = 0.0f;
+		float m_TimeMultiplier = 1.0f;
+		bool m_IncrementTimeOfDay = false;
 	};
 }

@@ -1,6 +1,8 @@
 <asset_manager>
-	<included_assets size="1">
+	<included_assets size="3">
+		<asset dirty="1" type="Model">assets/models/cube.dae</asset>
 		<asset dirty="1" type="Shader">assets/shaders/test/ShaderBuilderTest.glsl</asset>
+		<asset dirty="0" type="Texture">assets/textures/crate_diffuse.png</asset>
 	</included_assets>
 </asset_manager>
 

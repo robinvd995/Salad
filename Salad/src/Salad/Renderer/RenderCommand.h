@@ -20,6 +20,9 @@ namespace Salad {
 		static inline void drawTriangles(const Ref<VertexArray>& vertexArray, uint32_t count) { s_RenderAPI->drawTriangles(vertexArray, count); }
 		static inline void depthMask(bool enable) { s_RenderAPI->depthMask(enable); }
 
+		static inline void enableScissorTest(bool enable) { s_RenderAPI->enableScissorTest(enable); }
+		static inline void scissor(uint32_t x, uint32_t y, uint32_t width, uint32_t height) { s_RenderAPI->scissor(x, y, width, height); }
+
 		static inline RenderFlags* getFlags() { return s_RenderFlags; }
 
 	private:

@@ -26,6 +26,10 @@ namespace Salad {
 		void translateUp(float distance);
 		void translateLeft(float distance);
 
+		void translateForward(glm::vec3& dest, float distance);
+		void translateUp(glm::vec3& dest, float distance);
+		void translateLeft(glm::vec3& dest, float distance);
+
 		/*void setRotation(float x, float y, float z);
 		void rotate(float x, float y, float z);*/
 

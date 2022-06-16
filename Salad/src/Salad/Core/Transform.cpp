@@ -69,6 +69,27 @@ namespace Salad {
 		m_Position.z += direction.z * distance;
 	}
 
+	void Transform::translateForward(glm::vec3& dest, float distance) {
+		glm::vec3 direction = m_Orientation * glm::vec3(0.0f, 0.0f, 1.0f);
+		dest.x += direction.x * distance;
+		dest.y += direction.y * distance;
+		dest.z += direction.z * distance;
+	}
+
+	void Transform::translateUp(glm::vec3& dest, float distance) {
+		glm::vec3 direction = m_Orientation * glm::vec3(0.0f, 1.0f, 0.0f);
+		dest.x += direction.x * distance;
+		dest.y += direction.y * distance;
+		dest.z += direction.z * distance;
+	}
+
+	void Transform::translateLeft(glm::vec3& dest, float distance) {
+		glm::vec3 direction = m_Orientation * glm::vec3(1.0f, 0.0f, 0.0f);
+		dest.x += direction.x * distance;
+		dest.y += direction.y * distance;
+		dest.z += direction.z * distance;
+	}
+
 	/*void Transform::setRotation(float x, float y, float z) {
 		m_Rotation.x = x;
 		m_Rotation.y = y;

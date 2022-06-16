@@ -3,7 +3,7 @@
 		<entity id="64" tag="Camera">
 			<component_transform>
 				<position>0.000000 0.000000 0.000000</position>
-				<rotation>0.000000 0.000000 0.000000 0.000000</rotation>
+				<rotation>0.000000 0.000000 0.000000 1.000000</rotation>
 				<scale>1.000000 1.000000 1.000000</scale>
 			</component_transform>
 			<component_relation parent="128" depth="0"/>
@@ -15,25 +15,25 @@
 		<entity id="64" tag="Platform">
 			<component_transform>
 				<position>0.000000 0.005000 0.000000</position>
-				<rotation>0.000000 0.000000 0.000000 0.000000</rotation>
-				<scale>10.000000 0.010000 10.000000</scale>
+				<rotation>0.000000 0.000000 0.995613 -0.093571</rotation>
+				<scale>16.883671 0.077125 14.922990</scale>
 			</component_transform>
 			<component_relation parent="128" depth="0"/>
 			<component_mesh mesh_resource="mesh" shader_resource="material" texture_resource="texture"/>
 		</entity>
 		<entity id="64" tag="Leaves">
 			<component_transform>
-				<position>0.000000 0.000000 0.000000</position>
-				<rotation>0.000000 0.000000 0.000000 0.000000</rotation>
-				<scale>1.000000 1.000000 1.000000</scale>
+				<position>168.000000 1.194605 -168.000000</position>
+				<rotation>0.000000 0.000000 0.000000 0.992395</rotation>
+				<scale>0.000000 0.000000 0.000000</scale>
 			</component_transform>
 			<component_relation parent="128" depth="1"/>
 			<component_mesh mesh_resource="mesh" shader_resource="material" texture_resource="texture"/>
 		</entity>
 		<entity id="64" tag="Tree">
 			<component_transform>
-				<position>3.000000 0.000000 -3.000000</position>
-				<rotation>0.000000 0.000000 0.000000 0.000000</rotation>
+				<position>0.293385 2.437078 -0.448649</position>
+				<rotation>0.000000 0.000000 0.000000 1.000000</rotation>
 				<scale>0.400000 0.400000 0.400000</scale>
 			</component_transform>
 			<component_relation parent="128" depth="0">
@@ -43,8 +43,8 @@
 		</entity>
 		<entity id="64" tag="Crate2">
 			<component_transform>
-				<position>-3.000000 1.000000 1.500000</position>
-				<rotation>0.000000 0.000000 0.000000 0.000000</rotation>
+				<position>-7.416066 1.000061 3.306682</position>
+				<rotation>0.000000 0.000000 0.000000 1.000000</rotation>
 				<scale>1.000000 1.000000 1.000000</scale>
 			</component_transform>
 			<component_relation parent="128" depth="0"/>
@@ -53,7 +53,7 @@
 		<entity id="64" tag="Crate">
 			<component_transform>
 				<position>0.000000 1.000000 0.000000</position>
-				<rotation>0.000000 0.000000 0.000000 0.000000</rotation>
+				<rotation>0.000000 0.000000 0.000000 1.000000</rotation>
 				<scale>1.000000 1.000000 1.000000</scale>
 			</component_transform>
 			<component_relation parent="128" depth="0"/>

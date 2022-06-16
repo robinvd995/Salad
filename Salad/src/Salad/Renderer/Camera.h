@@ -20,6 +20,10 @@ namespace Salad {
 		OrthographicCameraProperties()
 			: Left(-16.0f), Right(16.0f), Top(9.0f), Bottom(-9.0f), ZNear(-1.0f), ZFar(1.0f)
 		{}
+
+		OrthographicCameraProperties(float width, float height)
+			: Left(0.0f), Right(width), Top(0.0f), Bottom(height), ZNear(-1.0f), ZFar(1.0f)
+		{}
 	};
 
 	class Camera {

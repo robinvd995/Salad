@@ -148,7 +148,7 @@ namespace Salad {
 	}
 
 	void Renderer2D::drawVertexArray(const glm::vec2& position, const glm::vec2& size, const Ref<VertexArray> vertexArray) {
-		drawVertexArray({ position.x, position.y, 1.0f }, size, vertexArray);
+		drawVertexArray({ position.x, position.y, 0.0f }, size, vertexArray);
 	}
 
 	void Renderer2D::drawVertexArray(const glm::vec3& position, const glm::vec2& size, const Ref<VertexArray> vertexArray) {

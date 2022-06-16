@@ -36,4 +36,13 @@ namespace Salad {
 		glDepthMask(enabled ? GL_TRUE : GL_FALSE);
 	}
 
+	void OpenGLRenderAPI::enableScissorTest(bool enable) {
+		if (enable) glEnable(GL_SCISSOR_TEST);
+		else glDisable(GL_SCISSOR_TEST);
+	}
+
+	void OpenGLRenderAPI::scissor(uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
+		glScissor(x, y, width, height);
+	}
+
 }

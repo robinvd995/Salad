@@ -50,3 +50,15 @@ textbox = {
 	TopHeight = 4,
 	BottomHeight = 4
 }
+
+textboxActive = {
+	X = 280,
+	Y = 208,
+	Width = 24,
+	Height = 24,
+	LeftWidth = 4,
+	RightWidth = 4,
+	TopHeight = 4,
+	BottomHeight = 4
+}
+

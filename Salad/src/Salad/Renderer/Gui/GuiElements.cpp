@@ -1,5 +1,5 @@
 #include "sldpch.h"
-#include "Gui.h"
+#include "GuiElements.h"
 
 #include "GuiTessellator.h"
 
@@ -7,187 +7,7 @@
 #include "Salad/Renderer/Tessellator.h"
 #include "Salad/Renderer/Renderer2D.h"
 
-#include "Salad/Lua/LuaScript.h"
-
-#include <algorithm>
-#include <Salad\Renderer\Gui\FontManager.h>
-
 namespace Salad {
-
-	// -------- GuiWindow --------- //
-
-	GuiWindow::GuiWindow(int offsetX, int offsetY, float allignX, float allignY, uint32_t width, uint32_t height) :
-		m_OffsetX(offsetX),
-		m_OffsetY(offsetY),
-		m_AllignX(allignX),
-		m_AllignY(allignY),
-		m_WindowWidth(width),
-		m_WindowHeight(height) 
-	{}
-
-	void GuiWindow::initWindow() {
-		Ref<Texture2D> texture = TextureManager::get().loadTexture2D("assets/textures/ui.png");
-		m_Elements.push_back(createRef<GuiCheckbox>(this, 0, 20, 80));
-		m_Elements.push_back(createRef<GuiTextbox>(this, 1, 52, 80, 224, 24));
-		m_Elements.push_back(createRef<GuiButton>(this, 20, 108, 256, 32));
-		m_Elements.push_back(createRef<GuiLabel>(88, 28, std::string("Hello World!")));
-		m_Elements.push_back(createRef<GuiElementWindowBackground>(this));
-	}
-
-	void GuiWindow::destroyWindow() {
-
-	}
-
-	void GuiWindow::drawWindow() {
-		for (int i = 0; i < m_Elements.size(); i++) {
-			TextureManager::get().getTexture2D("assets/textures/ui.png")->bind();
-			m_Elements[i]->draw(this);
-		}
-	}
-
-	void GuiWindow::onEvent(Event& e) {
-		Salad::EventDispatcher dispatcher(e);
-		dispatcher.dispatch<MouseButtonPressedEvent>(SLD_BIND_EVENT_FN(GuiWindow::onMouseButtonPressed));
-		dispatcher.dispatch<MouseButtonReleasedEvent>(SLD_BIND_EVENT_FN(GuiWindow::onMouseButtonReleased));
-		dispatcher.dispatch<MouseMoveEvent>(SLD_BIND_EVENT_FN(GuiWindow::onMouseMoveEvent));
-		dispatcher.dispatch<WindowResizeEvent>(SLD_BIND_EVENT_FN(GuiWindow::onWindowResizeEvent));
-	}
-
-	bool GuiWindow::onMouseButtonPressed(MouseButtonPressedEvent& e) {
-
-		bool handled = false;
-		for (int i = 0; i < m_Elements.size(); i++) {
-			handled = m_Elements[i]->onMouseButtonPressed(this, m_RelMousePosX, m_RelMousePosY, e.getMouseButton());
-			if (handled) break;
-		}
-
-		if (!handled && !isLocationLocked() && m_RelMousePosX > 0 && m_RelMousePosX < m_WindowWidth && m_RelMousePosY > 0 && m_RelMousePosY < m_WindowStyle->topHeight) {
-			m_Dragged = true;
-			m_DragOffsetX = m_RelMousePosX;
-			m_DragOffsetY = m_RelMousePosY;
-		}
-
-		return handled;
-	}
-
-	bool GuiWindow::onMouseButtonReleased(MouseButtonReleasedEvent& e) {
-		
-		bool handled = false;
-		for (int i = 0; i < m_Elements.size(); i++) {
-			handled = m_Elements[i]->onMouseButtonReleased(this, m_RelMousePosX, m_RelMousePosY, e.getMouseButton());
-			if (handled) break;
-		}
-
-		if(!handled)
-			m_Dragged = false;
-
-		return handled;
-	}
-
-	bool GuiWindow::onMouseMoveEvent(MouseMoveEvent& e) {
-
-		m_RelMousePosX = e.getX() - m_WindowPosX;
-		m_RelMousePosY = e.getY() - m_WindowPosY;
-
-		bool handled = false;
-		for (int i = 0; i < m_Elements.size(); i++) {
-			handled = m_Elements[i]->onMouseMoveEvent(this, m_RelMousePosX, m_RelMousePosY);
-			if (handled) break;
-		}
-
-		if (!handled && m_Dragged) {
-			m_WindowPosX = e.getX() - m_DragOffsetX;
-			m_WindowPosY = e.getY() - m_DragOffsetY;
-
-			if (m_WindowPosX < 0) m_WindowPosX = 0;
-			if (m_WindowPosY < 0) m_WindowPosY = 0;
-		}
-
-		return handled;
-	}
-
-	bool GuiWindow::onWindowResizeEvent(WindowResizeEvent& e) {
-
-		m_WindowPosX = m_OffsetX + (m_AllignX * e.getWidth());
-		m_WindowPosY = m_OffsetY + (m_AllignY * e.getHeight());
-
-		m_ScreenWidth = e.getWidth();
-		m_ScreenHeight = e.getHeight();
-		return false;
-	}
-
-	Ref<WindowStyle> GuiWindow::loadWindowStyle(const char* filepath) {
-		LuaScript script(filepath);
-		Ref<WindowStyle> windowStyle = createRef<WindowStyle>();
-
-		script.scopeToTable("window");
-
-		windowStyle->cornerTopLeftPosX = script.getInt("CornerTopLeftX");
-		windowStyle->cornerTopLeftPosY = script.getInt("CornerTopLeftY");
-		windowStyle->cornerTopRightPosX = script.getInt("CornerTopRightX");
-		windowStyle->cornerTopRightPosY = script.getInt("CornerTopRightY");
-		windowStyle->cornerBottomLeftPosX = script.getInt("CornerBottomLeftX");
-		windowStyle->cornerBottomLeftPosY = script.getInt("CornerBottomLeftY");
-		windowStyle->cornerBottomRightPosX = script.getInt("CornerBottomRightX");
-		windowStyle->cornerBottomRightPosY = script.getInt("CornerBottomRightY");
-
-		windowStyle->topHeight = script.getInt("TopHeight");
-		windowStyle->bottomHeight = script.getInt("BottomHeight");
-		windowStyle->leftWidth = script.getInt("LeftWidth");
-		windowStyle->rightWidth = script.getInt("RightWidth");
-
-		script.scopeToTable("button");
-
-		windowStyle->buttonLeftPosX = script.getInt("LeftX");
-		windowStyle->buttonLeftPosY = script.getInt("LeftY");
-		windowStyle->buttonRightPosX = script.getInt("RightX");
-		windowStyle->buttonRightPosY = script.getInt("RightY");
-
-		windowStyle->buttonLeftWidth = script.getInt("LeftWidth");
-		windowStyle->buttonRightWidth = script.getInt("RightWidth");
-		windowStyle->buttonHeight = script.getInt("Height");
-
-		windowStyle->buttonIdle = script.getInt("Idle");
-		windowStyle->buttonDisabled = script.getInt("Disabled");
-		windowStyle->buttonHovering = script.getInt("Hover");
-		windowStyle->buttonPressed = script.getInt("Pressed");
-
-		script.scopeToTable("checkbox");
-
-		windowStyle->checkboxX = script.getInt("X");
-		windowStyle->checkboxY = script.getInt("Y");
-		windowStyle->checkboxWidth = script.getInt("Width");
-		windowStyle->checkboxHeight = script.getInt("Height");
-
-		windowStyle->checkboxIdle = script.getInt("Idle");
-		windowStyle->checkboxHover = script.getInt("Hover");
-		windowStyle->checkboxPressed = script.getInt("Pressed");
-		windowStyle->checkboxDisabled = script.getInt("Disabled");
-
-		script.scopeToTable("textbox");
-
-		windowStyle->textbox.posX = script.getInt("X");
-		windowStyle->textbox.posY = script.getInt("Y");
-		windowStyle->textbox.width = script.getInt("Width");
-		windowStyle->textbox.height = script.getInt("Height");
-
-		windowStyle->textbox.leftWidth = script.getInt("LeftWidth");
-		windowStyle->textbox.rightWidth = script.getInt("RightWidth");
-		windowStyle->textbox.topHeight = script.getInt("TopHeight");
-		windowStyle->textbox.bottomHeight = script.getInt("BottomHeight");
-
-		return windowStyle;
-	}
-
-	void GuiWindow::onElementClicked(int elementId, int mouseButton) {
-
-	}
-
-	void GuiWindow::onElementReleased(int elementId, int mouseButton) {
-
-	}
-
-	// -------- GuiWindow End --------- //
 
 	// -------- GuiElementWindowBackground --------- //
 
@@ -356,7 +176,7 @@ namespace Salad {
 		vertexBuffer->setLayout({
 			{"a_Position", Salad::ShaderDataType::Float3},
 			{"a_TexCoord", Salad::ShaderDataType::Float2}
-		});
+			});
 
 		m_RenderId->addVertexBuffer(vertexBuffer);
 		Ref<IndexBuffer> indexBuffer = IndexBuffer::create(&indexData[0], indexData.size());
@@ -369,7 +189,7 @@ namespace Salad {
 	}
 
 	void GuiElementWindowBackground::draw(GuiWindow* window) {
-		Renderer2D::drawVertexArray({ window->getWindowPosX(), window->getWindowPosY() }, { 1.0f, 1.0f }, m_RenderId);
+		Renderer2D::drawVertexArray({ window->getWindowPosX(), window->getWindowPosY(), -0.99f }, { 1.0f, 1.0f }, m_RenderId);
 	}
 
 	// -------- GuiElementWindowBackground End --------- //
@@ -378,11 +198,12 @@ namespace Salad {
 	// -------- GuiElementInteratable Start --------- //
 
 	GuiElementInteractable::GuiElementInteractable(int elementId, int posX, int posY, int width, int height) :
+		GuiElement(posX, posY, width, height),
 		m_ElementId(elementId),
 		m_PosX(posX),
 		m_PosY(posY),
 		m_Width(width),
-		m_Height(height)
+		m_Height(height)	
 	{}
 
 	bool GuiElementInteractable::onMouseButtonPressed(GuiWindow* window, int mousePosX, int mousePosY, int button) {
@@ -434,8 +255,7 @@ namespace Salad {
 		m_ButtonPosX(x),
 		m_ButtonPosY(y),
 		m_ButtonWidth(width),
-		m_ButtonHeight(height)
-	{
+		m_ButtonHeight(height) 	{
 		Tessellator::start(TessellatorMode::TRIANGLES);
 
 		float resolution = 1.0f / 1024.0f;
@@ -454,7 +274,7 @@ namespace Salad {
 		vertexBuffer->setLayout({
 			{"a_Position", Salad::ShaderDataType::Float3},
 			{"a_TexCoord", Salad::ShaderDataType::Float2}
-		});
+			});
 
 		m_VertexBufferId = m_RenderId->addVertexBuffer(vertexBuffer);
 		Ref<IndexBuffer> indexBuffer = IndexBuffer::create(&indexData[0], indexData.size());
@@ -472,39 +292,44 @@ namespace Salad {
 
 	bool GuiButton::onMouseButtonPressed(GuiWindow* window, int mousePosX, int mousePosY, int button) {
 		bool hover = mousePosX > m_ButtonPosX && mousePosX < m_ButtonPosX + m_ButtonWidth && mousePosY > m_ButtonPosY && mousePosY < m_ButtonPosY + m_ButtonHeight;
-		if(hover && m_ButtonState == GuiInteractableState::Hovering){
+		if (hover && m_ButtonState == GuiInteractableState::Hovering) {
 			setButtonState(window, GuiInteractableState::Pressed);
 		}
-		
+
 		return hover;
 	}
 
 	bool GuiButton::onMouseButtonReleased(GuiWindow* window, int mousePosX, int mousePosY, int button) {
 		bool hover = mousePosX > m_ButtonPosX && mousePosX < m_ButtonPosX + m_ButtonWidth && mousePosY > m_ButtonPosY && mousePosY < m_ButtonPosY + m_ButtonHeight;
-		if(m_ButtonState == GuiInteractableState::Pressed) {
+		if (m_ButtonState == GuiInteractableState::Pressed) {
 			setButtonState(window, hover ? GuiInteractableState::Hovering : GuiInteractableState::Idle);
+			if (m_ButtonPressedCallback) m_ButtonPressedCallback();
 		}
-		
+
 		return false;
 	}
 
 	bool GuiButton::onMouseMoveEvent(GuiWindow* window, int mousePosX, int mousePosY) {
 		bool hover = mousePosX > m_ButtonPosX && mousePosX < m_ButtonPosX + m_ButtonWidth && mousePosY > m_ButtonPosY && mousePosY < m_ButtonPosY + m_ButtonHeight;
-		if(hover && m_ButtonState == GuiInteractableState::Idle) {
+		if (hover && m_ButtonState == GuiInteractableState::Idle) {
 			setButtonState(window, GuiInteractableState::Hovering);
 		}
-		else if(!hover && m_ButtonState == GuiInteractableState::Hovering) {
+		else if (!hover && m_ButtonState == GuiInteractableState::Hovering) {
 			setButtonState(window, GuiInteractableState::Idle);
 		}
-		
+
 		return false;
+	}
+
+	void GuiButton::setButtonPressedCallback(void (*callback_func)()) {
+		m_ButtonPressedCallback = callback_func;
 	}
 
 	void GuiButton::setButtonState(GuiWindow* window, GuiInteractableState state) {
 		m_ButtonState = state;
 
 		int buttonV = window->getWindowStyle()->buttonLeftPosY;
-		switch(state){
+		switch (state) {
 			case GuiInteractableState::Idle:
 				buttonV += window->getWindowStyle()->buttonHeight * window->getWindowStyle()->buttonIdle;
 				break;
@@ -520,7 +345,7 @@ namespace Salad {
 			case GuiInteractableState::Disabled:
 				buttonV += window->getWindowStyle()->buttonHeight * window->getWindowStyle()->buttonDisabled;
 				break;
-		
+
 		}
 
 		Tessellator::start(TessellatorMode::TRIANGLES);
@@ -542,8 +367,7 @@ namespace Salad {
 	// -------- GuiCheckbox Start --------- //
 
 	GuiCheckbox::GuiCheckbox(GuiWindow* window, int elementId, int x, int y) :
-		GuiElementInteractable(elementId, x, y, 24, 24)
-	{
+		GuiElementInteractable(elementId, x, y, 24, 24) 	{
 		Tessellator::start(TessellatorMode::TRIANGLES);
 
 		float resolution = 1.0f / 1024.0f;
@@ -562,7 +386,7 @@ namespace Salad {
 		vertexBuffer->setLayout({
 			{"a_Position", Salad::ShaderDataType::Float3},
 			{"a_TexCoord", Salad::ShaderDataType::Float2}
-		});
+			});
 
 		m_RenderId->addVertexBuffer(vertexBuffer);
 		Ref<IndexBuffer> indexBuffer = IndexBuffer::create(&indexData[0], indexData.size());
@@ -626,13 +450,13 @@ namespace Salad {
 
 	// -------- GuiTextbox Start --------- //
 
-	GuiTextbox::GuiTextbox(GuiWindow* window, int elementId, int x, int y, int width, int height) :
-		GuiElementInteractable(elementId, x, y, width, height)
+	GuiTextbox::GuiTextbox(GuiWindow* window, int elementId, int x, int y, int width, int height, uint32_t maxLength) :
+		GuiElementInteractable(elementId, x, y, width, height),
+		m_ContentLength(maxLength), m_ContentCurrentLength(0), m_ContentIndexPointer(0)
 	{
-		Tessellator::start(TessellatorMode::TRIANGLES);
-		Tessellator::setTextureResolution(1.0f / 1024.0f);
+		m_Content = (char*)malloc(sizeof(char) * m_ContentLength);
 
-		GuiTessellator::tessellateTiledElement(0, 0, width, height, window->getWindowStyle()->textbox);
+		tesselateElement(window);
 
 		std::vector<float> vertexData = Tessellator::getVertexBuffer();
 		std::vector<uint32_t> indexData = Tessellator::getIndexBuffer();
@@ -650,6 +474,19 @@ namespace Salad {
 		Ref<IndexBuffer> indexBuffer = IndexBuffer::create(&indexData[0], indexData.size());
 		m_RenderId->setIndexBuffer(indexBuffer);
 		m_RenderId->unbind();
+
+		m_Font = FontManager::loadFont("assets/fonts/arial.ttf", 14);
+	}
+
+	GuiTextbox::~GuiTextbox() {
+		free((char*)m_Content);
+	}
+
+	void GuiTextbox::tesselateElement(GuiWindow* window) {
+		Tessellator::start(TessellatorMode::TRIANGLES);
+		Tessellator::setTextureResolution(1.0f / 1024.0f);
+
+		GuiTessellator::tessellateTiledElement(0, 0, m_Width, m_Height, m_Focused ? window->getWindowStyle()->textboxActive : window->getWindowStyle()->textbox);
 	}
 
 	void GuiTextbox::init(GuiWindow* window) {
@@ -657,7 +494,69 @@ namespace Salad {
 	}
 
 	void GuiTextbox::draw(GuiWindow* window) {
+		RenderCommand::enableScissorTest(true);
+		GuiBounds absBounds = getAbsoluteBounds();
+		RenderCommand::scissor(-1, -1, 300, 300);
+
+		if(m_ContentCurrentLength > 0) {
+			m_Font->getFontTexture()->bind();
+			Salad::Renderer2D::drawVertexArray({ window->getWindowPosX() + m_PosX + 4, window->getWindowPosY() + m_PosY + 16 }, { 1.0f, 1.0f }, m_TextRenderId);
+			TextureManager::get().getTexture2D("assets/textures/ui.png")->bind();
+		}
 		Renderer2D::drawVertexArray({ window->getWindowPosX() + m_PosX, window->getWindowPosY() + m_PosY }, { 1.0f, 1.0f }, m_RenderId);
+		RenderCommand::enableScissorTest(false);
+	}
+
+	bool GuiTextbox::onKeyPressedEvent(GuiWindow* window, int keycode, int repeatCount) {
+		switch(keycode) {
+			// Return
+			case 259:
+				if (m_ContentIndexPointer > 0) { 
+					m_ContentIndexPointer--;
+					m_ContentCurrentLength--;
+					onContentChanged();
+				}
+				break;
+		}
+		return false;
+	}
+
+	bool GuiTextbox::onKeyTypedEvent(GuiWindow* window, int keycode, char c) {
+		if (m_ContentIndexPointer == m_ContentCurrentLength || m_TypeMode == 1)
+			m_ContentCurrentLength++;
+		
+		m_Content[m_ContentIndexPointer++] = c;
+
+		onContentChanged();
+		return true;
+	}
+
+	void GuiTextbox::onElementClicked(GuiWindow* window, int button) {
+
+	}
+
+	void GuiTextbox::setFocus(GuiWindow* window, bool focus) {
+		m_Focused = focus;
+		tesselateElement(window);
+			
+		std::vector<float> vertexData = Tessellator::getVertexBuffer();
+		std::vector<uint32_t> indexData = Tessellator::getIndexBuffer();
+		Tessellator::end();
+
+		m_RenderId->updateVertexBuffer(0, 0, vertexData.size() * sizeof(float), &vertexData[0]);
+
+		m_Focused = focus;
+	}
+
+	void GuiTextbox::onContentChanged() {
+		if (m_ContentCurrentLength > 0) {
+			m_TextRenderId = m_Font->generateText(getContent());
+		}
+	}
+
+	std::string GuiTextbox::getContent() {
+		std::string text(m_Content, m_ContentCurrentLength);
+		return text;
 	}
 
 	// -------- GuiTextbox End --------- //
@@ -666,8 +565,7 @@ namespace Salad {
 
 	GuiLabel::GuiLabel(int x, int y, std::string& text) :
 		m_PosX(x),
-		m_PosY(y)
-	{
+		m_PosY(y) 	{
 		m_Font = FontManager::loadFont("assets/fonts/arial.ttf", 20);
 		m_Text = m_Font->generateText(text);
 	}
@@ -682,4 +580,5 @@ namespace Salad {
 	}
 
 	// -------- GuiLabel End --------- //
+
 }
